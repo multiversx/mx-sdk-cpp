@@ -30,6 +30,7 @@
 *.exe
 *.out
 *.app
+*
 
 # Visual Studio
 *sln
@@ -57,3 +58,4 @@ CMakeCache.txt
 
 # CLion
 .idea
+
