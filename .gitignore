@@ -30,3 +30,30 @@
 *.exe
 *.out
 *.app
+
+# Visual Studio
+*sln
+*user
+*filters
+*vcxproj
+.vs
+.vscode
+
+# Build files
+build
+Testing
+Debug
+Win32
+Win64
+
+# CMake
+CMakeFiles
+Makefile
+CMakeCache.txt
+*cmake
+
+# Codeblocks
+*cbp
+
+# CLion
+.idea
