@@ -10,7 +10,7 @@ git submodule update --init --recursive
 ```
 
 ### 1.2 Dependencies
-Elrond C++ SDK CLI uses libsodium shared library. Make sure to [install]((https://doc.libsodium.org/installation)) the latest version.
+Elrond C++ SDK CLI uses libsodium shared library. Make sure to [install](https://doc.libsodium.org/installation) the latest version.
 
 ### 1.3 Compile and build with CMake
 ```bash
