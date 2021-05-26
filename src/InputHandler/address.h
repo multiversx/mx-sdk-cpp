@@ -1,10 +1,8 @@
 #ifndef ERDCPP_ADDRESS_H
 #define ERDCPP_ADDRESS_H
 
-#include <string.h>
-#include <sodium.h>
-#include "../Utils/bech32.h"
-#include "../Utils/bites.h"
+#include <string>
+#include <vector>
 
 class Address
 {
