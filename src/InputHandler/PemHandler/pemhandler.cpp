@@ -13,18 +13,20 @@ namespace ih
     m_fileContent = getFileContent();
   }
 
+  Address PemFileHandler::getAddress() const
+  {
+    std::vector<char> keyBytes = getKeyBytesFromFile();
+
+    keyBytes.erase(keyBytes.begin(),keyBytes.begin()+32);
+
+    return Address(keyBytes);
+  }
+
   void PemFileHandler::getSeed(unsigned char* seed) const
   {
     std::vector<char> keyBytes = getKeyBytesFromFile();
 
     std::copy(keyBytes.begin(), keyBytes.begin() + 32, seed);
-  }
-
-  void PemFileHandler::getPublicKey(unsigned char* pk) const
-  {
-    std::vector<char> keyBytes = getKeyBytesFromFile();
-
-    std::copy(keyBytes.begin() + 32, keyBytes.end(), pk);
   }
 
   void PemFileHandler::getPrivateKey(unsigned char* sk) const
@@ -33,17 +35,9 @@ namespace ih
     unsigned char seed[crypto_sign_SEEDBYTES];
 
     getSeed(seed);
-    getPublicKey(pk);
+    getAddress().getPublicKey(pk);
 
     crypto_sign_seed_keypair(pk, sk, seed);
-  }
-
-  std::string PemFileHandler::getSegwitAddress() const
-  {
-    unsigned char pk[crypto_sign_PUBLICKEYBYTES];
-    getPublicKey(pk);
-
-    return util::bech32::encode(hrp, util::convertBits(pk, crypto_sign_PUBLICKEYBYTES,  8, 5, true));
   }
 
   bool PemFileHandler::isFileValid() const
@@ -57,7 +51,7 @@ namespace ih
   {
     if (isFileValid())
     {
-      std::cerr << "Segwit address: " << getSegwitAddress() << "\n";
+      std::cerr << "Segwit address: " << getAddress().getSegwitAddress() << "\n";
     }
   }
 

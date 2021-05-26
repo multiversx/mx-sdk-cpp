@@ -5,25 +5,22 @@
 #include <vector>
 #include "../IFileHandler/ifilehandler.h"
 #include "../InputWrappers/pemhandler_input_wrapper.h"
+#include "../address.h"
 
 namespace ih
 {
   class PemFileHandler : public IFileHandler
   {
-    std::string const hrp = "erd";
-
   public:
     explicit PemFileHandler(wrapper::PemHandlerInputWrapper const inputWrapper);
 
     bool isFileValid() const override;
 
+    Address getAddress() const;
+
     void getSeed(unsigned char* seed) const;
 
-    void getPublicKey(unsigned char* pk) const;
-
     void getPrivateKey(unsigned char* pk) const;
-
-    std::string getSegwitAddress() const;
 
     void printFileContent() const;
 

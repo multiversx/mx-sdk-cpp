@@ -4,8 +4,9 @@ file(GLOB inputhandlers
 	InputWrappers/iwrapper.h
 	InputWrappers/jsonhandler_input_wrapper.h
 	InputWrappers/pemhandler_input_wrapper.h
-    JsonHandler/jsonhandler.h JsonHandler/jsonhandler.cpp
+        JsonHandler/jsonhandler.h JsonHandler/jsonhandler.cpp
 	PemHandler/pemhandler.h PemHandler/pemhandler.cpp
+	address.h address.cpp
 )
 
 add_library(inputhandler ${inputhandlers})

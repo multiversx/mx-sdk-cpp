@@ -392,7 +392,7 @@ TEST(PemFileReader, getPublicPrivateKeys_expectSameResultFrom_libsodium)
   unsigned char sodiumSk[crypto_sign_SECRETKEYBYTES];
 
   pemHandler.getSeed(pemSeed);
-  pemHandler.getPublicKey(pemPk);
+  pemHandler.getAddress().getPublicKey(pemPk);
   pemHandler.getPrivateKey(pemSk);
 
   crypto_sign_seed_keypair(sodiumPk, sodiumSk, pemSeed);
@@ -415,7 +415,7 @@ TEST(PemFileReader, getSegwitAddress)
   ih::wrapper::PemHandlerInputWrapper const pemWrapper(inputData);
   ih::PemFileHandler pemHandler(pemWrapper);
 
-  std::string pemAddress = pemHandler.getSegwitAddress();
+  std::string pemAddress = pemHandler.getAddress().getSegwitAddress();
   std::string expectedAdr = "erd1sjsk3n2d0krq3pyxxtgf0q7j3t56sgusqaujj4n82l39t9h7jers6gslr4";
 
   EXPECT_EQ(pemAddress, expectedAdr);
