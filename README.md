@@ -21,6 +21,7 @@ cmake --build .
 ### 1.4 Usage
 After building with cmake, you can use the SDK:
 ```bash
+cd src
 ./main
 ```
 
