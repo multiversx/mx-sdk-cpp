@@ -11,12 +11,18 @@ public:
 
   Address(std::vector<char> const pubKey);
 
+  Address(std::string segwitAddress);
+
+  std::string getSegWitAddress() const;
+
   void getPublicKey(unsigned char* pk) const;
 
-  std::string getSegwitAddress() const;
-
 private:
+
+  std::string computeBech32Address() const;
+
   std::vector<char> m_pubKeyBytes;
+  std::string m_segWitAddress;
 };
 
 #endif //ERDCPP_ADDRESS_H

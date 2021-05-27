@@ -415,7 +415,7 @@ TEST(PemFileReader, getSegwitAddress)
   ih::wrapper::PemHandlerInputWrapper const pemWrapper(inputData);
   ih::PemFileHandler pemHandler(pemWrapper);
 
-  std::string pemAddress = pemHandler.getAddress().getSegwitAddress();
+  std::string pemAddress = pemHandler.getAddress().getSegWitAddress();
   std::string expectedAdr = "erd1sjsk3n2d0krq3pyxxtgf0q7j3t56sgusqaujj4n82l39t9h7jers6gslr4";
 
   EXPECT_EQ(pemAddress, expectedAdr);

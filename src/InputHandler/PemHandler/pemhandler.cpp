@@ -51,7 +51,7 @@ namespace ih
   {
     if (isFileValid())
     {
-      std::cerr << "Segwit address: " << getAddress().getSegwitAddress() << "\n";
+      std::cerr << "Segwit address: " << getAddress().getSegWitAddress() << "\n";
     }
   }
 

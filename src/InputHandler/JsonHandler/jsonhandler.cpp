@@ -78,7 +78,7 @@ namespace ih
 
   std::string JsonHandler::getSender()
   {
-    return (m_pemHandler.isFileValid()) ? (m_pemHandler.getAddress().getSegwitAddress()) : ("");
+    return (m_pemHandler.isFileValid()) ? (m_pemHandler.getAddress().getSegWitAddress()) : ("");
   }
 }
 
