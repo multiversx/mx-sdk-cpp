@@ -66,7 +66,8 @@ namespace ih
     unsigned char sk[crypto_sign_SECRETKEYBYTES];
     unsigned char sig[crypto_sign_BYTES];
 
-    m_pemHandler.getPrivateKey(sk);
+    bytes skBytes = m_pemHandler.getPrivateKey();
+    std::copy(skBytes.begin(),skBytes.end(),sk);
 
     unsigned long long signLength;
     crypto_sign_detached(sig, &signLength, msg, msgLength, sk);

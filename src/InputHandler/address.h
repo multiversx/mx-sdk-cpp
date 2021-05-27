@@ -4,24 +4,26 @@
 #include <string>
 #include <vector>
 
+#include "internal.h"
+
 class Address
 {
   std::string const hrp = "erd";
 public:
 
-  Address(std::vector<char> const pubKey);
+  Address(bytes const& publicKey);
 
-  Address(std::string segwitAddress);
+  Address(std::string segWitAddress);
+
+  bytes getPublicKey() const;
 
   std::string getSegWitAddress() const;
-
-  void getPublicKey(unsigned char* pk) const;
 
 private:
 
   std::string computeBech32Address() const;
 
-  std::vector<char> m_pubKeyBytes;
+  bytes m_pk;
   std::string m_segWitAddress;
 };
 

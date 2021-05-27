@@ -10,6 +10,7 @@ file(GLOB inputhandlers
 	account.h account.cpp
 		signer.h signer.cpp
 		transaction.h transaction.cpp
+		internal.h
 )
 
 add_library(inputhandler ${inputhandlers})

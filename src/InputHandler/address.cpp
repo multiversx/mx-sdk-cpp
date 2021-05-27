@@ -3,42 +3,29 @@
 #include "../Utils/bites.h"
 #include "../Utils/bech32.h"
 
-Address::Address(const std::vector<char> pubKey) :
-    m_pubKeyBytes(pubKey),
+Address::Address(bytes const& publicKey) :
+    m_pk(publicKey),
     m_segWitAddress(){}
 
-Address::Address(std::string segwitAddress) :
-    m_pubKeyBytes(),
-    m_segWitAddress(segwitAddress){}
+Address::Address(std::string segWitAddress) :
+    m_pk(),
+    m_segWitAddress(segWitAddress){}
 
 std::string Address::getSegWitAddress()  const
 {
-  std::string ret;
-
-  if (m_segWitAddress.empty())
-  {
-    ret = computeBech32Address();
-  }
-  else
-  {
-    ret = m_segWitAddress;
-  }
-
-  return ret;
+  return (m_segWitAddress.empty()) ?
+  (computeBech32Address()) : (m_segWitAddress);
 }
 
 std::string Address::computeBech32Address() const
 {
   unsigned char pk[crypto_sign_PUBLICKEYBYTES];
-  getPublicKey(pk);
+  std::copy(m_pk.begin(), m_pk.end(), pk);
 
   return util::bech32::encode(hrp, util::convertBits(pk, crypto_sign_PUBLICKEYBYTES,  8, 5, true));
 }
 
-void Address::getPublicKey(unsigned char* pk) const
+bytes Address::getPublicKey() const
 {
-  if (m_pubKeyBytes.size() == crypto_sign_PUBLICKEYBYTES)
-  {
-    std::copy(m_pubKeyBytes.begin(), m_pubKeyBytes.end(), pk);
-  }
+  return m_pk;
 }

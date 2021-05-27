@@ -1,15 +1,17 @@
 #ifndef ERDCPP_SIGNER_H
 #define ERDCPP_SIGNER_H
 
+#include "internal.h"
+
 class Signer
 {
 public:
-  Signer(unsigned char* secretKey);
+  Signer(bytes secretKey);
 
   std::string getSignature(std::string const& message);
 
 private:
-  unsigned char* m_sk;
+  bytes m_sk;
 };
 
 

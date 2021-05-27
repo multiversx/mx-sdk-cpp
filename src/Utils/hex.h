@@ -5,10 +5,11 @@
 #include <vector>
 #include "params.h"
 #include <iostream>
+#include "../InputHandler/internal.h"
 
 namespace util
 {
-  std::vector<char> hexToBytes(const std::string& hex);
+  bytes hexToBytes(const std::string& hex);
 
   std::string stringToHex(const std::string& input);
 

@@ -1,6 +1,7 @@
 #include "gtest/gtest.h"
 
 #include "../../src/Utils/ext.h"
+#include "../../src/InputHandler/internal.h"
 
 TEST(Base64, decode)
 {
@@ -24,15 +25,15 @@ TEST(Hex, toBytes)
 {
   std::string textHex = "0A11f4C";
 
-  std::vector<char> expectedBytes;
+  bytes expectedBytes;
   expectedBytes.push_back(char(10)); // 0A -> 10
   expectedBytes.push_back(char(17)); // 11 -> 17
   expectedBytes.push_back(char(244));// f4 -> 244
   expectedBytes.push_back(char(12)); // C  -> 12
 
-  std::vector<char> bytes = util::hexToBytes(textHex);
+  bytes computedBytes = util::hexToBytes(textHex);
 
-  EXPECT_EQ(bytes, expectedBytes);
+  EXPECT_EQ(computedBytes, expectedBytes);
 }
 
 TEST(String, toHex)

@@ -15,29 +15,36 @@ namespace ih
 
   Address PemFileHandler::getAddress() const
   {
-    std::vector<char> keyBytes = getKeyBytesFromFile();
+    bytes keyBytes = getKeyBytesFromFile();
 
     keyBytes.erase(keyBytes.begin(),keyBytes.begin()+32);
 
     return Address(keyBytes);
   }
 
-  void PemFileHandler::getSeed(unsigned char* seed) const
+  bytes PemFileHandler::getSeed() const
   {
-    std::vector<char> keyBytes = getKeyBytesFromFile();
+    bytes keyBytes = getKeyBytesFromFile();
+    keyBytes.erase(keyBytes.begin() +32 , keyBytes.end());
 
-    std::copy(keyBytes.begin(), keyBytes.begin() + 32, seed);
+    return keyBytes;
   }
 
-  void PemFileHandler::getPrivateKey(unsigned char* sk) const
+  bytes PemFileHandler::getPrivateKey() const
   {
+    unsigned char sk[crypto_sign_SECRETKEYBYTES];
     unsigned char pk[crypto_sign_PUBLICKEYBYTES];
     unsigned char seed[crypto_sign_SEEDBYTES];
 
-    getSeed(seed);
-    getAddress().getPublicKey(pk);
+    bytes seedBytes = getSeed();
+    std::copy(seedBytes.begin(),seedBytes.end(),seed);
+
+    bytes pkBytes = getAddress().getPublicKey();
+    std::copy(pkBytes.begin(), pkBytes.end(), pk);
 
     crypto_sign_seed_keypair(pk, sk, seed);
+
+    return bytes(sk,sk+crypto_sign_SECRETKEYBYTES);
   }
 
   bool PemFileHandler::isFileValid() const
@@ -55,7 +62,7 @@ namespace ih
     }
   }
 
-  std::vector<char> PemFileHandler::getKeyBytesFromFile() const
+  bytes PemFileHandler::getKeyBytesFromFile() const
   {
     std::string keyHex = util::base64_decode(m_fileContent);
 

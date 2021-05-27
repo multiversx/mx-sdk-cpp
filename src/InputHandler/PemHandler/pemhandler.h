@@ -6,6 +6,7 @@
 #include "../IFileHandler/ifilehandler.h"
 #include "../InputWrappers/pemhandler_input_wrapper.h"
 #include "../address.h"
+#include "../internal.h"
 
 namespace ih
 {
@@ -18,9 +19,9 @@ namespace ih
 
     Address getAddress() const;
 
-    void getSeed(unsigned char* seed) const;
+    bytes getSeed() const;
 
-    void getPrivateKey(unsigned char* pk) const;
+    bytes getPrivateKey() const;
 
     void printFileContent() const;
 
@@ -28,7 +29,7 @@ namespace ih
 
     std::string getFileContent() const;
 
-    std::vector<char> getKeyBytesFromFile() const;
+    bytes getKeyBytesFromFile() const;
 
     std::string m_fileContent;
     wrapper::PemHandlerInputWrapper m_inputData;

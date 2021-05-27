@@ -391,9 +391,15 @@ TEST(PemFileReader, getPublicPrivateKeys_expectSameResultFrom_libsodium)
   unsigned char sodiumPk[crypto_sign_PUBLICKEYBYTES];
   unsigned char sodiumSk[crypto_sign_SECRETKEYBYTES];
 
-  pemHandler.getSeed(pemSeed);
-  pemHandler.getAddress().getPublicKey(pemPk);
-  pemHandler.getPrivateKey(pemSk);
+
+  bytes seedBytes = pemHandler.getSeed();
+  bytes skBytes = pemHandler.getPrivateKey();
+  bytes pkBytes = pemHandler.getAddress().getPublicKey();
+
+  std::copy(seedBytes.begin(), seedBytes.end(), pemSeed);
+  std::copy(skBytes.begin(), skBytes.end(), pemSk);
+  std::copy(pkBytes.begin(), pkBytes.end(), pemPk);
+
 
   crypto_sign_seed_keypair(sodiumPk, sodiumSk, pemSeed);
 

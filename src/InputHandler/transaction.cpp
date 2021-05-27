@@ -25,7 +25,7 @@ Transaction::Transaction(
   {
     m_jsonTransaction[STR_JSON_DATA] = util::base64_encode(data);
   }
-    m_jsonTransaction[STR_JSON_CHAIN_ID] = chainID;
+  m_jsonTransaction[STR_JSON_CHAIN_ID] = chainID;
   m_jsonTransaction[STR_JSON_VERSION] = version;
 }
 
