@@ -8,6 +8,8 @@ file(GLOB inputhandlers
 	PemHandler/pemhandler.h PemHandler/pemhandler.cpp
 	address.h address.cpp
 	account.h account.cpp
+		signer.h signer.cpp
+		transaction.h transaction.cpp
 )
 
 add_library(inputhandler ${inputhandlers})
