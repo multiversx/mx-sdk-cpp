@@ -336,7 +336,7 @@ TEST(JsonFileHandler, writeOutputFile)
   ih::JsonFileHandler jsonHandler(jsonWrapper);
 
   Transaction transaction(jsonWrapper.getNonce(),jsonWrapper.getValue(),
-                          pemHandler.getAddress(), jsonWrapper.getReceiver(),
+                          jsonWrapper.getReceiver(),pemHandler.getAddress(),
                           jsonWrapper.getGasPrice(), jsonWrapper.getGasLimit(),
                           jsonWrapper.getData(), jsonWrapper.getChainId(),
                           jsonWrapper.getVersion());

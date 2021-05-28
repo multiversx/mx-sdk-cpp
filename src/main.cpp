@@ -59,8 +59,8 @@ int main(int argc, char* argv[])
     if (jsonFileHandler.isFileValid())
     {
       Transaction transaction
-      (jsonInputWrapper.getNonce(), jsonInputWrapper.getValue(),pemFileHandler.getAddress(),
-       jsonInputWrapper.getReceiver(), jsonInputWrapper.getGasPrice(), jsonInputWrapper.getGasLimit(),
+      (jsonInputWrapper.getNonce(), jsonInputWrapper.getValue(),jsonInputWrapper.getReceiver(),
+       pemFileHandler.getAddress(), jsonInputWrapper.getGasPrice(), jsonInputWrapper.getGasLimit(),
        jsonInputWrapper.getData(), jsonInputWrapper.getChainId(), jsonInputWrapper.getVersion());
 
       Signer signer(pemFileHandler.getPrivateKey());
