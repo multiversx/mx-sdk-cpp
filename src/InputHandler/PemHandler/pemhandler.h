@@ -26,7 +26,6 @@ namespace ih
     void printFileContent() const;
 
   private:
-
     std::string getFileContent() const;
 
     bytes getKeyBytesFromFile() const;

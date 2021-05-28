@@ -17,8 +17,8 @@ Transaction::Transaction(
 {
   m_jsonTransaction[STR_JSON_NONCE] = nonce;
   m_jsonTransaction[STR_JSON_VALUE] = value;
-  m_jsonTransaction[STR_JSON_RECEIVER] = receiver.getSegWitAddress();
-  m_jsonTransaction[STR_JSON_SENDER] = sender.getSegWitAddress();
+  m_jsonTransaction[STR_JSON_RECEIVER] = receiver.getBech32Address();
+  m_jsonTransaction[STR_JSON_SENDER] = sender.getBech32Address();
   m_jsonTransaction[STR_JSON_GAS_PRICE] = gasPrice;
   m_jsonTransaction[STR_JSON_GAS_LIMIT] = gasLimit;
   if (!data.empty())

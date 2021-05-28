@@ -5,16 +5,16 @@
 
 Address::Address(bytes const& publicKey) :
     m_pk(publicKey),
-    m_segWitAddress(){}
+    m_bech32Address(){}
 
-Address::Address(std::string segWitAddress) :
+Address::Address(std::string bech32Address) :
     m_pk(),
-    m_segWitAddress(segWitAddress){}
+    m_bech32Address(bech32Address){}
 
-std::string Address::getSegWitAddress()  const
+std::string Address::getBech32Address()  const
 {
-  return (m_segWitAddress.empty()) ?
-  (computeBech32Address()) : (m_segWitAddress);
+  return (m_bech32Address.empty()) ?
+  (computeBech32Address()) : (m_bech32Address);
 }
 
 std::string Address::computeBech32Address() const

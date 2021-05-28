@@ -95,7 +95,7 @@ TEST(ArgHandler, getRequestedCmd_getRequestType_transaction_new_noData_expectCre
 
   ih::ArgHandler argHandler(argc, argv);
 
-  EXPECT_EQ(argHandler.getRequestedCmd().getRequestType(), ih::createTransaction);
+  EXPECT_EQ(argHandler.getRequestedCmd().getRequestType(), ih::createSignedTransactionWithPemFile);
 }
 
 TEST(ArgHandler, getRequestedCmd_getRequestType_transaction_new_withData_expectCreateTransaction)
@@ -116,7 +116,7 @@ TEST(ArgHandler, getRequestedCmd_getRequestType_transaction_new_withData_expectC
 
   ih::ArgHandler argHandler(argc, argv);
 
-  EXPECT_EQ(argHandler.getRequestedCmd().getRequestType(), ih::createTransaction);
+  EXPECT_EQ(argHandler.getRequestedCmd().getRequestType(), ih::createSignedTransactionWithPemFile);
 }
 
 
@@ -316,7 +316,7 @@ TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidData_expect
 //}
 
 
-TEST(JsonHandler, writeOutputFile)
+TEST(JsonFileHandler, writeOutputFile)
 {
   std::map<uint32_t, std::string> input;
 
@@ -332,9 +332,20 @@ TEST(JsonHandler, writeOutputFile)
   ih::wrapper::PemHandlerInputWrapper const pemWrapper(input);
   ih::wrapper::JsonHandlerInputWrapper const jsonWrapper(input);
 
-  ih::JsonHandler jsonHandler(pemWrapper, jsonWrapper);
+  ih::PemFileHandler pemHandler(pemWrapper);
+  ih::JsonFileHandler jsonHandler(jsonWrapper);
 
-  jsonHandler.writeOutputFile();
+  Transaction transaction(jsonWrapper.getNonce(),jsonWrapper.getValue(),
+                          pemHandler.getAddress(), jsonWrapper.getReceiver(),
+                          jsonWrapper.getGasPrice(), jsonWrapper.getGasLimit(),
+                          jsonWrapper.getData(), jsonWrapper.getChainId(),
+                          jsonWrapper.getVersion());
+
+  Signer signer(pemHandler.getPrivateKey());
+
+  transaction.applySignature(signer);
+
+  jsonHandler.writeOutputFile(transaction);
 }
 
 TEST(PemFileReader, printFileContent)
@@ -421,7 +432,7 @@ TEST(PemFileReader, getSegwitAddress)
   ih::wrapper::PemHandlerInputWrapper const pemWrapper(inputData);
   ih::PemFileHandler pemHandler(pemWrapper);
 
-  std::string pemAddress = pemHandler.getAddress().getSegWitAddress();
+  std::string pemAddress = pemHandler.getAddress().getBech32Address();
   std::string expectedAdr = "erd1sjsk3n2d0krq3pyxxtgf0q7j3t56sgusqaujj4n82l39t9h7jers6gslr4";
 
   EXPECT_EQ(pemAddress, expectedAdr);

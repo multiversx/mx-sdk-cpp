@@ -145,7 +145,7 @@ namespace ih
       checkAndSetUserInput<std::string>(7U, "--pem=", userInputs, ARGS_TX_IDX_PEM_INPUT_FILE, ERROR_PEM_INPUT_FILE) &&
       checkAndSetUserInput<std::string>(8U, "--outfile=", userInputs, ARGS_TX_IDX_JSON_OUT_FILE, ERROR_JSON_OUT_FILE))
     {
-      reqType = createTransaction;
+      reqType = createSignedTransactionWithPemFile;
 
       if ((argCount() == 10) && (!checkAndSetUserInput<std::string>(9U, "--data=", userInputs, ARGS_TX_IDX_DATA, ERROR_DATA)))
       {

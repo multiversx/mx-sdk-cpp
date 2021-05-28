@@ -8,7 +8,7 @@ class Signer
 public:
   Signer(bytes secretKey);
 
-  std::string getSignature(std::string const& message);
+  std::string getSignature(std::string const& message) const;
 
 private:
   bytes m_sk;

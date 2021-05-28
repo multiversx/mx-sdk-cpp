@@ -8,10 +8,9 @@
 Signer::Signer(bytes secretKey) :
   m_sk(secretKey){}
 
-std::string Signer::getSignature(std::string const& message)
+std::string Signer::getSignature(std::string const& message) const
 {
   unsigned long long const msgLength = message.length();
-
   unsigned char *msg = new unsigned char[msgLength + 1ULL];
   strcpy((char*)msg, message.c_str());
 

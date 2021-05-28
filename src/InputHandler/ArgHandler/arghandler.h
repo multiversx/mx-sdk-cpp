@@ -13,7 +13,7 @@ namespace ih
     invalid,
     help,
     loadPemFile,
-    createTransaction
+    createSignedTransactionWithPemFile
   };
 
   class RequestedCmd

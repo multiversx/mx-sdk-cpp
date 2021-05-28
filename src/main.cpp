@@ -48,15 +48,26 @@ int main(int argc, char* argv[])
     }
     break;
   }
-  case ih::createTransaction:
+  case ih::createSignedTransactionWithPemFile:
   {
     ih::wrapper::PemHandlerInputWrapper const pemInputWrapper(reqestedCmd.getUserInputs());
     ih::wrapper::JsonHandlerInputWrapper const jsonInputWrapper(reqestedCmd.getUserInputs());
-    ih::JsonHandler jsonHandler(pemInputWrapper , jsonInputWrapper);
 
-    if (jsonHandler.isFileValid())
+    ih::JsonFileHandler jsonFileHandler(jsonInputWrapper);
+    ih::PemFileHandler pemFileHandler(pemInputWrapper);
+
+    if (jsonFileHandler.isFileValid())
     {
-      jsonHandler.writeOutputFile();
+      Transaction transaction
+      (jsonInputWrapper.getNonce(), jsonInputWrapper.getValue(),pemFileHandler.getAddress(),
+       jsonInputWrapper.getReceiver(), jsonInputWrapper.getGasPrice(), jsonInputWrapper.getGasLimit(),
+       jsonInputWrapper.getData(), jsonInputWrapper.getChainId(), jsonInputWrapper.getVersion());
+
+      Signer signer(pemFileHandler.getPrivateKey());
+
+      transaction.applySignature(signer);
+
+      jsonFileHandler.writeOutputFile(transaction);
     }
     else
     {

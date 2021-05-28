@@ -13,10 +13,16 @@ namespace ih
     m_fileContent = getFileContent();
   }
 
+  bool PemFileHandler::isFileValid() const
+  {
+    return IFileHandler::fileExists() &&
+           IFileHandler::isFileExtensionValid("pem") &&
+           (m_fileContent != "");
+  }
+
   Address PemFileHandler::getAddress() const
   {
     bytes keyBytes = getKeyBytesFromFile();
-
     keyBytes.erase(keyBytes.begin(),keyBytes.begin()+32);
 
     return Address(keyBytes);
@@ -47,18 +53,11 @@ namespace ih
     return bytes(sk,sk+crypto_sign_SECRETKEYBYTES);
   }
 
-  bool PemFileHandler::isFileValid() const
-  {
-    return IFileHandler::fileExists() &&
-           IFileHandler::isFileExtensionValid("pem") &&
-           (m_fileContent != "");
-  }
-
   void PemFileHandler::printFileContent() const
   {
     if (isFileValid())
     {
-      std::cerr << "Segwit address: " << getAddress().getSegWitAddress() << "\n";
+      std::cerr << "Segwit address: " << getAddress().getBech32Address() << "\n";
     }
   }
 
