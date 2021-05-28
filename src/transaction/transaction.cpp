@@ -1,8 +1,10 @@
-#include "transaction.h"
-#include "../Utils/params.h"
-#include "../Utils/hex.h"
-#include "../Utils/base64.h"
 #include <sodium.h>
+
+#include "transaction/transaction.h"
+#include "params.h"
+#include "hex.h"
+#include "base64.h"
+
 
 Transaction::Transaction(
     uint64_t nonce,

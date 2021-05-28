@@ -5,7 +5,7 @@
 #include <vector>
 #include "params.h"
 #include <iostream>
-#include "../InputHandler/internal.h"
+#include "../../include/internal/internal.h"
 
 namespace util
 {

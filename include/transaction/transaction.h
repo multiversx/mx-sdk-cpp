@@ -1,10 +1,10 @@
 #ifndef ERDCPP_TRANSACTIONHANDLER_H
 #define ERDCPP_TRANSACTIONHANDLER_H
 
-#include "../Utils/json.hpp"
+#include "json/json.hpp"
 
-#include "address.h"
-#include "signer.h"
+#include "account/address.h"
+#include "transaction/signer.h"
 
 #include <stdint.h>
 #include <string>

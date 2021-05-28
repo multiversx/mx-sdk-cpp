@@ -2,7 +2,7 @@
 #include <iostream>
 #include <sodium.h>
 #include <vector>
-#include "InputHandler/ext.h"
+#include "inputhandler/ext.h"
 
 void reportError(errorCode const err);
 

@@ -1,5 +1,5 @@
-#ifndef BITES_H
-#define BITES_H
+#ifndef BITS_H
+#define BITS_H
 
 #include <vector>
 #include <stdint.h>

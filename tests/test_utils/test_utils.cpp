@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
 
-#include "../../src/Utils/ext.h"
-#include "../../src/InputHandler/internal.h"
+#include "internal/internal.h"
+#include "ext.h"
 
 TEST(Base64, decode)
 {

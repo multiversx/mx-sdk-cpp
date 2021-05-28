@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
-#include "../../src/InputHandler/ext.h"
-#include "../../src/Utils/ext.h"
+#include "inputhandler/ext.h"
+#include "utils/ext.h"
 #include <sodium.h>
 
 TEST(ArgHandler, getRequestedCmd_getRequestType_noArgument_expectInvalid)

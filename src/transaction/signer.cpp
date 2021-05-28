@@ -1,8 +1,8 @@
 #include <string.h>
 #include <sodium.h>
 
-#include "../Utils/strchr.h"
-#include "signer.h"
+#include "strchr.h"
+#include "transaction/signer.h"
 
 
 Signer::Signer(bytes secretKey) :

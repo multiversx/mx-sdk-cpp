@@ -1,7 +1,7 @@
-#include "address.h"
+#include "account/address.h"
 #include <sodium.h>
-#include "../Utils/bites.h"
-#include "../Utils/bech32.h"
+#include "bits.h"
+#include "bech32/bech32.h"
 
 Address::Address(bytes const& publicKey) :
     m_pk(publicKey),

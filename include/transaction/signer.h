@@ -1,7 +1,7 @@
 #ifndef ERDCPP_SIGNER_H
 #define ERDCPP_SIGNER_H
 
-#include "internal.h"
+#include "internal/internal.h"
 
 class Signer
 {

@@ -1,10 +1,20 @@
-add_subdirectory(Utils)
-add_subdirectory(InputHandler)
+add_subdirectory(utils)
 
-add_executable(main main.cpp)
+file(GLOB src
+	internal.h
+	transaction/transaction.cpp
+	transaction/signer.cpp
+	account/account.cpp
+	account/address.cpp)
 
-target_link_libraries(main PUBLIC utils)
-target_link_libraries(main PUBLIC inputhandler)
-target_link_libraries(main LINK_PUBLIC ${LIBSODIUM_LIBRARY})
+include_directories(utils)
 
+add_library(src ${src})
+
+
+include_directories(../../include)
+	
+target_link_libraries(src PUBLIC utils)
+target_link_libraries(src PUBLIC external)
+	
 
