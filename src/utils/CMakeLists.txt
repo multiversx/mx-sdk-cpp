@@ -8,6 +8,3 @@ file(GLOB utils
 
 add_library(utils ${utils})
 	
-	
-
-	
