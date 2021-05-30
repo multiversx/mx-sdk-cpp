@@ -1,5 +1,5 @@
-#ifndef HEX_H
-#define HEX_H
+#ifndef ERD_HEX_H
+#define ERD_HEX_H
 
 #include <string>
 #include "params.h"

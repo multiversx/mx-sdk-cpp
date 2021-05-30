@@ -1,5 +1,5 @@
-#ifndef ERDCPP_ADDRESS_H
-#define ERDCPP_ADDRESS_H
+#ifndef ERD_ADDRESS_H
+#define ERD_ADDRESS_H
 
 #include <string>
 #include "internal/internal.h"
@@ -25,4 +25,4 @@ private:
   std::string m_bech32Address;
 };
 
-#endif //ERDCPP_ADDRESS_H
+#endif //ERD_ADDRESS_H

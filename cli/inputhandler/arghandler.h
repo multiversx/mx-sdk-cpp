@@ -1,5 +1,5 @@
-#ifndef CLIHANDLER_H
-#define CLIHANDLER_H
+#ifndef ARGHANDLER_H
+#define ARGHANDLER_H
 
 #include <string>
 #include <vector>

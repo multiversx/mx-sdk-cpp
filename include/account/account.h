@@ -1,5 +1,5 @@
-#ifndef ERDCPP_ACCOUNT_H
-#define ERDCPP_ACCOUNT_H
+#ifndef ERD_ACCOUNT_H
+#define ERD_ACCOUNT_H
 
 #include "address.h"
 #include <string>
@@ -19,4 +19,4 @@ private:
 };
 
 
-#endif //ERDCPP_ACCOUNT_H
+#endif //ERD_ACCOUNT_H

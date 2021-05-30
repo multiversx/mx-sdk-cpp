@@ -1,5 +1,5 @@
-#ifndef STRINGTOCHAR_H
-#define STRINGTOCHAR_H
+#ifndef ERD_STRINGTOCHAR_H
+#define ERD_STRINGTOCHAR_H
 
 #include <string>
 #include <vector>

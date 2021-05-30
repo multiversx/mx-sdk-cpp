@@ -1,5 +1,5 @@
-#ifndef PARAMS_H
-#define PARAMS_H
+#ifndef ERD_PARAMS_H
+#define ERD_PARAMS_H
 
 #include <map>
 #include <string>

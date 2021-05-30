@@ -1,5 +1,5 @@
-#ifndef ERDCPP_SDK_H
-#define ERDCPP_SDK_H
+#ifndef ERD_SDK_H
+#define ERD_SDK_H
 
 #include "internal/internal.h"
 #include "transaction/signer.h"
@@ -8,4 +8,4 @@
 #include "account/address"
 
 
-#endif //ERDCPP_SDK_H
+#endif //ERD_SDK_H

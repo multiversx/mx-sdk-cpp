@@ -1,5 +1,5 @@
-#ifndef ERDCPP_TRANSACTIONHANDLER_H
-#define ERDCPP_TRANSACTIONHANDLER_H
+#ifndef ERD_TRANSACTION_H
+#define ERD_TRANSACTION_H
 
 #include "json/json.hpp"
 
@@ -33,4 +33,4 @@ private:
 };
 
 
-#endif //ERDCPP_TRANSACTIONHANDLER_H
+#endif //ERD_TRANSACTION_H

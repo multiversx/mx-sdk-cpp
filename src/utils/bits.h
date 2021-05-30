@@ -1,5 +1,5 @@
-#ifndef BITS_H
-#define BITS_H
+#ifndef ERD_BITS_H
+#define ERD_BITS_H
 
 #include <vector>
 #include <stdint.h>
