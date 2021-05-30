@@ -1,7 +1,7 @@
 #include <string>
 #include <iostream>
 #include <sodium.h>
-#include <vector>
+
 #include "inputhandler/ext.h"
 
 void reportError(errorCode const err);
@@ -16,8 +16,8 @@ int main(int argc, char* argv[])
 
   ih::ArgHandler argHandler(argc, argv);
 
-  ih::RequestedCmd const reqestedCmd = argHandler.getRequestedCmd();
-  errorCode const errCode = reqestedCmd.getErrorCode();
+  ih::RequestedCmd const requestedCmd = argHandler.getRequestedCmd();
+  errorCode const errCode = requestedCmd.getErrorCode();
 
   if (errCode != ERROR_NONE)
   {
@@ -25,7 +25,7 @@ int main(int argc, char* argv[])
     return 0;
   }
 
-  ih::RequestType const reqType = reqestedCmd.getRequestType();
+  ih::RequestType const reqType = requestedCmd.getRequestType();
 
   switch (reqType)
   {
@@ -35,7 +35,7 @@ int main(int argc, char* argv[])
   }
   case ih::loadPemFile:
   {
-    ih::wrapper::PemHandlerInputWrapper const pemInputWrapper(reqestedCmd.getUserInputs());
+    ih::wrapper::PemHandlerInputWrapper const pemInputWrapper(requestedCmd.getUserInputs());
     ih::PemFileHandler pemHandler(pemInputWrapper);
 
     if (pemHandler.isFileValid())
@@ -50,8 +50,8 @@ int main(int argc, char* argv[])
   }
   case ih::createSignedTransactionWithPemFile:
   {
-    ih::wrapper::PemHandlerInputWrapper const pemInputWrapper(reqestedCmd.getUserInputs());
-    ih::wrapper::JsonHandlerInputWrapper const jsonInputWrapper(reqestedCmd.getUserInputs());
+    ih::wrapper::PemHandlerInputWrapper const pemInputWrapper(requestedCmd.getUserInputs());
+    ih::wrapper::JsonHandlerInputWrapper const jsonInputWrapper(requestedCmd.getUserInputs());
 
     ih::JsonFileHandler jsonFileHandler(jsonInputWrapper);
     ih::PemFileHandler pemFileHandler(pemInputWrapper);

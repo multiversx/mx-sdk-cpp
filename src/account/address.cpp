@@ -11,6 +11,11 @@ Address::Address(std::string bech32Address) :
     m_pk(),
     m_bech32Address(bech32Address){}
 
+bytes Address::getPublicKey() const
+{
+  return m_pk;
+}
+
 std::string Address::getBech32Address()  const
 {
   return (m_bech32Address.empty()) ?
@@ -25,7 +30,3 @@ std::string Address::computeBech32Address() const
   return util::bech32::encode(hrp, util::convertBits(pk, crypto_sign_PUBLICKEYBYTES,  8, 5, true));
 }
 
-bytes Address::getPublicKey() const
-{
-  return m_pk;
-}

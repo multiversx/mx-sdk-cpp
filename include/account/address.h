@@ -2,9 +2,7 @@
 #define ERDCPP_ADDRESS_H
 
 #include <string>
-#include <vector>
-
-#include "../internal/internal.h"
+#include "internal/internal.h"
 
 class Address
 {

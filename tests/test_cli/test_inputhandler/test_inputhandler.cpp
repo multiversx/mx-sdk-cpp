@@ -7,7 +7,7 @@ TEST(ArgHandler, getRequestedCmd_getRequestType_noArgument_expectInvalid)
 {
   int const argc = 1;
   char* argv[argc];
-  argv[0] = "ERDProject.exe";
+  argv[0] = (char*)"ERDProject.exe";
 
   ih::ArgHandler argHandler(argc, argv);
 
@@ -18,9 +18,9 @@ TEST(ArgHandler, getRequestedCmd_getRequestType_randomArgs_expectInvalid)
 {
   int const argc = 3;
   char* argv[argc];
-  argv[0] = "ERDProject.exe";
-  argv[1] = "dsa";
-  argv[2] = "";
+  argv[0] = (char*)"ERDProject.exe";
+  argv[1] = (char*)"dsa";
+  argv[2] = (char*)"";
 
   ih::ArgHandler argHandler(argc, argv);
 
@@ -31,8 +31,8 @@ TEST(ArgHandler, getRequestedCmd_getRequestType_help_expectHelp)
 {
   int const argc = 2;
   char* argv[argc];
-  argv[0] = "ERDProject.exe";
-  argv[1] = "help";
+  argv[0] = (char*)"ERDProject.exe";
+  argv[1] = (char*)"help";
 
   ih::ArgHandler argHandler(argc, argv);
 
@@ -43,10 +43,10 @@ TEST(ArgHandler, getRequestedCmd_getRequestType_pem_load_someFile_expectLoadPemF
 {
   int const argc = 4;
   char* argv[argc];
-  argv[0] = "ERDProject.exe";
-  argv[1] = "pem";
-  argv[2] = "load";
-  argv[3] = "--file=someFile";
+  argv[0] = (char*)"ERDProject.exe";
+  argv[1] = (char*)"pem";
+  argv[2] = (char*)"load";
+  argv[3] = (char*)"--file=someFile";
 
   ih::ArgHandler argHandler(argc, argv);
 
@@ -57,9 +57,9 @@ TEST(ArgHandler, getRequestedCmd_getRequestType_pem_load_withoutFile_expectInval
 {
   int const argc = 3;
   char* argv[argc];
-  argv[0] = "ERDProject.exe";
-  argv[1] = "pem";
-  argv[2] = "help";
+  argv[0] = (char*)"ERDProject.exe";
+  argv[1] = (char*)"pem";
+  argv[2] = (char*)"help";
 
   ih::ArgHandler argHandler(argc, argv);
 
@@ -70,8 +70,8 @@ TEST(ArgHandler, getRequestedCmd_getRequestType_pem_withoutSubArgument_expectInv
 {
   int const argc = 2;
   char* argv[argc];
-  argv[0] = "ERDProject.exe";
-  argv[1] = "pem";
+  argv[0] = (char*)"ERDProject.exe";
+  argv[1] = (char*)"pem";
 
   ih::ArgHandler argHandler(argc, argv);
 
@@ -82,16 +82,16 @@ TEST(ArgHandler, getRequestedCmd_getRequestType_transaction_new_noData_expectCre
 {
   int const argc = 10;
   char* argv[argc];
-  argv[0] = "ERDProject.exe";
-  argv[1] = "transaction";
-  argv[2] = "new";
-  argv[3] = "--nonce=3";
-  argv[4] = "--value=\"31\"";
-  argv[5] = "--receiver=\"da\"";
-  argv[6] = "--gas-price=31";
-  argv[7] = "--gas-limit=31";
-  argv[8] = "--pem=\"dd\"";
-  argv[9] = "--outfile=\"dd\"";
+  argv[0] = (char*)"ERDProject.exe";
+  argv[1] = (char*)"transaction";
+  argv[2] = (char*)"new";
+  argv[3] = (char*)"--nonce=3";
+  argv[4] = (char*)"--value=\"31\"";
+  argv[5] = (char*)"--receiver=\"da\"";
+  argv[6] = (char*)"--gas-price=31";
+  argv[7] = (char*)"--gas-limit=31";
+  argv[8] = (char*)"--pem=\"dd\"";
+  argv[9] = (char*)"--outfile=\"dd\"";
 
   ih::ArgHandler argHandler(argc, argv);
 
@@ -102,17 +102,17 @@ TEST(ArgHandler, getRequestedCmd_getRequestType_transaction_new_withData_expectC
 {
   int const argc = 11;
   char* argv[argc];
-  argv[0] = "ERDProject.exe";
-  argv[1] = "transaction";
-  argv[2] = "new";
-  argv[3] = "--nonce=3";
-  argv[4] = "--value=\"31\"";
-  argv[5] = "--receiver=\"da\"";
-  argv[6] = "--gas-price=31";
-  argv[7] = "--gas-limit=31";
-  argv[8] = "--pem=\"dd\"";
-  argv[9] = "--outfile=\"dd\"";
-  argv[10] = "--data=\"dd\"";
+  argv[0] = (char*)"ERDProject.exe";
+  argv[1] = (char*)"transaction";
+  argv[2] = (char*)"new";
+  argv[3] = (char*)"--nonce=3";
+  argv[4] = (char*)"--value=\"31\"";
+  argv[5] = (char*)"--receiver=\"da\"";
+  argv[6] = (char*)"--gas-price=31";
+  argv[7] = (char*)"--gas-limit=31";
+  argv[8] = (char*)"--pem=\"dd\"";
+  argv[9] = (char*)"--outfile=\"dd\"";
+  argv[10] = (char*)"--data=\"dd\"";
 
   ih::ArgHandler argHandler(argc, argv);
 
@@ -124,17 +124,17 @@ TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidNonce_expec
 {
   int const argc = 11;
   char* argv[argc];
-  argv[0] = "ERDProject.exe";
-  argv[1] = "transaction";
-  argv[2] = "new";
-  argv[3] = "--nonce=3f";
-  argv[4] = "--value=\"31\"";
-  argv[5] = "--receiver=\"da\"";
-  argv[6] = "--gas-price=31";
-  argv[7] = "--gas-limit=31";
-  argv[8] = "--pem=\"dd\"";
-  argv[9] = "--outfile=\"dd\"";
-  argv[10] = "--data=\"dd\"";
+  argv[0] = (char*)"ERDProject.exe";
+  argv[1] = (char*)"transaction";
+  argv[2] = (char*)"new";
+  argv[3] = (char*)"--nonce=3f";
+  argv[4] = (char*)"--value=\"31\"";
+  argv[5] = (char*)"--receiver=\"da\"";
+  argv[6] = (char*)"--gas-price=31";
+  argv[7] = (char*)"--gas-limit=31";
+  argv[8] = (char*)"--pem=\"dd\"";
+  argv[9] = (char*)"--outfile=\"dd\"";
+  argv[10] = (char*)"--data=\"dd\"";
 
   ih::ArgHandler argHandler(argc, argv);
 
@@ -145,17 +145,17 @@ TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidValue_expec
 {
   int const argc = 11;
   char* argv[argc];
-  argv[0] = "ERDProject.exe";
-  argv[1] = "transaction";
-  argv[2] = "new";
-  argv[3] = "--nonce=3";
-  argv[4] = "--value=";
-  argv[5] = "--receiver=\"da\"";
-  argv[6] = "--gas-price=31";
-  argv[7] = "--gas-limit=31";
-  argv[8] = "--pem=\"dd\"";
-  argv[9] = "--outfile=\"dd\"";
-  argv[10] = "--data=\"dd\"";
+  argv[0] = (char*)"ERDProject.exe";
+  argv[1] = (char*)"transaction";
+  argv[2] = (char*)"new";
+  argv[3] = (char*)"--nonce=3";
+  argv[4] = (char*)"--value=";
+  argv[5] = (char*)"--receiver=\"da\"";
+  argv[6] = (char*)"--gas-price=31";
+  argv[7] = (char*)"--gas-limit=31";
+  argv[8] = (char*)"--pem=\"dd\"";
+  argv[9] = (char*)"--outfile=\"dd\"";
+  argv[10] = (char*)"--data=\"dd\"";
 
   ih::ArgHandler argHandler(argc, argv);
 
@@ -167,17 +167,17 @@ TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidReceiver_ex
   int const argc = 11;
   char* argv[argc];
 
-  argv[0] = "ERDProject.exe";
-  argv[1] = "transaction";
-  argv[2] = "new";
-  argv[3] = "--nonce=0";
-  argv[4] = "--value=10000";
-  argv[5] = "--receiver=";
-  argv[6] = "--gas-price=31";
-  argv[7] = "--gas-limit=31";
-  argv[8] = "--pem=\"dd\"";
-  argv[9] = "--outfile=\"dd\"";
-  argv[10] = "--data=\"dd\"";
+  argv[0] = (char*)"ERDProject.exe";
+  argv[1] = (char*)"transaction";
+  argv[2] = (char*)"new";
+  argv[3] = (char*)"--nonce=0";
+  argv[4] = (char*)"--value=10000";
+  argv[5] = (char*)"--receiver=";
+  argv[6] = (char*)"--gas-price=31";
+  argv[7] = (char*)"--gas-limit=31";
+  argv[8] = (char*)"--pem=\"dd\"";
+  argv[9] = (char*)"--outfile=\"dd\"";
+  argv[10] = (char*)"--data=\"dd\"";
 
   ih::ArgHandler argHandler(argc, argv);
 
@@ -189,17 +189,17 @@ TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidGasPrice_ex
   int const argc = 11;
   char* argv[argc];
 
-  argv[0] = "ERDProject.exe";
-  argv[1] = "transaction";
-  argv[2] = "new";
-  argv[3] = "--nonce=0";
-  argv[4] = "--value=10000";
-  argv[5] = "--receiver=address";
-  argv[6] = "--gas-price=abc";
-  argv[7] = "--gas-limit=31";
-  argv[8] = "--pem=\"dd\"";
-  argv[9] = "--outfile=\"dd\"";
-  argv[10] = "--data=\"dd\"";
+  argv[0] = (char*)"ERDProject.exe";
+  argv[1] = (char*)"transaction";
+  argv[2] = (char*)"new";
+  argv[3] = (char*)"--nonce=0";
+  argv[4] = (char*)"--value=10000";
+  argv[5] = (char*)"--receiver=address";
+  argv[6] = (char*)"--gas-price=abc";
+  argv[7] = (char*)"--gas-limit=31";
+  argv[8] = (char*)"--pem=\"dd\"";
+  argv[9] = (char*)"--outfile=\"dd\"";
+  argv[10] = (char*)"--data=\"dd\"";
 
   ih::ArgHandler argHandler(argc, argv);
 
@@ -211,17 +211,17 @@ TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidGasLimit_ex
   int const argc = 11;
   char* argv[argc];
 
-  argv[0] = "ERDProject.exe";
-  argv[1] = "transaction";
-  argv[2] = "new";
-  argv[3] = "--nonce=0";
-  argv[4] = "--value=10000";
-  argv[5] = "--receiver=address";
-  argv[6] = "--gas-price=1000";
-  argv[7] = "--gas-limit=abc";
-  argv[8] = "--pem=\"dd\"";
-  argv[9] = "--outfile=\"dd\"";
-  argv[10] = "--data=\"dd\"";
+  argv[0] = (char*)"ERDProject.exe";
+  argv[1] = (char*)"transaction";
+  argv[2] = (char*)"new";
+  argv[3] = (char*)"--nonce=0";
+  argv[4] = (char*)"--value=10000";
+  argv[5] = (char*)"--receiver=address";
+  argv[6] = (char*)"--gas-price=1000";
+  argv[7] = (char*)"--gas-limit=abc";
+  argv[8] = (char*)"--pem=\"dd\"";
+  argv[9] = (char*)"--outfile=\"dd\"";
+  argv[10] = (char*)"--data=\"dd\"";
 
   ih::ArgHandler argHandler(argc, argv);
 
@@ -233,17 +233,17 @@ TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidPem_expectE
   int const argc = 11;
   char* argv[argc];
 
-  argv[0] = "ERDProject.exe";
-  argv[1] = "transaction";
-  argv[2] = "new";
-  argv[3] = "--nonce=0";
-  argv[4] = "--value=10000";
-  argv[5] = "--receiver=address";
-  argv[6] = "--gas-price=1000";
-  argv[7] = "--gas-limit=700";
-  argv[8] = "--pem=";
-  argv[9] = "--outfile=\"dd\"";
-  argv[10] = "--data=\"dd\"";
+  argv[0] = (char*)"ERDProject.exe";
+  argv[1] = (char*)"transaction";
+  argv[2] = (char*)"new";
+  argv[3] = (char*)"--nonce=0";
+  argv[4] = (char*)"--value=10000";
+  argv[5] = (char*)"--receiver=address";
+  argv[6] = (char*)"--gas-price=1000";
+  argv[7] = (char*)"--gas-limit=700";
+  argv[8] = (char*)"--pem=";
+  argv[9] = (char*)"--outfile=\"dd\"";
+  argv[10] = (char*)"--data=\"dd\"";
 
   ih::ArgHandler argHandler(argc, argv);
 
@@ -255,17 +255,17 @@ TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidJson_expect
   int const argc = 11;
   char* argv[argc];
 
-  argv[0] = "ERDProject.exe";
-  argv[1] = "transaction";
-  argv[2] = "new";
-  argv[3] = "--nonce=0";
-  argv[4] = "--value=10000";
-  argv[5] = "--receiver=address";
-  argv[6] = "--gas-price=1000";
-  argv[7] = "--gas-limit=700";
-  argv[8] = "--pem=someFile";
-  argv[9] = "--outfile=";
-  argv[10] = "--data=\"dd\"";
+  argv[0] = (char*)"ERDProject.exe";
+  argv[1] = (char*)"transaction";
+  argv[2] = (char*)"new";
+  argv[3] = (char*)"--nonce=0";
+  argv[4] = (char*)"--value=10000";
+  argv[5] = (char*)"--receiver=address";
+  argv[6] = (char*)"--gas-price=1000";
+  argv[7] = (char*)"--gas-limit=700";
+  argv[8] = (char*)"--pem=someFile";
+  argv[9] = (char*)"--outfile=";
+  argv[10] = (char*)"--data=\"dd\"";
 
   ih::ArgHandler argHandler(argc, argv);
 
@@ -277,17 +277,17 @@ TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidData_expect
   int const argc = 11;
   char* argv[argc];
 
-  argv[0] = "ERDProject.exe";
-  argv[1] = "transaction";
-  argv[2] = "new";
-  argv[3] = "--nonce=0";
-  argv[4] = "--value=10000";
-  argv[5] = "--receiver=address";
-  argv[6] = "--gas-price=1000";
-  argv[7] = "--gas-limit=700";
-  argv[8] = "--pem=someFile";
-  argv[9] = "--outfile=otherFile";
-  argv[10] = "--data=";
+  argv[0] = (char*)"ERDProject.exe";
+  argv[1] = (char*)"transaction";
+  argv[2] = (char*)"new";
+  argv[3] = (char*)"--nonce=0";
+  argv[4] = (char*)"--value=10000";
+  argv[5] = (char*)"--receiver=address";
+  argv[6] = (char*)"--gas-price=1000";
+  argv[7] = (char*)"--gas-limit=700";
+  argv[8] = (char*)"--pem=someFile";
+  argv[9] = (char*)"--outfile=otherFile";
+  argv[10] = (char*)"--data=";
 
   ih::ArgHandler argHandler(argc, argv);
 
@@ -437,5 +437,3 @@ TEST(PemFileReader, getSegwitAddress)
 
   EXPECT_EQ(pemAddress, expectedAdr);
 }
-
-

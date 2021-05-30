@@ -1,10 +1,7 @@
-#include <sodium.h>
-
 #include "transaction/transaction.h"
 #include "params.h"
 #include "hex.h"
 #include "base64.h"
-
 
 Transaction::Transaction(
     uint64_t nonce,
@@ -25,7 +22,7 @@ Transaction::Transaction(
   m_jsonTransaction[STR_JSON_GAS_LIMIT] = gasLimit;
   if (!data.empty())
   {
-    m_jsonTransaction[STR_JSON_DATA] = util::base64_encode(data);
+    m_jsonTransaction[STR_JSON_DATA] = util::base64::encode(data);
   }
   m_jsonTransaction[STR_JSON_CHAIN_ID] = chainID;
   m_jsonTransaction[STR_JSON_VERSION] = version;

@@ -1,4 +1,5 @@
 #include "ifilehandler.h"
+#include <fstream>
 
 namespace ih
 {

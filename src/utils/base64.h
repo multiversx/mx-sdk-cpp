@@ -7,8 +7,11 @@ typedef unsigned char uchar;
 
 namespace util
 {
-  std::string base64_encode(const std::string &in);
-  std::string base64_decode(const std::string &in);
+  namespace base64
+  {
+    std::string encode(const std::string &in);
+    std::string decode(const std::string &in);
+  }
 }
 
 #endif

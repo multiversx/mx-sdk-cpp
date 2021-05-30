@@ -9,7 +9,6 @@
 #include <stdint.h>
 #include <string>
 
-
 class Transaction
 {
 public:

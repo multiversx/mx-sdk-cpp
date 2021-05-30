@@ -1,5 +1,7 @@
 #include "pemhandler.h"
-#include "utils/ext.h"
+#include "utils/base64.h"
+#include "utils/hex.h"
+
 #include <fstream>
 #include <iostream>
 #include <sodium.h>
@@ -43,9 +45,9 @@ namespace ih
     unsigned char seed[crypto_sign_SEEDBYTES];
 
     bytes seedBytes = getSeed();
-    std::copy(seedBytes.begin(),seedBytes.end(),seed);
-
     bytes pkBytes = getAddress().getPublicKey();
+
+    std::copy(seedBytes.begin(),seedBytes.end(),seed);
     std::copy(pkBytes.begin(), pkBytes.end(), pk);
 
     crypto_sign_seed_keypair(pk, sk, seed);
@@ -63,7 +65,7 @@ namespace ih
 
   bytes PemFileHandler::getKeyBytesFromFile() const
   {
-    std::string keyHex = util::base64_decode(m_fileContent);
+    std::string keyHex = util::base64::decode(m_fileContent);
 
     return util::hexToBytes(keyHex);
   }

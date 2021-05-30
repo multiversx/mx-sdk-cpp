@@ -1,7 +1,7 @@
 #include "base64.h"
 #include <vector>
 
-std::string util::base64_encode(const std::string &in)
+std::string util::base64::encode(const std::string &in)
 {
   std::string out;
 
@@ -19,7 +19,7 @@ std::string util::base64_encode(const std::string &in)
   return out;
 }
 
-std::string util::base64_decode(const std::string &in)
+std::string util::base64::decode(const std::string &in)
 {
   std::string out;
 

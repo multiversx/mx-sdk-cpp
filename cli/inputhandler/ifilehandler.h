@@ -2,7 +2,6 @@
 #define IFILEHANDLER_H
 
 #include <string>
-#include <fstream>
 
 namespace ih
 {

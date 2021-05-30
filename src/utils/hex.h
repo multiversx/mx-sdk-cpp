@@ -2,10 +2,8 @@
 #define HEX_H
 
 #include <string>
-#include <vector>
 #include "params.h"
-#include <iostream>
-#include "../../include/internal/internal.h"
+#include "internal/internal.h"
 
 namespace util
 {

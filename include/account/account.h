@@ -9,9 +9,9 @@ class Account
 public:
   Account(Address const&  address);
 
-  const Account& getAccount() const;
+  const Account getAddress() const;
 
-  const std::string& getBalance() const;
+  const std::string getBalance() const;
 
 private:
   std::string m_balance;
