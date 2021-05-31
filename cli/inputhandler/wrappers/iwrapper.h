@@ -6,24 +6,24 @@
 
 namespace ih
 {
-    namespace wrapper
+namespace wrapper
+{
+class IWrapper
+{
+public:
+    IWrapper(std::map<uint32_t, std::string> const &inputData) :
+            m_inputData(inputData)
+    {}
+
+    const std::map<uint32_t, std::string> &getInputData() const
     {
-        class IWrapper
-        {
-        public:
-            IWrapper(std::map<uint32_t, std::string> const &inputData) :
-                    m_inputData(inputData)
-            {}
-
-            const std::map<uint32_t, std::string> &getInputData() const
-            {
-                return m_inputData;
-            }
-
-        private:
-            std::map<uint32_t, std::string> const m_inputData;
-        };
+        return m_inputData;
     }
+
+private:
+    std::map<uint32_t, std::string> const m_inputData;
+};
+}
 }
 
 #endif

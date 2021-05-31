@@ -8,19 +8,19 @@
 
 namespace ih
 {
-    class JsonFileHandler : public IFileHandler
-    {
-    public:
-        explicit JsonFileHandler(wrapper::JsonHandlerInputWrapper const jsonInputWrapper);
+class JsonFileHandler : public IFileHandler
+{
+public:
+    explicit JsonFileHandler(wrapper::JsonHandlerInputWrapper const jsonInputWrapper);
 
-        bool isFileValid() const override;
+    bool isFileValid() const override;
 
-        void writeOutputFile(Transaction const &transaction);
+    void writeOutputFile(Transaction const &transaction);
 
-    private:
+private:
 
-        wrapper::JsonHandlerInputWrapper m_inputData;
-    };
+    wrapper::JsonHandlerInputWrapper m_inputData;
+};
 }
 
 #endif

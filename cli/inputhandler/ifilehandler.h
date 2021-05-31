@@ -5,26 +5,26 @@
 
 namespace ih
 {
-    class IFileHandler
-    {
-    public:
-        explicit IFileHandler(std::string const &path);
+class IFileHandler
+{
+public:
+    explicit IFileHandler(std::string const &path);
 
-        virtual bool isFileValid() const;
+    virtual bool isFileValid() const;
 
-        const std::string &getFilePath() const;
+    const std::string &getFilePath() const;
 
-    protected:
+protected:
 
-        bool fileExists() const;
+    bool fileExists() const;
 
-        bool isFileExtensionValid(std::string const ext) const;
+    bool isFileExtensionValid(std::string const ext) const;
 
-    private:
-        std::string getFileExtension() const;
+private:
+    std::string getFileExtension() const;
 
-        std::string m_filePath;
+    std::string m_filePath;
 
-    };
+};
 }
 #endif
