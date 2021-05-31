@@ -11,7 +11,7 @@ public:
 
     Address(bytes const &publicKey);
 
-    Address(std::string bech32Address);
+    Address(std::string const &bech32Address);
 
     bytes getPublicKey() const;
 

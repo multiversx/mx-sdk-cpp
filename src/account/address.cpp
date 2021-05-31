@@ -8,7 +8,7 @@ Address::Address(bytes const &publicKey) :
         m_bech32Address()
 {}
 
-Address::Address(std::string bech32Address) :
+Address::Address(std::string const &bech32Address) :
         m_pk(),
         m_bech32Address(bech32Address)
 {}

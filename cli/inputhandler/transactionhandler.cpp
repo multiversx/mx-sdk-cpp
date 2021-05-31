@@ -16,10 +16,9 @@ bool TransactionInputHandler::isFileValid() const
 
 void TransactionInputHandler::writeTransactionToJsonFile(Transaction const &transaction)
 {
-    std::ofstream myFile(m_inputData.getOutputFile());
-
     if (isFileValid())
     {
+        std::ofstream myFile(m_inputData.getOutputFile());
         myFile << transaction.getSerializedTransaction();;
         myFile.close();
         std::cerr << "Succesfully created transaction!\n";
