@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
         case ih::loadPemFile:
         {
             ih::wrapper::PemHandlerInputWrapper const pemInputWrapper(requestedCmd.getUserInputs());
-            ih::PemFileHandler pemHandler(pemInputWrapper);
+            ih::PemInputHandler pemHandler(pemInputWrapper);
 
             if (pemHandler.isFileValid())
             {
@@ -51,27 +51,29 @@ int main(int argc, char *argv[])
         case ih::createSignedTransactionWithPemFile:
         {
             ih::wrapper::PemHandlerInputWrapper const pemInputWrapper(requestedCmd.getUserInputs());
-            ih::wrapper::JsonHandlerInputWrapper const jsonInputWrapper(requestedCmd.getUserInputs());
+            ih::wrapper::TransactionInputWrapper const transactionInputWrapper(requestedCmd.getUserInputs());
 
-            ih::JsonFileHandler jsonFileHandler(jsonInputWrapper);
-            ih::PemFileHandler pemFileHandler(pemInputWrapper);
+            ih::TransactionInputHandler transactionHandler(transactionInputWrapper);
+            ih::PemInputHandler pemFileHandler(pemInputWrapper);
 
-            if (jsonFileHandler.isFileValid())
+            if (!pemFileHandler.isFileValid())
             {
-                Transaction transaction
-                        (jsonInputWrapper.getNonce(), jsonInputWrapper.getValue(), jsonInputWrapper.getReceiver(),
-                         pemFileHandler.getAddress(), jsonInputWrapper.getGasPrice(), jsonInputWrapper.getGasLimit(),
-                         jsonInputWrapper.getData(), jsonInputWrapper.getChainId(), jsonInputWrapper.getVersion());
-
-                Signer signer(pemFileHandler.getPrivateKey());
-
-                transaction.applySignature(signer);
-
-                jsonFileHandler.writeOutputFile(transaction);
+                reportError(ERROR_PEM_INPUT_FILE);
+            }
+            else if (!transactionHandler.isFileValid())
+            {
+                reportError(ERROR_JSON_OUT_FILE);
             }
             else
             {
-                reportError(ERROR_JSON_OUT_FILE);
+                Transaction transaction
+                        (transactionInputWrapper.getNonce(), transactionInputWrapper.getValue(), transactionInputWrapper.getReceiver(),
+                         pemFileHandler.getAddress(), transactionInputWrapper.getGasPrice(), transactionInputWrapper.getGasLimit(),
+                         transactionInputWrapper.getData(), transactionInputWrapper.getChainId(), transactionInputWrapper.getVersion());
+
+                Signer signer(pemFileHandler.getPrivateKey());
+                transaction.applySignature(signer);
+                transactionHandler.writeTransactionToJsonFile(transaction);
             }
             break;
         }

@@ -4,8 +4,8 @@
 
 #include "arghandler.h"
 #include "pemhandler.h"
-#include "jsonhandler.h"
-#include "wrappers/pemhandler_input_wrapper.h"
-#include "wrappers/jsonhandler_input_wrapper.h"
+#include "transactionhandler.h"
+#include "wrappers/pem_input_wrapper.h"
+#include "wrappers/transaction_input_wrapper.h"
 
 #endif

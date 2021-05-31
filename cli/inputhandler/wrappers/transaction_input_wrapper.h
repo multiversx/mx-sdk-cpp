@@ -10,10 +10,10 @@ namespace ih
 {
 namespace wrapper
 {
-class JsonHandlerInputWrapper : public IWrapper
+class TransactionInputWrapper : public IWrapper
 {
 public:
-    JsonHandlerInputWrapper(std::map<uint32_t, std::string> const &inputData) :
+    TransactionInputWrapper(std::map<uint32_t, std::string> const &inputData) :
             IWrapper(inputData)
     {
         m_containsData = (getInputData().find(ARGS_TX_IDX_DATA) != getInputData().end()) ?

@@ -1,20 +1,20 @@
-#include "jsonhandler.h"
+#include "transactionhandler.h"
 #include <iostream>
 #include <fstream>
 
 namespace ih
 {
-JsonFileHandler::JsonFileHandler(wrapper::JsonHandlerInputWrapper const jsonInputWrapper) :
+TransactionInputHandler::TransactionInputHandler(wrapper::TransactionInputWrapper const jsonInputWrapper) :
         IFileHandler(jsonInputWrapper.getOutputFile()),
         m_inputData(jsonInputWrapper)
 {}
 
-bool JsonFileHandler::isFileValid() const
+bool TransactionInputHandler::isFileValid() const
 {
     return IFileHandler::fileExists() && IFileHandler::isFileExtensionValid("json");
 }
 
-void JsonFileHandler::writeOutputFile(Transaction const &transaction)
+void TransactionInputHandler::writeTransactionToJsonFile(Transaction const &transaction)
 {
     std::ofstream myFile(m_inputData.getOutputFile());
 

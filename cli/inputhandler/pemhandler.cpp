@@ -8,21 +8,21 @@
 
 namespace ih
 {
-PemFileHandler::PemFileHandler(wrapper::PemHandlerInputWrapper const inputWrapper) :
+PemInputHandler::PemInputHandler(wrapper::PemHandlerInputWrapper const inputWrapper) :
         IFileHandler(inputWrapper.getPemFilePath()),
         m_inputData(inputWrapper)
 {
     m_fileContent = getFileContent();
 }
 
-bool PemFileHandler::isFileValid() const
+bool PemInputHandler::isFileValid() const
 {
     return IFileHandler::fileExists() &&
            IFileHandler::isFileExtensionValid("pem") &&
            (m_fileContent != "");
 }
 
-Address PemFileHandler::getAddress() const
+Address PemInputHandler::getAddress() const
 {
     bytes keyBytes = getKeyBytesFromFile();
     keyBytes.erase(keyBytes.begin(), keyBytes.begin() + 32);
@@ -30,7 +30,7 @@ Address PemFileHandler::getAddress() const
     return Address(keyBytes);
 }
 
-bytes PemFileHandler::getSeed() const
+bytes PemInputHandler::getSeed() const
 {
     bytes keyBytes = getKeyBytesFromFile();
     keyBytes.erase(keyBytes.begin() + 32, keyBytes.end());
@@ -38,7 +38,7 @@ bytes PemFileHandler::getSeed() const
     return keyBytes;
 }
 
-bytes PemFileHandler::getPrivateKey() const
+bytes PemInputHandler::getPrivateKey() const
 {
     unsigned char sk[crypto_sign_SECRETKEYBYTES];
     unsigned char pk[crypto_sign_PUBLICKEYBYTES];
@@ -55,7 +55,7 @@ bytes PemFileHandler::getPrivateKey() const
     return bytes(sk, sk + crypto_sign_SECRETKEYBYTES);
 }
 
-void PemFileHandler::printFileContent() const
+void PemInputHandler::printFileContent() const
 {
     if (isFileValid())
     {
@@ -63,14 +63,14 @@ void PemFileHandler::printFileContent() const
     }
 }
 
-bytes PemFileHandler::getKeyBytesFromFile() const
+bytes PemInputHandler::getKeyBytesFromFile() const
 {
     std::string keyHex = util::base64::decode(m_fileContent);
 
     return util::hexToBytes(keyHex);
 }
 
-std::string PemFileHandler::getFileContent() const
+std::string PemInputHandler::getFileContent() const
 {
     std::string line;
     std::string keyLines = "";

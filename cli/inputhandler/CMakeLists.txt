@@ -1,11 +1,11 @@
 file(GLOB inputhandlers
         arghandler.h arghandler.cpp
         ifilehandler.h ifilehandler.cpp
-        jsonhandler.h jsonhandler.cpp
+        transactionhandler.h transactionhandler.cpp
         pemhandler.h pemhandler.cpp
         wrappers/iwrapper.h
-        wrappers/jsonhandler_input_wrapper.h
-        wrappers/pemhandler_input_wrapper.h)
+        wrappers/transaction_input_wrapper.h
+        wrappers/pem_input_wrapper.h)
 
 add_library(inputhandler ${inputhandlers})
 
