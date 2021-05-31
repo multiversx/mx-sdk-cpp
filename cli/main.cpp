@@ -3,6 +3,7 @@
 #include <sodium.h>
 
 #include "inputhandler/ext.h"
+#include "erdsdk.h"
 
 void reportError(errorCode const err);
 
@@ -36,11 +37,11 @@ int main(int argc, char *argv[])
         case ih::loadPemFile:
         {
             ih::wrapper::PemHandlerInputWrapper const pemInputWrapper(requestedCmd.getUserInputs());
-            ih::PemInputHandler pemHandler(pemInputWrapper);
+            ih::PemFileReader pemHandler(pemInputWrapper.getPemFilePath());
 
             if (pemHandler.isFileValid())
             {
-                pemHandler.printFileContent();
+                std::cerr << "Bech32 address: " << pemHandler.getAddress().getBech32Address() << "\n";
             }
             else
             {
@@ -54,7 +55,7 @@ int main(int argc, char *argv[])
             ih::wrapper::TransactionInputWrapper const transactionInputWrapper(requestedCmd.getUserInputs());
 
             ih::TransactionInputHandler transactionHandler(transactionInputWrapper);
-            ih::PemInputHandler pemFileHandler(pemInputWrapper);
+            ih::PemFileReader pemFileHandler(pemInputWrapper.getPemFilePath());
 
             if (!pemFileHandler.isFileValid())
             {

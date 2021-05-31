@@ -11,7 +11,7 @@ TransactionInputHandler::TransactionInputHandler(wrapper::TransactionInputWrappe
 
 bool TransactionInputHandler::isFileValid() const
 {
-    return IFileHandler::fileExists() && IFileHandler::isFileExtensionValid("json");
+    return IFileHandler::fileExists() && IFileHandler::isFileExtension("json");
 }
 
 void TransactionInputHandler::writeTransactionToJsonFile(Transaction const &transaction)

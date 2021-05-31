@@ -1,4 +1,4 @@
-#include "ifilehandler.h"
+#include "filehandler/ifilehandler.h"
 #include <fstream>
 
 namespace ih
@@ -6,11 +6,6 @@ namespace ih
 IFileHandler::IFileHandler(std::string const &path) :
         m_filePath(path)
 {}
-
-bool IFileHandler::isFileValid() const
-{
-    return fileExists();
-}
 
 const std::string &IFileHandler::getFilePath() const
 {
@@ -23,7 +18,7 @@ bool IFileHandler::fileExists() const
     return f.good() && f.is_open();
 }
 
-bool IFileHandler::isFileExtensionValid(std::string const ext) const
+bool IFileHandler::isFileExtension(std::string const ext) const
 {
     return getFileExtension() == ext;
 }

@@ -5,7 +5,8 @@
 #include "transaction/signer.h"
 #include "transaction/transaction.h"
 #include "account/account.h"
-#include "account/address"
+#include "account/address.h"
+#include "filehandler/pemhandler.h"
 
 
 #endif //ERD_SDK_H

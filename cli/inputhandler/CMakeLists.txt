@@ -1,8 +1,6 @@
 file(GLOB inputhandlers
         arghandler.h arghandler.cpp
-        ifilehandler.h ifilehandler.cpp
         transactionhandler.h transactionhandler.cpp
-        pemhandler.h pemhandler.cpp
         wrappers/iwrapper.h
         wrappers/transaction_input_wrapper.h
         wrappers/pem_input_wrapper.h)

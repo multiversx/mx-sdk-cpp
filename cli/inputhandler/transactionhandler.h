@@ -2,7 +2,7 @@
 #ifndef TRANSACTION_HANDLER_H
 #define TRANSACTION_HANDLER_H
 
-#include "ifilehandler.h"
+#include "filehandler/ifilehandler.h"
 #include "wrappers/transaction_input_wrapper.h"
 #include "transaction/transaction.h"
 
