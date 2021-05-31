@@ -43,7 +43,7 @@ typedef std::string errorMessage;
 errorCode const ERROR_NONE = 0UL;
 
 errorCode const ERROR_NONCE = 1U;
-errorCode const ERROR_VALUE = 1UL<<1;
+errorCode const ERROR_VALUE = 1UL << 1;
 errorCode const ERROR_RECEIVER = 1UL << 2U;
 errorCode const ERROR_GAS_PRICE = 1UL << 3U;
 errorCode const ERROR_GAS_LIMIT = 1UL << 4U;
@@ -63,16 +63,16 @@ errorMessage const ERROR_MSG_DATA = "Invalid data.";
 errorMessage const ERROR_MSG_SODIUM_INIT = "Could not initialize sodium library.";
 
 std::map<errorCode, errorMessage> const errors =
-{
-  {ERROR_NONCE, ERROR_MSG_NONCE},
-  {ERROR_VALUE, ERROR_MSG_VALUE},
-  {ERROR_RECEIVER, ERROR_MSG_RECEIVER},
-  {ERROR_GAS_PRICE, ERROR_MSG_GAS_PRICE},
-  {ERROR_GAS_LIMIT, ERROR_MSG_GAS_LIMIT},
-  {ERROR_PEM_INPUT_FILE, ERROR_MSG_PEM_INPUT_FILE},
-  {ERROR_JSON_OUT_FILE, ERROR_MSG_JSON_OUT_FILE},
-  {ERROR_DATA, ERROR_MSG_DATA},
-  {ERROR_SODIUM_INIT, ERROR_MSG_SODIUM_INIT}
-};
+        {
+                {ERROR_NONCE,          ERROR_MSG_NONCE},
+                {ERROR_VALUE,          ERROR_MSG_VALUE},
+                {ERROR_RECEIVER,       ERROR_MSG_RECEIVER},
+                {ERROR_GAS_PRICE,      ERROR_MSG_GAS_PRICE},
+                {ERROR_GAS_LIMIT,      ERROR_MSG_GAS_LIMIT},
+                {ERROR_PEM_INPUT_FILE, ERROR_MSG_PEM_INPUT_FILE},
+                {ERROR_JSON_OUT_FILE,  ERROR_MSG_JSON_OUT_FILE},
+                {ERROR_DATA,           ERROR_MSG_DATA},
+                {ERROR_SODIUM_INIT,    ERROR_MSG_SODIUM_INIT}
+        };
 
 #endif

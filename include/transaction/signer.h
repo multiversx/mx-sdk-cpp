@@ -6,12 +6,12 @@
 class Signer
 {
 public:
-  Signer(bytes secretKey);
+    Signer(bytes secretKey);
 
-  std::string getSignature(std::string const& message) const;
+    std::string getSignature(std::string const &message) const;
 
 private:
-  bytes m_sk;
+    bytes m_sk;
 };
 
 

@@ -6,23 +6,23 @@
 
 class Address
 {
-  std::string const hrp = "erd";
+    std::string const hrp = "erd";
 public:
 
-  Address(bytes const& publicKey);
+    Address(bytes const &publicKey);
 
-  Address(std::string bech32Address);
+    Address(std::string bech32Address);
 
-  bytes getPublicKey() const;
+    bytes getPublicKey() const;
 
-  std::string getBech32Address() const;
+    std::string getBech32Address() const;
 
 private:
 
-  std::string computeBech32Address() const;
+    std::string computeBech32Address() const;
 
-  bytes m_pk;
-  std::string m_bech32Address;
+    bytes m_pk;
+    std::string m_bech32Address;
 };
 
 #endif //ERD_ADDRESS_H

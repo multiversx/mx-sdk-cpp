@@ -11,29 +11,29 @@
 
 namespace ih
 {
-  class PemFileHandler : public IFileHandler
-  {
-  public:
-    explicit PemFileHandler(wrapper::PemHandlerInputWrapper const inputWrapper);
+    class PemFileHandler : public IFileHandler
+    {
+    public:
+        explicit PemFileHandler(wrapper::PemHandlerInputWrapper const inputWrapper);
 
-    bool isFileValid() const override;
+        bool isFileValid() const override;
 
-    Address getAddress() const;
+        Address getAddress() const;
 
-    bytes getSeed() const;
+        bytes getSeed() const;
 
-    bytes getPrivateKey() const;
+        bytes getPrivateKey() const;
 
-    void printFileContent() const;
+        void printFileContent() const;
 
-  private:
-    std::string getFileContent() const;
+    private:
+        std::string getFileContent() const;
 
-    bytes getKeyBytesFromFile() const;
+        bytes getKeyBytesFromFile() const;
 
-    std::string m_fileContent;
-    wrapper::PemHandlerInputWrapper m_inputData;
-  };
+        std::string m_fileContent;
+        wrapper::PemHandlerInputWrapper m_inputData;
+    };
 }
 
 #endif

@@ -7,15 +7,15 @@
 class Account
 {
 public:
-  Account(Address const&  address);
+    Account(Address const &address);
 
-  const Account getAddress() const;
+    const Account getAddress() const;
 
-  const std::string getBalance() const;
+    const std::string getBalance() const;
 
 private:
-  std::string m_balance;
-  Address const m_address;
+    std::string m_balance;
+    Address const m_address;
 };
 
 

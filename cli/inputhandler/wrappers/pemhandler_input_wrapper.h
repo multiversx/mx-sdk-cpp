@@ -8,20 +8,21 @@
 
 namespace ih
 {
-  namespace wrapper
-  {
-    class PemHandlerInputWrapper :public IWrapper
+    namespace wrapper
     {
-    public:
-      PemHandlerInputWrapper(std::map<uint32_t, std::string> const& inputData) :
-        IWrapper(inputData) {}
+        class PemHandlerInputWrapper : public IWrapper
+        {
+        public:
+            PemHandlerInputWrapper(std::map<uint32_t, std::string> const &inputData) :
+                    IWrapper(inputData)
+            {}
 
-      const std::string &getPemFilePath() const
-      {
-        return getInputData().at(ARGS_TX_IDX_PEM_INPUT_FILE);
-      }
-    };
-  }
+            const std::string &getPemFilePath() const
+            {
+                return getInputData().at(ARGS_TX_IDX_PEM_INPUT_FILE);
+            }
+        };
+    }
 }
 
 #endif
