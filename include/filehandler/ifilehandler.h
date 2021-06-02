@@ -10,11 +10,10 @@ class IFileHandler
 public:
     explicit IFileHandler(std::string const &path);
 
-    virtual bool isFileValid() const = 0;
-
     const std::string &getFilePath() const;
 
 protected:
+    virtual bool isFileValid() const = 0;
 
     bool fileExists() const;
 
@@ -23,7 +22,7 @@ protected:
 private:
     std::string getFileExtension() const;
 
-    std::string m_filePath;
+    std::string const m_filePath;
 
 };
 }

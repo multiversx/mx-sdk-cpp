@@ -346,36 +346,52 @@ TEST(JsonFileHandler, writeOutputFile)
     transactionHandler.writeTransactionToJsonFile(transaction);
 }
 
-class PemFileReaderTestFixture : public ::testing::Test
+class PemFileReaderConstructorFixture : public ::testing::Test
 {
-protected:
+public:
+    template <typename T>
+    void expectException(std::string const &filePath, errorMessage const &errMsg)
+    {
+        EXPECT_THROW({
+                         try
+                         {
+                             ih::PemFileReader pemHandler(filePath);
+                         }
+                         catch(const T &e)
+                         {
+                             EXPECT_EQ( errMsg, e.what() );
+                             throw;
+                         }
+                     }, T );
+    }
 
-private:
 };
 
-TEST(PemFileReader, isPemFileValid_validFile)
+TEST_F(PemFileReaderConstructorFixture, validFile)
 {
-     ih::PemFileReader pemHandler("..//testData//keys.pem");
-
-    EXPECT_TRUE(pemHandler.isFileValid());
+    EXPECT_NO_THROW(ih::PemFileReader pemHandler("..//testData//keys.pem"));
 }
 
-TEST(PemFileReader, isPemFileValid_invalidFile_NotEnoughBytes)
+TEST_F(PemFileReaderConstructorFixture, invalidFile_NotEnoughBytes)
 {
-
-    EXPECT_THROW(ih::PemFileReader pemHandler("..//testData//keysNotEnoughBytes.pem");,std::length_error);
+    expectException<std::length_error>("..//testData//keysNotEnoughBytes.pem",ERROR_MSG_KEY_BYTES_SIZE);
 }
 
-
-TEST(PemFileReader, isPemFileValid_invalidFileExtension)
+TEST_F(PemFileReaderConstructorFixture, invalidFile_invalidFileExtension)
 {
-    EXPECT_THROW(ih::PemFileReader pemHandler("..//testData//keys.pme");,std::invalid_argument);
+    expectException<std::invalid_argument>("..//testData//keys.pme",ERROR_MSG_FILE_EXTENSION_INVALID);
 }
 
-TEST(PemFileReader, isPemFileValid_emptyFile)
+TEST_F(PemFileReaderConstructorFixture, invalidFile_emptyFile)
 {
-    EXPECT_THROW(ih::PemFileReader pemHandler("..//testData//keysEmptyFile.pem");,std::invalid_argument);
+    expectException<std::invalid_argument>("..//testData//keysEmptyFile.pem",ERROR_MSG_FILE_EMPTY);
 }
+
+TEST_F(PemFileReaderConstructorFixture, invalidFile_notExisting)
+{
+    expectException<std::invalid_argument>("..//testData//thisFileDoesNotExist.pem",ERROR_MSG_FILE_DOES_NOT_EXIST);
+}
+
 
 TEST(PemFileReader, getPublicPrivateKeys_expectSameResultFrom_libsodium)
 {

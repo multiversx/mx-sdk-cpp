@@ -36,45 +36,48 @@ int main(int argc, char *argv[])
         }
         case ih::loadPemFile:
         {
-            ih::wrapper::PemHandlerInputWrapper const pemInputWrapper(requestedCmd.getUserInputs());
-            ih::PemFileReader pemHandler(pemInputWrapper.getPemFilePath());
-
-            if (pemHandler.isFileValid())
+            try
             {
+                ih::wrapper::PemHandlerInputWrapper const pemInputWrapper(requestedCmd.getUserInputs());
+                ih::PemFileReader pemHandler(pemInputWrapper.getPemFilePath());
                 std::cerr << "Bech32 address: " << pemHandler.getAddress().getBech32Address() << "\n";
             }
-            else
+            catch (std::exception exception)
             {
-                reportError(ERROR_PEM_INPUT_FILE);
+                std::cerr<< exception.what();
             }
             break;
         }
         case ih::createSignedTransactionWithPemFile:
         {
-            ih::wrapper::PemHandlerInputWrapper const pemInputWrapper(requestedCmd.getUserInputs());
             ih::wrapper::TransactionInputWrapper const transactionInputWrapper(requestedCmd.getUserInputs());
-
             ih::TransactionInputHandler transactionHandler(transactionInputWrapper);
-            ih::PemFileReader pemFileHandler(pemInputWrapper.getPemFilePath());
 
-            if (!pemFileHandler.isFileValid())
-            {
-                reportError(ERROR_PEM_INPUT_FILE);
-            }
-            else if (!transactionHandler.isFileValid())
+            if (!transactionHandler.isFileValid())
             {
                 reportError(ERROR_JSON_OUT_FILE);
             }
             else
             {
-                Transaction transaction
-                        (transactionInputWrapper.getNonce(), transactionInputWrapper.getValue(), transactionInputWrapper.getReceiver(),
-                         pemFileHandler.getAddress(), transactionInputWrapper.getGasPrice(), transactionInputWrapper.getGasLimit(),
-                         transactionInputWrapper.getData(), transactionInputWrapper.getChainId(), transactionInputWrapper.getVersion());
+                try
+                {
+                    ih::wrapper::PemHandlerInputWrapper const pemInputWrapper(requestedCmd.getUserInputs());
+                    ih::PemFileReader pemFileHandler(pemInputWrapper.getPemFilePath());
 
-                Signer signer(pemFileHandler.getPrivateKey());
-                transaction.applySignature(signer);
-                transactionHandler.writeTransactionToJsonFile(transaction);
+                    Transaction transaction
+                            (transactionInputWrapper.getNonce(), transactionInputWrapper.getValue(), transactionInputWrapper.getReceiver(),
+                             pemFileHandler.getAddress(), transactionInputWrapper.getGasPrice(), transactionInputWrapper.getGasLimit(),
+                             transactionInputWrapper.getData(), transactionInputWrapper.getChainId(), transactionInputWrapper.getVersion());
+
+                    Signer signer(pemFileHandler.getPrivateKey());
+                    transaction.applySignature(signer);
+                    transactionHandler.writeTransactionToJsonFile(transaction);
+                }
+                catch (std::exception exception)
+                {
+                    std::cerr<<exception.what();
+                }
+
             }
             break;
         }

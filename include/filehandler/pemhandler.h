@@ -15,13 +15,14 @@ class PemFileReader : public IFileHandler
 public:
     explicit PemFileReader(std::string const filePath);
 
-    bool isFileValid() const override;
-
     Address getAddress() const;
 
     bytes getSeed() const;
 
     bytes getPrivateKey() const;
+
+protected:
+    bool isFileValid() const override;
 
 private:
     std::string getFileContent() const;
