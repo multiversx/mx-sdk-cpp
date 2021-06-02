@@ -29,6 +29,8 @@ std::string Address::computeBech32Address() const
     unsigned char pk[crypto_sign_PUBLICKEYBYTES];
     std::copy(m_pk.begin(), m_pk.end(), pk);
 
-    return util::bech32::encode(hrp, util::convertBits(pk, crypto_sign_PUBLICKEYBYTES, 8, 5, true));
+    int const kNoBitsInByte = 8;
+    int const kNoBitsInBech32 = 5;
+    return util::bech32::encode(hrp, util::convertBits(pk, crypto_sign_PUBLICKEYBYTES, kNoBitsInByte, kNoBitsInBech32, true));
 }
 
