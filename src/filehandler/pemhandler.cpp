@@ -1,41 +1,70 @@
 #include "filehandler/pemhandler.h"
+#include "params.h"
 #include "base64.h"
 #include "hex.h"
 
 #include <fstream>
 #include <iostream>
 #include <sodium.h>
+#include <stdexcept>
+
+#include <iomanip>
+
 
 namespace ih
 {
 PemFileReader::PemFileReader(std::string const filePath) :
         IFileHandler(filePath)
 {
-    m_fileContent = getFileContent();
+    if (isFileValid())
+    {
+        std::string const fileContent = getFileContent();
+        if (fileContent == "")
+            throw std::invalid_argument(ERROR_MSG_FILE_EMPTY);
+
+        m_fileKeyBytes = getKeyBytesFromContent(fileContent);
+        if(m_fileKeyBytes.size() != (crypto_sign_PUBLICKEYBYTES + crypto_sign_SEEDBYTES))
+            throw std::length_error(ERROR_MSG_KEY_BYTES_SIZE);
+    }
 }
 
 bool PemFileReader::isFileValid() const
 {
-    return IFileHandler::fileExists() &&
-            IFileHandler::isFileExtension("pem") &&
-           (m_fileContent != "");
+    bool const fileExists = IFileHandler::fileExists();
+    bool const fileExtensionValid = IFileHandler::isFileExtension("pem");
+
+    if (!fileExists) throw std::invalid_argument(ERROR_MSG_FILE_DOES_NOT_EXIST);
+    if (!fileExtensionValid) throw std::invalid_argument(ERROR_MSG_FILE_EXTENSION_INVALID);
+
+    return fileExists && fileExtensionValid ;
 }
 
 Address PemFileReader::getAddress() const
 {
-    bytes keyBytes = getKeyBytesFromFile();
-    keyBytes.erase(keyBytes.begin(), keyBytes.begin() + crypto_sign_PUBLICKEYBYTES);
-
-    return Address(keyBytes);
+    return Address(bytes(m_fileKeyBytes.begin() + crypto_sign_PUBLICKEYBYTES,m_fileKeyBytes.end()));
 }
 
 bytes PemFileReader::getSeed() const
 {
-    bytes keyBytes = getKeyBytesFromFile();
-    keyBytes.erase(keyBytes.begin() + crypto_sign_PUBLICKEYBYTES, keyBytes.end());
-
-    return keyBytes;
+    return bytes(m_fileKeyBytes.begin(),m_fileKeyBytes.begin() + crypto_sign_PUBLICKEYBYTES);
 }
+
+template<typename TInputIter>
+std::string make_hex_string(TInputIter first, TInputIter last, bool use_uppercase = true, bool insert_spaces = false)
+{
+    std::ostringstream ss;
+    ss << std::hex << std::setfill('0');
+    if (use_uppercase)
+        ss << std::uppercase;
+    while (first != last)
+    {
+        ss << std::setw(2) << static_cast<int>(*first++);
+        if (insert_spaces && first != last)
+            ss << " ";
+    }
+    return ss.str();
+}
+
 
 bytes PemFileReader::getPrivateKey() const
 {
@@ -50,14 +79,16 @@ bytes PemFileReader::getPrivateKey() const
     std::copy(pkBytes.begin(), pkBytes.end(), pk);
 
     crypto_sign_seed_keypair(pk, sk, seed);
+    std::cerr<< "Seed key:" << make_hex_string(seed,seed+32) <<"\n";
+    std::cerr<< "Public key:" << make_hex_string(pk,pk+32) <<"\n";
+    std::cerr<< "Secret key:" <<make_hex_string(sk,sk+64) <<"\n";
 
     return bytes(sk, sk + crypto_sign_SECRETKEYBYTES);
 }
 
-bytes PemFileReader::getKeyBytesFromFile() const
+bytes PemFileReader::getKeyBytesFromContent(std::string const &content) const
 {
-    std::string keyHex = util::base64::decode(m_fileContent);
-
+    std::string const keyHex = util::base64::decode(content);
     return util::hexToBytes(keyHex);
 }
 

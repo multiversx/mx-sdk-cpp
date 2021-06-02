@@ -26,9 +26,9 @@ public:
 private:
     std::string getFileContent() const;
 
-    bytes getKeyBytesFromFile() const;
+    bytes getKeyBytesFromContent(std::string const &content) const;
 
-    std::string m_fileContent;
+    bytes m_fileKeyBytes;
 };
 }
 
