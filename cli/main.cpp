@@ -53,14 +53,14 @@ int main(int argc, char *argv[])
             ih::wrapper::PemHandlerInputWrapper const pemInputWrapper(requestedCmd.getUserInputs());
             ih::wrapper::TransactionInputWrapper const transactionInputWrapper(requestedCmd.getUserInputs());
 
-            ih::TransactionInputHandler transactionHandler(transactionInputWrapper);
+            ih::JsonFileHandler jsonHandler(transactionInputWrapper.getOutputFile());
             ih::PemInputHandler pemFileHandler(pemInputWrapper);
 
             if (!pemFileHandler.isFileValid())
             {
                 reportError(ERROR_PEM_INPUT_FILE);
             }
-            else if (!transactionHandler.isFileValid())
+            else if (!jsonHandler.isFileValid())
             {
                 reportError(ERROR_JSON_OUT_FILE);
             }
@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
 
                 Signer signer(pemFileHandler.getPrivateKey());
                 transaction.applySignature(signer);
-                transactionHandler.writeTransactionToJsonFile(transaction);
+                jsonHandler.writeDataToFile(transaction.getSerializedTransaction());
             }
             break;
         }
