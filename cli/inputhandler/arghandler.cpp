@@ -1,6 +1,5 @@
 #include "arghandler.h"
 
-#include <iostream>
 #include <stdint.h>
 #include <limits>
 
@@ -64,13 +63,6 @@ ArgHandler::ArgHandler(int const &argc, char *const argv[]) : m_errCode(ERROR_NO
         }
     }
 }
-
-ArgHandler::commandGroupMap const ArgHandler::m_commandGroupMap =
-        {
-                {"transaction", {"new"}},
-                {"pem",         {"load"}},
-                {"help",        {}}
-        };
 
 bool ArgHandler::isSubCmd(uint32_t const subCmdIdx, std::string const subCmd) const
 {
@@ -163,30 +155,4 @@ int ArgHandler::argCount() const
     return m_arguments.size();
 }
 
-void ArgHandler::showSubGroupAvailableCmds(std::string cmdGroup) const
-{
-    std::vector<std::string> cmd = m_commandGroupMap.at(cmdGroup);
-
-    if (cmd.size() == 0) std::cerr << "-";
-
-    else
-    {
-        for (std::string subCmd : cmd)
-        {
-            std::cerr << subCmd << " ";
-        }
-    }
-}
-
-void ArgHandler::showInfo() const
-{
-    std::cerr << "----\nInfo\n----\n\nCommand groups: Avaiable arguments\n";
-
-    for (auto it = m_commandGroupMap.begin(); it != m_commandGroupMap.end(); ++it)
-    {
-        std::cerr << it->first << ": ";
-        showSubGroupAvailableCmds(it->first);
-        std::cerr << "\n";
-    }
-}
 }

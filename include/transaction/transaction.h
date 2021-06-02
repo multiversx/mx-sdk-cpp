@@ -28,7 +28,7 @@ public:
     std::string getSerializedTransaction() const;
 
 private:
-
+    // TODO: Create wrapper for json
     nlohmann::ordered_json m_jsonTransaction;
 };
 

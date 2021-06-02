@@ -37,15 +37,11 @@ private:
 
 class ArgHandler
 {
-    typedef std::map<std::string, std::vector<std::string>> commandGroupMap;
-
 public:
 
     explicit ArgHandler(int const &argc, char *const argv[]);
 
     RequestedCmd getRequestedCmd();
-
-    void showInfo() const;
 
 private:
 
@@ -60,11 +56,8 @@ private:
                               std::map<uint32_t, std::string> &userInputs, uint32_t userInputIdx,
                               errorCode errCode);
 
-    void showSubGroupAvailableCmds(std::string cmdGroup) const;
-
     std::vector<std::string> m_arguments;
     errorCode m_errCode;
-    static commandGroupMap const m_commandGroupMap;
 };
 }
 

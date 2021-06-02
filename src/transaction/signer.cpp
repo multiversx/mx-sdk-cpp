@@ -11,6 +11,7 @@ Signer::Signer(bytes secretKey) :
 
 std::string Signer::getSignature(std::string const &message) const
 {
+    //TODO: Put this code in a wrapper for libsodium library
     unsigned long long const msgLength = message.length();
     unsigned char *msg = new unsigned char[msgLength + 1ULL];
     strcpy((char *) msg, message.c_str());

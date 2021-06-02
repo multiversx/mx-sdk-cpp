@@ -334,7 +334,8 @@ TEST(JsonFileHandler, writeOutputFile)
     ih::wrapper::TransactionInputWrapper const transactionWrapper(input);
 
     ih::PemFileReader pemHandler(pemWrapper.getPemFilePath());
-    ih::TransactionInputHandler transactionHandler(transactionWrapper);
+    ih::JsonFileHandler jsonHandler(transactionWrapper.getOutputFile());
+
 
     Transaction transaction(transactionWrapper.getNonce(), transactionWrapper.getValue(),
                             transactionWrapper.getReceiver(), pemHandler.getAddress(),
@@ -343,7 +344,7 @@ TEST(JsonFileHandler, writeOutputFile)
                             transactionWrapper.getVersion());
     Signer signer(pemHandler.getPrivateKey());
     transaction.applySignature(signer);
-    transactionHandler.writeTransactionToJsonFile(transaction);
+    jsonHandler.writeDataToFile(transaction.getSerializedTransaction());
 }
 
 TEST(PemFileReader, isPemFileValid_validFile)
