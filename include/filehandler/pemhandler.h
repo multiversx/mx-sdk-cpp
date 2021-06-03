@@ -13,7 +13,7 @@ namespace ih
 class PemFileReader : public IFileHandler
 {
 public:
-    explicit PemFileReader(std::string const filePath);
+    explicit PemFileReader(std::string const &filePath);
 
     Address getAddress() const;
 

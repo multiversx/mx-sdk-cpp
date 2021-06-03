@@ -1,13 +1,18 @@
 #include <string.h>
 #include <sodium.h>
+#include <stdexcept>
 
+#include "params.h"
 #include "strchr.h"
 #include "transaction/signer.h"
 
 
 Signer::Signer(bytes secretKey) :
         m_sk(secretKey)
-{}
+{
+    if (secretKey.size() != crypto_sign_SECRETKEYBYTES)
+        throw std::length_error(ERROR_MSG_KEY_BYTES_SIZE);
+}
 
 std::string Signer::getSignature(std::string const &message) const
 {

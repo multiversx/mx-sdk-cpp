@@ -7,19 +7,17 @@
 #include <iostream>
 #include <sodium.h>
 #include <stdexcept>
-
 #include <iomanip>
-
 
 namespace ih
 {
-PemFileReader::PemFileReader(std::string const filePath) :
+PemFileReader::PemFileReader(std::string const &filePath) :
         IFileHandler(filePath)
 {
     if (isFileValid())
     {
         std::string const fileContent = getFileContent();
-        if (fileContent == "")
+        if (fileContent.empty())
             throw std::invalid_argument(ERROR_MSG_FILE_EMPTY);
 
         m_fileKeyBytes = getKeyBytesFromContent(fileContent);
