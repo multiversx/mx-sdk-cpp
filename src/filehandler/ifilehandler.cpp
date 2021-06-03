@@ -18,17 +18,17 @@ bool IFileHandler::fileExists() const
     return f.good() && f.is_open();
 }
 
-bool IFileHandler::isFileExtension(std::string const ext) const
+bool IFileHandler::isFileExtension(std::string const &ext) const
 {
     return getFileExtension() == ext;
 }
 
 std::string IFileHandler::getFileExtension() const
 {
-    std::string ext = "";
+    std::string ext;
 
-    if (m_filePath.find_last_of(".") != std::string::npos)
-        ext = m_filePath.substr(m_filePath.find_last_of(".") + 1);
+    if (m_filePath.find_last_of('.') != std::string::npos)
+        ext = m_filePath.substr(m_filePath.find_last_of('.') + 1);
 
     return ext;
 }

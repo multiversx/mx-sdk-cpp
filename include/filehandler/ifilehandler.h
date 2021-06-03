@@ -1,5 +1,5 @@
-#ifndef IFILEHANDLER_H
-#define IFILEHANDLER_H
+#ifndef I_FILE_HANDLER_H
+#define I_FILE_HANDLER_H
 
 #include <string>
 
@@ -17,7 +17,7 @@ protected:
 
     bool fileExists() const;
 
-    bool isFileExtension(std::string const ext) const;
+    bool isFileExtension(std::string const &ext) const;
 
 private:
     std::string getFileExtension() const;
