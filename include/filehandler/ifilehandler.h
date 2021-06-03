@@ -8,7 +8,7 @@ namespace ih
 class IFileHandler
 {
 public:
-    explicit IFileHandler(std::string const &path);
+    explicit IFileHandler(std::string path);
 
     const std::string &getFilePath() const;
 

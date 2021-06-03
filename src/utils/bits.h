@@ -2,11 +2,11 @@
 #define ERD_BITS_H
 
 #include <vector>
-#include <stdint.h>
+#include <cstdint>
 
 namespace util
 {
-std::vector<uint8_t> convertBits(unsigned char *data, unsigned int const dataLength,
-                                 int const fromBits, int const toBits, bool const pad);
+std::vector<uint8_t> convertBits(unsigned char *data, unsigned int dataLength,
+                                 int fromBits, int toBits, bool pad);
 }
 #endif

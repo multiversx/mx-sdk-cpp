@@ -14,7 +14,7 @@ namespace ih
 PemFileReader::PemFileReader(std::string const &filePath) :
         IFileHandler(filePath)
 {
-    if (isFileValid())
+    if (PemFileReader::isFileValid())
     {
         std::string const fileContent = getFileContent();
         if (fileContent.empty())
@@ -34,7 +34,7 @@ bool PemFileReader::isFileValid() const
     if (!fileExists) throw std::invalid_argument(ERROR_MSG_FILE_DOES_NOT_EXIST);
     if (!fileExtensionValid) throw std::invalid_argument(ERROR_MSG_FILE_EXTENSION_INVALID);
 
-    return fileExists && fileExtensionValid ;
+    return (fileExists && fileExtensionValid) ;
 }
 
 Address PemFileReader::getAddress() const
@@ -93,7 +93,7 @@ bytes PemFileReader::getKeyBytesFromContent(std::string const &content) const
 std::string PemFileReader::getFileContent() const
 {
     std::string line;
-    std::string keyLines = "";
+    std::string keyLines;
     std::ifstream inFile(IFileHandler::getFilePath());
 
     if (inFile.is_open())

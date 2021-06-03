@@ -338,7 +338,7 @@ TEST(JsonFileHandler, writeOutputFile)
 
 
     Transaction transaction(transactionWrapper.getNonce(), transactionWrapper.getValue(),
-                            transactionWrapper.getReceiver(), pemHandler.getAddress(),
+                            Address(transactionWrapper.getReceiver()), pemHandler.getAddress(),
                             transactionWrapper.getGasPrice(), transactionWrapper.getGasLimit(),
                             transactionWrapper.getData(), transactionWrapper.getChainId(),
                             transactionWrapper.getVersion());

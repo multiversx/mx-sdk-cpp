@@ -9,9 +9,9 @@ class Address
     std::string const hrp = "erd";
 public:
 
-    Address(bytes const &publicKey);
+    explicit Address(bytes const &publicKey);
 
-    Address(std::string const &bech32Address);
+    explicit Address(std::string const &bech32Address);
 
     bytes getPublicKey() const;
 

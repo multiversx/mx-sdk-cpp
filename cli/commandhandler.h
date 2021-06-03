@@ -17,15 +17,15 @@ static commandGroupMap const cmdGroupMap =
                 {"help",        {}}
         };
 
-void showSubGroupAvailableCmds(std::string cmdGroup)
+void showSubGroupAvailableCmds(std::string const &cmdGroup)
 {
     std::vector<std::string> cmd = cmdGroupMap.at(cmdGroup);
 
-    if (cmd.size() == 0) std::cerr << "-";
+    if (cmd.empty()) std::cerr << "-";
 
     else
     {
-        for (std::string subCmd : cmd)
+        for (std::string const &subCmd : cmd)
         {
             std::cerr << subCmd << " ";
         }
@@ -36,10 +36,10 @@ void showInfo()
 {
     std::cerr << "----\nInfo\n----\n\nCommand groups: Avaiable arguments\n";
 
-    for (auto it = cmdGroupMap.begin(); it != cmdGroupMap.end(); ++it)
+    for (const auto & it : cmdGroupMap)
     {
-        std::cerr << it->first << ": ";
-        showSubGroupAvailableCmds(it->first);
+        std::cerr << it.first << ": ";
+        showSubGroupAvailableCmds(it.first);
         std::cerr << "\n";
     }
 }
@@ -94,7 +94,7 @@ void handleCreateSignedTransactionWithPemFile(const std::map<uint32_t, std::stri
 
             Transaction transaction
                     (transactionInputWrapper.getNonce(), transactionInputWrapper.getValue(),
-                     transactionInputWrapper.getReceiver(),pemFileHandler.getAddress(),
+                     Address(transactionInputWrapper.getReceiver()),pemFileHandler.getAddress(),
                      transactionInputWrapper.getGasPrice(), transactionInputWrapper.getGasLimit(),
                      transactionInputWrapper.getData(), transactionInputWrapper.getChainId(),
                      transactionInputWrapper.getVersion());
@@ -111,7 +111,7 @@ void handleCreateSignedTransactionWithPemFile(const std::map<uint32_t, std::stri
     }
 }
 
-void handleRequest(ih::RequestedCmd const requestedCmd)
+void handleRequest(ih::RequestedCmd const &requestedCmd)
 {
     switch (requestedCmd.getRequestType())
     {

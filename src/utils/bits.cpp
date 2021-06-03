@@ -8,13 +8,12 @@ std::vector<uint8_t> convertBits(unsigned char *data, unsigned int const dataLen
     int acc = 0;
     int bits = 0;
     std::vector<uint8_t> ret;
-    int maxv = (1 << toBits) - 1;
+    int maxV = (1 << toBits) - 1;
     int maxAcc = (1 << (fromBits + toBits - 1)) - 1;
 
-    for (unsigned int ct = 0; ct < dataLength; ++ct)
+    unsigned int ct = 0;
+    for (unsigned char value = *data; ct<dataLength; value = *++data)
     {
-        char value = *data;
-
         int valueAsInt = value & 0xff;
 
         if ((valueAsInt < 0) || (valueAsInt >> fromBits != 0))
@@ -28,20 +27,19 @@ std::vector<uint8_t> convertBits(unsigned char *data, unsigned int const dataLen
         while (bits >= toBits)
         {
             bits -= toBits;
-            ret.push_back((acc >> bits) & maxv);
+            ret.push_back((acc >> bits) & maxV);
         }
-
-        value = *++data;
+        ct++;
     }
 
     if (pad)
     {
         if (bits > 0)
         {
-            ret.push_back((acc << (toBits - bits)) & maxv);
+            ret.push_back((acc << (toBits - bits)) & maxV);
         }
     }
-    else if (bits >= fromBits || ((acc << (toBits - bits)) & maxv) != 0)
+    else if (bits >= fromBits || ((acc << (toBits - bits)) & maxV) != 0)
     {
         //TODO: throw new Exceptions.CannotConvertBitsException();
     }

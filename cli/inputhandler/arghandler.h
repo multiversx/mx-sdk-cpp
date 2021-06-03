@@ -20,8 +20,8 @@ enum RequestType
 class RequestedCmd
 {
 public:
-    RequestedCmd(std::map<uint32_t, std::string> const userInputs,
-                 RequestType const reqType, errorCode const errCode);
+    RequestedCmd(std::map<uint32_t, std::string> const &userInputs,
+                 RequestType const &reqType, errorCode const &errCode);
 
     const std::map<uint32_t, std::string> &getUserInputs() const;
 
@@ -45,14 +45,14 @@ public:
 
 private:
 
-    int argCount() const;
+    unsigned long argCount() const;
 
-    bool isCmdGroup(std::string const arg) const;
+    bool isCmdGroup(std::string const &arg) const;
 
-    bool isSubCmd(uint32_t const subCmdIdx, std::string const subCmd) const;
+    bool isSubCmd(uint32_t subCmdIdx, std::string const &subCmd) const;
 
     template<typename T>
-    bool checkAndSetUserInput(uint32_t const argIdx, std::string const arg,
+    bool checkAndSetUserInput(uint32_t const &argIdx, std::string const &arg,
                               std::map<uint32_t, std::string> &userInputs, uint32_t userInputIdx,
                               errorCode errCode);
 

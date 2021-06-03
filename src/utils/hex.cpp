@@ -23,7 +23,7 @@ int hexValue(unsigned char hexDigit)
             -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
             -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
     };
-    int value = hexValues[hexDigit];
+    auto value = hexValues[hexDigit];
     if (value == -1) throw std::invalid_argument("invalid hex digit");
     return value;
 }
@@ -38,7 +38,7 @@ bytes hexToBytes(const std::string &hex)
     for (unsigned int i = 0; i < hex.length(); i += 2)
     {
         std::string byteString = hex.substr(i, 2);
-        char byte = (char) strtol(byteString.c_str(), NULL, 16);
+        char byte = (char) strtol(byteString.c_str(), nullptr, 16);
         ret.push_back(byte);
     }
 

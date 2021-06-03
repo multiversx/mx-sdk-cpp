@@ -1,10 +1,11 @@
 #include "filehandler/ifilehandler.h"
 #include <fstream>
+#include <utility>
 
 namespace ih
 {
-IFileHandler::IFileHandler(std::string const &path) :
-        m_filePath(path)
+IFileHandler::IFileHandler(std::string path) :
+        m_filePath(std::move(path))
 {}
 
 const std::string &IFileHandler::getFilePath() const

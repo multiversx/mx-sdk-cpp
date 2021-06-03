@@ -1,4 +1,4 @@
-#include <string.h>
+#include <cstring>
 #include <sodium.h>
 #include <stdexcept>
 
@@ -7,7 +7,7 @@
 #include "transaction/signer.h"
 
 
-Signer::Signer(bytes secretKey) :
+Signer:: Signer(bytes const &secretKey) :
         m_sk(secretKey)
 {
     if (secretKey.size() != crypto_sign_SECRETKEYBYTES)
@@ -18,7 +18,7 @@ std::string Signer::getSignature(std::string const &message) const
 {
     //TODO: Put this code in a wrapper for libsodium library
     unsigned long long const msgLength = message.length();
-    unsigned char *msg = new unsigned char[msgLength + 1ULL];
+    auto *msg = new unsigned char[msgLength + 1ULL];
     strcpy((char *) msg, message.c_str());
 
     unsigned char sig[crypto_sign_BYTES];
@@ -30,6 +30,6 @@ std::string Signer::getSignature(std::string const &message) const
     crypto_sign_detached(sig, &signLength, msg, msgLength, sk);
     std::string ret = util::uCharToStr(sig, signLength);
 
-    delete msg;
+    delete[] msg;
     return ret;
 }

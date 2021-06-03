@@ -6,24 +6,24 @@
 #include "account/address.h"
 #include "transaction/signer.h"
 
-#include <stdint.h>
+#include <cstdint>
 #include <string>
 
 class Transaction
 {
 public:
     Transaction(
-            uint64_t nonce,
-            std::string value,
-            Address receiver,
-            Address sender,
-            uint64_t gasPrice,
-            uint64_t gasLimit,
-            std::string data,
-            std::string chainID,
-            uint64_t version);
+            uint64_t const &nonce,
+            std::string const &value,
+            Address const &receiver,
+            Address const &sender,
+            uint64_t const &gasPrice,
+            uint64_t const &gasLimit,
+            std::string const &data,
+            std::string const &chainID,
+            uint64_t const &version);
 
-    void applySignature(Signer signer);
+    void applySignature(Signer const &signer);
 
     std::string getSerializedTransaction() const;
 
