@@ -19,7 +19,7 @@ std::vector<uint8_t> convertBits(unsigned char *data, unsigned int const dataLen
 
         if ((valueAsInt < 0) || (valueAsInt >> fromBits != 0))
         {
-            //throw new Exceptions.CannotConvertBitsException();
+            //TODO: throw new Exceptions.CannotConvertBitsException();
         }
 
         acc = ((acc << fromBits) | valueAsInt) & maxAcc;
@@ -43,7 +43,7 @@ std::vector<uint8_t> convertBits(unsigned char *data, unsigned int const dataLen
     }
     else if (bits >= fromBits || ((acc << (toBits - bits)) & maxv) != 0)
     {
-        //throw new Exceptions.CannotConvertBitsException();
+        //TODO: throw new Exceptions.CannotConvertBitsException();
     }
 
     return ret;

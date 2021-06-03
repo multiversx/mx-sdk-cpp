@@ -8,18 +8,14 @@
 
 namespace ih
 {
-class TransactionInputHandler : public IFileHandler
+class JsonFileHandler : public IFileHandler
 {
 public:
-    explicit TransactionInputHandler(wrapper::TransactionInputWrapper const jsonInputWrapper);
+    explicit JsonFileHandler(std::string const &filePath);
 
     bool isFileValid() const override;
 
-    void writeTransactionToJsonFile(Transaction const &transaction);
-
-private:
-
-    wrapper::TransactionInputWrapper m_inputData;
+    void writeDataToFile(std::string const &data);
 };
 }
 

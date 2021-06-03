@@ -3,9 +3,9 @@
 
 namespace
 {
-int hex_value(unsigned char hex_digit)
+int hexValue(unsigned char hexDigit)
 {
-    static const signed char hex_values[256] = {
+    static const signed char hexValues[256] = {
             -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
             -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
             -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
@@ -23,7 +23,7 @@ int hex_value(unsigned char hex_digit)
             -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
             -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
     };
-    int value = hex_values[hex_digit];
+    int value = hexValues[hexDigit];
     if (value == -1) throw std::invalid_argument("invalid hex digit");
     return value;
 }
@@ -47,14 +47,14 @@ bytes hexToBytes(const std::string &hex)
 
 std::string stringToHex(const std::string &input)
 {
-    static const char hex_digits[] = "0123456789abcdef";
+    static const char hexDigits[] = "0123456789abcdef";
 
     std::string output;
     output.reserve(input.length() * 2);
     for (unsigned char c : input)
     {
-        output.push_back(hex_digits[c >> 4]);
-        output.push_back(hex_digits[c & 15]);
+        output.push_back(hexDigits[c >> 4]);
+        output.push_back(hexDigits[c & 15]);
     }
     return output;
 }
@@ -68,8 +68,8 @@ std::string hexToString(const std::string &input)
     output.reserve(len / 2);
     for (auto it = input.begin(); it != input.end();)
     {
-        int hi = hex_value(*it++);
-        int lo = hex_value(*it++);
+        int hi = hexValue(*it++);
+        int lo = hexValue(*it++);
         output.push_back(hi << 4 | lo);
     }
     return output;
