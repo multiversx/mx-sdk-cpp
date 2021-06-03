@@ -13,11 +13,10 @@ namespace wrapper
 class TransactionInputWrapper : public IWrapper
 {
 public:
-    TransactionInputWrapper(std::map<uint32_t, std::string> const &inputData) :
+    explicit TransactionInputWrapper(std::map<uint32_t, std::string> const &inputData) :
             IWrapper(inputData)
     {
-        m_containsData = (getInputData().find(ARGS_TX_IDX_DATA) != getInputData().end()) ?
-                         (true) : (false);
+        m_containsData = (getInputData().find(ARGS_TX_IDX_DATA) != getInputData().end());
     }
 
     bool isDataEmpty() const
@@ -57,7 +56,7 @@ public:
 
     std::string getChainId() const
     {
-        return JSON_TX_DEFAULT_CHAIN_ID;;
+        return JSON_TX_DEFAULT_CHAIN_ID;
     }
 
     uint64_t getVersion() const
