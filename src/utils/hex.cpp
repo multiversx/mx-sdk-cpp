@@ -24,7 +24,7 @@ int hexValue(unsigned char hexDigit)
             -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
     };
     auto value = hexValues[hexDigit];
-    if (value == -1) throw std::invalid_argument("invalid hex digit");
+    if (value == -1) throw std::invalid_argument(ERROR_MSG_HEX);
     return value;
 }
 }

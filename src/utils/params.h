@@ -61,9 +61,10 @@ errorMessage const ERROR_MSG_PEM_INPUT_FILE = "Invalid pem file.";
 errorMessage const ERROR_MSG_JSON_OUT_FILE = "Invalid json file.";
 errorMessage const ERROR_MSG_DATA = "Invalid data.";
 errorMessage const ERROR_MSG_SODIUM_INIT = "Could not initialize sodium library.";
-errorMessage const ERROR_MSG_BECH32 = "Invalid bech32 address!";
-errorMessage const ERROR_MSG_CONVERT_BITS = "Cannot convert bits";
 
+errorMessage const ERROR_MSG_BECH32 = "Invalid bech32 address!";
+errorMessage const ERROR_MSG_HEX = "Invalid hex digit format!";
+errorMessage const ERROR_MSG_CONVERT_BITS = "Cannot convert bits";
 errorMessage const ERROR_MSG_FILE_EMPTY = "File is empty!";
 errorMessage const ERROR_MSG_FILE_DOES_NOT_EXIST = "File does not exists!";
 errorMessage const ERROR_MSG_FILE_EXTENSION_INVALID = "File extension invalid!";
