@@ -6,9 +6,11 @@ file(GLOB src
         account/account.cpp
         account/address.cpp
         filehandler/ifilehandler.cpp
-        filehandler/pemhandler.cpp)
+        filehandler/pemhandler.cpp
+        wrappers/cryptosignwrapper.h)
 
 include_directories(utils)
+include_directories(wrappers)
 
 add_library(src ${src})
 

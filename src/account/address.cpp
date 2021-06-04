@@ -50,7 +50,8 @@ bytes Address::computePkFromBech32() const
     auto pkCharPtr = new unsigned char[pk5BitsSize];
     std::copy(pk5BitsPerByte.begin(), pk5BitsPerByte.end(), pkCharPtr);
 
+    bytes ret = util::convertBits(pkCharPtr, pk5BitsSize, kNoBitsInBech32, kNoBitsInByte, false);
     delete[] pkCharPtr;
-    return util::convertBits(pkCharPtr, pk5BitsSize, kNoBitsInBech32, kNoBitsInByte, false);
+    return ret;
 }
 
