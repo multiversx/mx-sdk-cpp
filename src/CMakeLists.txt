@@ -7,7 +7,7 @@ file(GLOB src
         account/address.cpp
         filehandler/ifilehandler.cpp
         filehandler/pemhandler.cpp
-        wrappers/cryptosignwrapper.h)
+        wrappers/cryptosignwrapper.h wrappers/cryptosignwrapper.cpp)
 
 include_directories(utils)
 include_directories(wrappers)

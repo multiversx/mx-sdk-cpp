@@ -5,8 +5,6 @@
 #include "cryptosignwrapper.h"
 #include "params.h"
 
-
-
 Signer:: Signer(bytes const &secretKey) :
         m_sk(secretKey)
 {

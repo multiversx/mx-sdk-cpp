@@ -1,13 +1,12 @@
 #include "filehandler/pemhandler.h"
+#include "cryptosignwrapper.h"
 #include "params.h"
 #include "base64.h"
 #include "hex.h"
 
 #include <fstream>
 #include <iostream>
-#include <sodium.h>
 #include <stdexcept>
-#include <iomanip>
 
 namespace ih
 {
@@ -21,7 +20,7 @@ PemFileReader::PemFileReader(std::string const &filePath) :
             throw std::invalid_argument(ERROR_MSG_FILE_EMPTY);
 
         m_fileKeyBytes = getKeyBytesFromContent(fileContent);
-        if(m_fileKeyBytes.size() != (crypto_sign_PUBLICKEYBYTES + crypto_sign_SEEDBYTES))
+        if(m_fileKeyBytes.size() != (PUBLIC_KEY_BYTES + SEED_BYTES))
             throw std::length_error(ERROR_MSG_KEY_BYTES_SIZE);
     }
 }
@@ -39,29 +38,20 @@ bool PemFileReader::isFileValid() const
 
 Address PemFileReader::getAddress() const
 {
-    return Address(bytes(m_fileKeyBytes.begin() + crypto_sign_PUBLICKEYBYTES,m_fileKeyBytes.end()));
+    return Address(bytes(m_fileKeyBytes.begin() + PUBLIC_KEY_BYTES,m_fileKeyBytes.end()));
 }
 
 bytes PemFileReader::getSeed() const
 {
-    return bytes(m_fileKeyBytes.begin(),m_fileKeyBytes.begin() + crypto_sign_PUBLICKEYBYTES);
+    return bytes(m_fileKeyBytes.begin(),m_fileKeyBytes.begin() + PUBLIC_KEY_BYTES);
 }
 
 bytes PemFileReader::getPrivateKey() const
 {
-    unsigned char sk[crypto_sign_SECRETKEYBYTES];
-    unsigned char pk[crypto_sign_PUBLICKEYBYTES];
-    unsigned char seed[crypto_sign_SEEDBYTES];
+    bytes const seedBytes = getSeed();
+    bytes const pkBytes = getAddress().getPublicKey();
 
-    bytes seedBytes = getSeed();
-    bytes pkBytes = getAddress().getPublicKey();
-
-    std::copy(seedBytes.begin(), seedBytes.end(), seed);
-    std::copy(pkBytes.begin(), pkBytes.end(), pk);
-
-    crypto_sign_seed_keypair(pk, sk, seed);
-
-    return bytes(sk, sk + crypto_sign_SECRETKEYBYTES);
+    return wrapper::crypto::getSecretKey(pkBytes,seedBytes);
 }
 
 bytes PemFileReader::getKeyBytesFromContent(std::string const &content) const
