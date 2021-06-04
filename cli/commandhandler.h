@@ -94,7 +94,7 @@ void handleCreateSignedTransactionWithPemFile(const std::map<uint32_t, std::stri
 
             Transaction transaction
                     (transactionInputWrapper.getNonce(), transactionInputWrapper.getValue(),
-                     Address(transactionInputWrapper.getReceiver()),pemFileHandler.getAddress(),
+                     transactionInputWrapper.getReceiver(),pemFileHandler.getAddress(),
                      transactionInputWrapper.getGasPrice(), transactionInputWrapper.getGasLimit(),
                      transactionInputWrapper.getData(), transactionInputWrapper.getChainId(),
                      transactionInputWrapper.getVersion());

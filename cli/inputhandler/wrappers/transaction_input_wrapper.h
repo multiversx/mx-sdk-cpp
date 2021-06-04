@@ -3,8 +3,10 @@
 
 #include <string>
 #include <map>
+
 #include "iwrapper.h"
 #include "utils/params.h"
+#include "account/address.h"
 
 namespace ih
 {
@@ -34,9 +36,9 @@ public:
         return getInputData().at(ARGS_TX_IDX_VALUE);
     }
 
-    std::string getReceiver() const
+    Address getReceiver() const
     {
-        return getInputData().at(ARGS_TX_IDX_RECEIVER);
+        return Address(getInputData().at(ARGS_TX_IDX_RECEIVER));
     }
 
     uint64_t getGasPrice() const
