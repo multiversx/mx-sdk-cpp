@@ -1,4 +1,5 @@
 #include "bits.h"
+#include "params.h"
 
 namespace util
 {
@@ -18,7 +19,7 @@ std::vector<uint8_t> convertBits(unsigned char *data, unsigned int const dataLen
 
         if ((valueAsInt < 0) || (valueAsInt >> fromBits != 0))
         {
-            //TODO: throw new Exceptions.CannotConvertBitsException();
+            throw std::invalid_argument(ERROR_MSG_CONVERT_BITS);
         }
 
         acc = ((acc << fromBits) | valueAsInt) & maxAcc;
@@ -41,7 +42,7 @@ std::vector<uint8_t> convertBits(unsigned char *data, unsigned int const dataLen
     }
     else if (bits >= fromBits || ((acc << (toBits - bits)) & maxV) != 0)
     {
-        //TODO: throw new Exceptions.CannotConvertBitsException();
+        throw std::invalid_argument(ERROR_MSG_CONVERT_BITS);
     }
 
     return ret;

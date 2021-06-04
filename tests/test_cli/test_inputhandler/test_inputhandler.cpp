@@ -438,3 +438,14 @@ TEST(PemFileReader, getSegwitAddress)
     EXPECT_EQ(pemAddress, expectedAdr);
 }
 
+//TODO: This test will be moved in another unit test file, when the unit test ticket is started.
+TEST(Address, getPubKey)
+{
+    ih::PemFileReader pemHandler("..//testData//keys.pem");
+
+    bytes pubKeyFromPem = pemHandler.getAddress().getPublicKey();
+    Address adr("erd1sjsk3n2d0krq3pyxxtgf0q7j3t56sgusqaujj4n82l39t9h7jers6gslr4");
+
+    EXPECT_EQ(adr.getPublicKey(),pubKeyFromPem);
+}
+

@@ -47,23 +47,6 @@ bytes PemFileReader::getSeed() const
     return bytes(m_fileKeyBytes.begin(),m_fileKeyBytes.begin() + crypto_sign_PUBLICKEYBYTES);
 }
 
-template<typename TInputIter>
-std::string make_hex_string(TInputIter first, TInputIter last, bool use_uppercase = true, bool insert_spaces = false)
-{
-    std::ostringstream ss;
-    ss << std::hex << std::setfill('0');
-    if (use_uppercase)
-        ss << std::uppercase;
-    while (first != last)
-    {
-        ss << std::setw(2) << static_cast<int>(*first++);
-        if (insert_spaces && first != last)
-            ss << " ";
-    }
-    return ss.str();
-}
-
-
 bytes PemFileReader::getPrivateKey() const
 {
     unsigned char sk[crypto_sign_SECRETKEYBYTES];
@@ -77,9 +60,6 @@ bytes PemFileReader::getPrivateKey() const
     std::copy(pkBytes.begin(), pkBytes.end(), pk);
 
     crypto_sign_seed_keypair(pk, sk, seed);
-    std::cerr<< "Seed key:" << make_hex_string(seed,seed+32) <<"\n";
-    std::cerr<< "Public key:" << make_hex_string(pk,pk+32) <<"\n";
-    std::cerr<< "Secret key:" <<make_hex_string(sk,sk+64) <<"\n";
 
     return bytes(sk, sk + crypto_sign_SECRETKEYBYTES);
 }
