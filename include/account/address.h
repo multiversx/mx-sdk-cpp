@@ -7,6 +7,7 @@
 class Address
 {
     std::string const hrp = "erd";
+
     int const kNoBitsInByte = 8;
     int const kNoBitsInBech32 = 5;
 

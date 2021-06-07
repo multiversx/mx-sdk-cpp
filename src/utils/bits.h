@@ -4,9 +4,10 @@
 #include <vector>
 #include <cstdint>
 
+#include "internal/internal.h"
+
 namespace util
 {
-std::vector<uint8_t> convertBits(unsigned char *data, unsigned int dataLength,
-                                 int fromBits, int toBits, bool pad);
+bytes convertBits(bytes const &data, int fromBits, int toBits, bool pad);
 }
 #endif

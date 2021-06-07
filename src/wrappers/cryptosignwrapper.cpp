@@ -1,4 +1,5 @@
 #include "cryptosignwrapper.h"
+#include "strchr.h"
 
 #include <sodium.h>
 
