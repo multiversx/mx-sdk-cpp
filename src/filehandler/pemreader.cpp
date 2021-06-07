@@ -1,6 +1,6 @@
-#include "filehandler/pemhandler.h"
+#include "filehandler/pemreader.h"
 #include "cryptosignwrapper.h"
-#include "params.h"
+#include "errors.h"
 #include "base64.h"
 #include "hex.h"
 
@@ -11,10 +11,12 @@
 namespace ih
 {
 PemFileReader::PemFileReader(std::string const &filePath) :
-        IFileHandler(filePath)
+        IFile(filePath)
 {
-    if (PemFileReader::isFileValid())
+    try
     {
+        PemFileReader::checkFile();
+
         std::string const fileContent = getFileContent();
         if (fileContent.empty())
             throw std::invalid_argument(ERROR_MSG_FILE_EMPTY);
@@ -23,17 +25,18 @@ PemFileReader::PemFileReader(std::string const &filePath) :
         if(m_fileKeyBytes.size() != (PUBLIC_KEY_BYTES + SEED_BYTES))
             throw std::length_error(ERROR_MSG_KEY_BYTES_SIZE);
     }
+    catch (std::exception const &error)
+    {
+        throw;
+    }
 }
 
-bool PemFileReader::isFileValid() const
+bool PemFileReader::checkFile() const
 {
-    bool const fileExists = IFileHandler::fileExists();
-    bool const fileExtensionValid = IFileHandler::isFileExtension("pem");
+    if (!IFile::fileExists()) throw std::invalid_argument(ERROR_MSG_FILE_DOES_NOT_EXIST);
+    if (!IFile::isFileExtension("pem")) throw std::invalid_argument(ERROR_MSG_FILE_EXTENSION_INVALID);
 
-    if (!fileExists) throw std::invalid_argument(ERROR_MSG_FILE_DOES_NOT_EXIST);
-    if (!fileExtensionValid) throw std::invalid_argument(ERROR_MSG_FILE_EXTENSION_INVALID);
-
-    return (fileExists && fileExtensionValid) ;
+    return true;
 }
 
 Address PemFileReader::getAddress() const
@@ -64,7 +67,7 @@ std::string PemFileReader::getFileContent() const
 {
     std::string line;
     std::string keyLines;
-    std::ifstream inFile(IFileHandler::getFilePath());
+    std::ifstream inFile(IFile::getFilePath());
 
     if (inFile.is_open())
     {

@@ -1,4 +1,5 @@
 #include "hex.h"
+#include "errors.h"
 #include <stdexcept>
 
 namespace

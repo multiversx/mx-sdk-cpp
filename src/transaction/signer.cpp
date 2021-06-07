@@ -1,9 +1,10 @@
 #include <sodium.h>
 #include <stdexcept>
 
+
 #include "transaction/signer.h"
 #include "cryptosignwrapper.h"
-#include "params.h"
+#include "errors.h"
 
 Signer:: Signer(bytes const &secretKey) :
         m_sk(secretKey)

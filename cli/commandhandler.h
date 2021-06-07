@@ -64,51 +64,30 @@ bool init()
 
 void handleLoadPemFile(const std::map<uint32_t, std::string> &userInputs)
 {
-    try
-    {
-        ih::wrapper::PemHandlerInputWrapper const pemInputWrapper(userInputs);
-        ih::PemFileReader pemHandler(pemInputWrapper.getPemFilePath());
-        std::cerr << "File loaded successfully! Bech32 address: " << pemHandler.getAddress().getBech32Address() << "\n";
-    }
-    catch (std::exception const &exception)
-    {
-        std::cerr<< exception.what();
-    }
+    ih::wrapper::PemHandlerInputWrapper const pemInputWrapper(userInputs);
+    ih::PemFileReader pemReader(pemInputWrapper.getPemFilePath());
+    std::cerr << "File loaded successfully! Bech32 address: " << pemReader.getAddress().getBech32Address() << "\n";
 }
 
 void handleCreateSignedTransactionWithPemFile(const std::map<uint32_t, std::string> &userInputs)
 {
     ih::wrapper::TransactionInputWrapper const transactionInputWrapper(userInputs);
-    ih::JsonFileHandler jsonHandler(transactionInputWrapper.getOutputFile());
+    ih::wrapper::PemHandlerInputWrapper const pemInputWrapper(userInputs);
 
-    if (!jsonHandler.isFileValid())
-    {
-        reportError(ERROR_JSON_OUT_FILE);
-    }
-    else
-    {
-        try
-        {
-            ih::wrapper::PemHandlerInputWrapper const pemInputWrapper(userInputs);
-            ih::PemFileReader pemFileHandler(pemInputWrapper.getPemFilePath());
+    ih::JsonFile jsonFile(transactionInputWrapper.getOutputFile());
+    ih::PemFileReader pemReader(pemInputWrapper.getPemFilePath());
 
-            Transaction transaction
-                    (transactionInputWrapper.getNonce(), transactionInputWrapper.getValue(),
-                     transactionInputWrapper.getReceiver(),pemFileHandler.getAddress(),
-                     transactionInputWrapper.getGasPrice(), transactionInputWrapper.getGasLimit(),
-                     transactionInputWrapper.getData(), transactionInputWrapper.getChainId(),
-                     transactionInputWrapper.getVersion());
+    //TODO: Maybe in the future add a transaction builder here
+    Transaction transaction
+        (transactionInputWrapper.getNonce(), transactionInputWrapper.getValue(),
+         transactionInputWrapper.getReceiver(), pemReader.getAddress(),
+         transactionInputWrapper.getGasPrice(), transactionInputWrapper.getGasLimit(),
+         transactionInputWrapper.getData(), transactionInputWrapper.getChainId(),
+         transactionInputWrapper.getVersion());
 
-            Signer signer(pemFileHandler.getPrivateKey());
-            transaction.applySignature(signer);
-            jsonHandler.writeDataToFile(transaction.getSerializedTransaction());
-        }
-        catch (std::exception const &exception)
-        {
-            std::cerr<<exception.what();
-        }
-
-    }
+    Signer signer(pemReader.getPrivateKey());
+    transaction.applySignature(signer);
+    jsonFile.writeDataToFile(transaction.getSerializedTransaction());
 }
 
 void handleRequest(ih::RequestedCmd const &requestedCmd)

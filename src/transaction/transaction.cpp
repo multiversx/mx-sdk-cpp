@@ -3,6 +3,7 @@
 #include "hex.h"
 #include "base64.h"
 
+//TODO: Allow creating transactions without nonce/gasPrice
 Transaction::Transaction(
         uint64_t const &nonce,
         std::string const &value,

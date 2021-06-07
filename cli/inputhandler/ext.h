@@ -3,7 +3,7 @@
 
 
 #include "arghandler.h"
-#include "jsonhandler.h"
+#include "jsonfile.h"
 #include "wrappers/pem_input_wrapper.h"
 #include "wrappers/transaction_input_wrapper.h"
 

@@ -19,7 +19,14 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    cli::handleRequest(requestedCmd);
+    try
+    {
+        cli::handleRequest(requestedCmd);
+    }
+    catch (std::exception const &exception)
+    {
+        std::cerr<< exception.what();
+    }
 
     return 0;
 }
