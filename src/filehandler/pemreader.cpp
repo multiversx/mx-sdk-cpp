@@ -1,4 +1,4 @@
-#include "filehandler/pemhandler.h"
+#include "filehandler/pemreader.h"
 #include "params.h"
 #include "base64.h"
 #include "hex.h"
@@ -12,7 +12,7 @@
 namespace ih
 {
 PemFileReader::PemFileReader(std::string const &filePath) :
-        IFileHandler(filePath)
+        IFile(filePath)
 {
     if (PemFileReader::isFileValid())
     {
@@ -28,13 +28,13 @@ PemFileReader::PemFileReader(std::string const &filePath) :
 
 bool PemFileReader::isFileValid() const
 {
-    bool const fileExists = IFileHandler::fileExists();
-    bool const fileExtensionValid = IFileHandler::isFileExtension("pem");
+    bool const fileExists = IFile::fileExists();
+    bool const fileExtensionValid = IFile::isFileExtension("pem");
 
     if (!fileExists) throw std::invalid_argument(ERROR_MSG_FILE_DOES_NOT_EXIST);
     if (!fileExtensionValid) throw std::invalid_argument(ERROR_MSG_FILE_EXTENSION_INVALID);
 
-    return (fileExists && fileExtensionValid) ;
+    return true;
 }
 
 Address PemFileReader::getAddress() const
@@ -74,7 +74,7 @@ std::string PemFileReader::getFileContent() const
 {
     std::string line;
     std::string keyLines;
-    std::ifstream inFile(IFileHandler::getFilePath());
+    std::ifstream inFile(IFile::getFilePath());
 
     if (inFile.is_open())
     {

@@ -6,7 +6,7 @@
 #include "transaction/transaction.h"
 #include "account/account.h"
 #include "account/address.h"
-#include "filehandler/pemhandler.h"
+#include "filehandler/pemreader.h"
 
 
 #endif //ERD_SDK_H

@@ -5,8 +5,8 @@ file(GLOB src
         transaction/signer.cpp
         account/account.cpp
         account/address.cpp
-        filehandler/ifilehandler.cpp
-        filehandler/pemhandler.cpp)
+        filehandler/ifile.cpp
+        filehandler/pemreader.cpp)
 
 include_directories(utils)
 

@@ -67,8 +67,8 @@ void handleLoadPemFile(const std::map<uint32_t, std::string> &userInputs)
     try
     {
         ih::wrapper::PemHandlerInputWrapper const pemInputWrapper(userInputs);
-        ih::PemFileReader pemHandler(pemInputWrapper.getPemFilePath());
-        std::cerr << "File loaded successfully! Bech32 address: " << pemHandler.getAddress().getBech32Address() << "\n";
+        ih::PemFileReader pemReader(pemInputWrapper.getPemFilePath());
+        std::cerr << "File loaded successfully! Bech32 address: " << pemReader.getAddress().getBech32Address() << "\n";
     }
     catch (std::exception const &exception)
     {

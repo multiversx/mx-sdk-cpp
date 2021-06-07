@@ -4,13 +4,13 @@
 #include <string>
 #include <vector>
 
-#include "ifilehandler.h"
+#include "ifile.h"
 #include "account/address.h"
 #include "internal/internal.h"
 
 namespace ih
 {
-class PemFileReader : public IFileHandler
+class PemFileReader : public IFile
 {
 public:
     explicit PemFileReader(std::string const &filePath);

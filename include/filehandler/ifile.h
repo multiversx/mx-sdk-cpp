@@ -1,14 +1,14 @@
-#ifndef I_FILE_HANDLER_H
-#define I_FILE_HANDLER_H
+#ifndef I_FILE_H
+#define I_FILE_H
 
 #include <string>
 
 namespace ih
 {
-class IFileHandler
+class IFile
 {
 public:
-    explicit IFileHandler(std::string path);
+    explicit IFile(std::string path);
 
     const std::string &getFilePath() const;
 

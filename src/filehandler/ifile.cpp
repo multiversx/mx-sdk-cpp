@@ -1,30 +1,30 @@
-#include "filehandler/ifilehandler.h"
+#include "filehandler/ifile.h"
 #include <fstream>
 #include <utility>
 
 namespace ih
 {
-IFileHandler::IFileHandler(std::string path) :
+IFile::IFile(std::string path) :
         m_filePath(std::move(path))
 {}
 
-const std::string &IFileHandler::getFilePath() const
+const std::string &IFile::getFilePath() const
 {
     return m_filePath;
 }
 
-bool IFileHandler::fileExists() const
+bool IFile::fileExists() const
 {
     std::ifstream f(m_filePath);
     return f.good() && f.is_open();
 }
 
-bool IFileHandler::isFileExtension(std::string const &ext) const
+bool IFile::isFileExtension(std::string const &ext) const
 {
     return getFileExtension() == ext;
 }
 
-std::string IFileHandler::getFileExtension() const
+std::string IFile::getFileExtension() const
 {
     std::string ext;
 
