@@ -2,13 +2,13 @@
 #ifndef TRANSACTION_HANDLER_H
 #define TRANSACTION_HANDLER_H
 
-#include "filehandler/ifilehandler.h"
+#include "filehandler/ifile.h"
 #include "wrappers/transaction_input_wrapper.h"
 #include "transaction/transaction.h"
 
 namespace ih
 {
-class JsonFileHandler : public IFileHandler
+class JsonFileHandler : public IFile
 {
 public:
     explicit JsonFileHandler(std::string const &filePath);

@@ -5,10 +5,10 @@
 
 namespace ih
 {
-class IFileHandler
+class IFile
 {
 public:
-    explicit IFileHandler(std::string const &path);
+    explicit IFile(std::string const &path);
 
     virtual bool isFileValid() const = 0;
 

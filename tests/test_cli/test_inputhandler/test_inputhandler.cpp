@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 #include "inputhandler/ext.h"
-#include "filehandler/pemhandler.h"
+#include "filehandler/pemreader.h"
 #include "utils/ext.h"
 #include <sodium.h>
 

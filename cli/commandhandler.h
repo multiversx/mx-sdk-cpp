@@ -65,11 +65,11 @@ bool init()
 void handleLoadPemFile(const std::map<uint32_t, std::string> &userInputs)
 {
     ih::wrapper::PemHandlerInputWrapper const pemInputWrapper(userInputs);
-    ih::PemFileReader pemHandler(pemInputWrapper.getPemFilePath());
+    ih::PemFileReader pemReader(pemInputWrapper.getPemFilePath());
 
-    if (pemHandler.isFileValid())
+    if (pemReader.isFileValid())
     {
-        std::cerr << "Bech32 address: " << pemHandler.getAddress().getBech32Address() << "\n";
+        std::cerr << "Bech32 address: " << pemReader.getAddress().getBech32Address() << "\n";
     }
     else
     {

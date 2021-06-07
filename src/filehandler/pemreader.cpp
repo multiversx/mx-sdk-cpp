@@ -1,4 +1,4 @@
-#include "filehandler/pemhandler.h"
+#include "filehandler/pemreader.h"
 #include "base64.h"
 #include "hex.h"
 
@@ -9,15 +9,15 @@
 namespace ih
 {
 PemFileReader::PemFileReader(std::string const filePath) :
-        IFileHandler(filePath)
+        IFile(filePath)
 {
     m_fileContent = getFileContent();
 }
 
 bool PemFileReader::isFileValid() const
 {
-    return IFileHandler::fileExists() &&
-            IFileHandler::isFileExtension("pem") &&
+    return IFile::fileExists() &&
+           IFile::isFileExtension("pem") &&
            (m_fileContent != "");
 }
 
@@ -65,7 +65,7 @@ std::string PemFileReader::getFileContent() const
 {
     std::string line;
     std::string keyLines = "";
-    std::ifstream inFile(IFileHandler::getFilePath());
+    std::ifstream inFile(IFile::getFilePath());
 
     if (inFile.is_open())
     {
