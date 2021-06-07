@@ -6,10 +6,10 @@
 #include "internal/internal.h"
 #include "strchr.h"
 
-#define PUBLIC_KEY_BYTES 32U
-#define SECRET_KEY_BYTES 64U
-#define SEED_BYTES 32U
-#define SIGN_BYTES 64U
+#define PUBLIC_KEY_BYTES_LENGTH 32U
+#define SECRET_KEY_BYTES_LENGTH 64U
+#define SEED_BYTES_LENGTH 32U
+#define SIGN_BYTES_LENGTH 64U
 
 namespace wrapper
 {
@@ -17,7 +17,7 @@ namespace crypto
 {
 std::string getSignature(bytes const &secretKey, std::string const &message);
 
-bytes getSecretKey(bytes const &publicKey, bytes const &seed);
+bytes getSecretKey(bytes publicKey, bytes const &seed);
 }
 }
 
