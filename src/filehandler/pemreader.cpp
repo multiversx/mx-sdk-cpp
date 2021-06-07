@@ -1,5 +1,5 @@
 #include "filehandler/pemreader.h"
-#include "params.h"
+#include "errors.h"
 #include "base64.h"
 #include "hex.h"
 
@@ -7,15 +7,16 @@
 #include <iostream>
 #include <sodium.h>
 #include <stdexcept>
-#include <iomanip>
 
 namespace ih
 {
 PemFileReader::PemFileReader(std::string const &filePath) :
         IFile(filePath)
 {
-    if (PemFileReader::isFileValid())
+    try
     {
+        PemFileReader::checkFile();
+
         std::string const fileContent = getFileContent();
         if (fileContent.empty())
             throw std::invalid_argument(ERROR_MSG_FILE_EMPTY);
@@ -24,15 +25,16 @@ PemFileReader::PemFileReader(std::string const &filePath) :
         if(m_fileKeyBytes.size() != (crypto_sign_PUBLICKEYBYTES + crypto_sign_SEEDBYTES))
             throw std::length_error(ERROR_MSG_KEY_BYTES_SIZE);
     }
+    catch (std::exception const &error)
+    {
+        throw;
+    }
 }
 
-bool PemFileReader::isFileValid() const
+bool PemFileReader::checkFile() const
 {
-    bool const fileExists = IFile::fileExists();
-    bool const fileExtensionValid = IFile::isFileExtension("pem");
-
-    if (!fileExists) throw std::invalid_argument(ERROR_MSG_FILE_DOES_NOT_EXIST);
-    if (!fileExtensionValid) throw std::invalid_argument(ERROR_MSG_FILE_EXTENSION_INVALID);
+    if (!IFile::fileExists()) throw std::invalid_argument(ERROR_MSG_FILE_DOES_NOT_EXIST);
+    if (!IFile::isFileExtension("pem")) throw std::invalid_argument(ERROR_MSG_FILE_EXTENSION_INVALID);
 
     return true;
 }

@@ -1,6 +1,6 @@
 file(GLOB inputhandlers
         arghandler.h arghandler.cpp
-        jsonhandler.h jsonhandler.cpp
+        jsonfile.h jsonfile.cpp
         wrappers/iwrapper.h
         wrappers/transaction_input_wrapper.h
         wrappers/pem_input_wrapper.h)

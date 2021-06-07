@@ -1,7 +1,7 @@
 #include "account/address.h"
 #include "bits.h"
 #include "bech32/bech32.h"
-#include "params.h"
+#include "errors.h"
 
 #include <sodium.h>
 #include <stdexcept>
@@ -45,12 +45,8 @@ std::string Address::computeBech32Address() const
 bytes Address::computePkFromBech32() const
 {
     bytes pk5BitsPerByte = util::bech32::decode(m_bech32Address).second;
-    unsigned int const pk5BitsSize = pk5BitsPerByte.size();
-
-    auto pkCharPtr = new unsigned char[pk5BitsSize];
-    std::copy(pk5BitsPerByte.begin(), pk5BitsPerByte.end(), pkCharPtr);
-
-    delete[] pkCharPtr;
-    return util::convertBits(pkCharPtr, pk5BitsSize, kNoBitsInBech32, kNoBitsInByte, false);
+    auto pkCharPtr = reinterpret_cast<unsigned char*>(pk5BitsPerByte.data());
+    //TODO: Change convertBits to take bytes as input parameter;
+    return util::convertBits(pkCharPtr, pk5BitsPerByte.size(), kNoBitsInBech32, kNoBitsInByte, false);
 }
 

@@ -1,6 +1,6 @@
 #pragma warning(disable:4996)
-#ifndef TRANSACTION_HANDLER_H
-#define TRANSACTION_HANDLER_H
+#ifndef JSON_FILE_H
+#define JSON_FILE_H
 
 #include "filehandler/ifile.h"
 #include "wrappers/transaction_input_wrapper.h"
@@ -8,14 +8,15 @@
 
 namespace ih
 {
-class JsonFileHandler : public IFile
+class JsonFile : public IFile
 {
 public:
-    explicit JsonFileHandler(std::string const &filePath);
-
-    bool isFileValid() const override;
+    explicit JsonFile(std::string const &filePath);
 
     void writeDataToFile(std::string const &data);
+
+protected:
+    bool checkFile() const override;
 };
 }
 

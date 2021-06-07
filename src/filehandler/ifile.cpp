@@ -27,9 +27,10 @@ bool IFile::isFileExtension(std::string const &ext) const
 std::string IFile::getFileExtension() const
 {
     std::string ext;
+    auto const dotPosition = m_filePath.find_last_of('.');
 
-    if (m_filePath.find_last_of('.') != std::string::npos)
-        ext = m_filePath.substr(m_filePath.find_last_of('.') + 1);
+    if (dotPosition != std::string::npos)
+        ext = m_filePath.substr(dotPosition + 1);
 
     return ext;
 }

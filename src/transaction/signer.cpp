@@ -2,7 +2,7 @@
 #include <sodium.h>
 #include <stdexcept>
 
-#include "params.h"
+#include "errors.h"
 #include "strchr.h"
 #include "transaction/signer.h"
 
