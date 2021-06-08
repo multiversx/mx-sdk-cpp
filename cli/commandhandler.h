@@ -2,7 +2,9 @@
 #define COMMAND_HANDLER_H
 
 #include <sodium.h>
+#include <iostream>
 #include "inputhandler/ext.h"
+#include "erdsdk.h"
 
 namespace cli
 {
@@ -63,11 +65,11 @@ bool init()
 void handleLoadPemFile(const std::map<uint32_t, std::string> &userInputs)
 {
     ih::wrapper::PemHandlerInputWrapper const pemInputWrapper(userInputs);
-    ih::PemInputHandler pemHandler(pemInputWrapper);
+    ih::PemFileReader pemReader(pemInputWrapper.getPemFilePath());
 
-    if (pemHandler.isFileValid())
+    if (pemReader.isFileValid())
     {
-        pemHandler.printFileContent();
+        std::cerr << "Bech32 address: " << pemReader.getAddress().getBech32Address() << "\n";
     }
     else
     {
@@ -81,7 +83,7 @@ void handleCreateSignedTransactionWithPemFile(const std::map<uint32_t, std::stri
     ih::wrapper::TransactionInputWrapper const transactionInputWrapper(userInputs);
 
     ih::JsonFileHandler jsonHandler(transactionInputWrapper.getOutputFile());
-    ih::PemInputHandler pemFileHandler(pemInputWrapper);
+    ih::PemFileReader pemFileHandler(pemInputWrapper.getPemFilePath());
 
     if (!pemFileHandler.isFileValid())
     {

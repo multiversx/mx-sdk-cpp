@@ -5,12 +5,12 @@
 
 namespace ih
 {
-class IFileHandler
+class IFile
 {
 public:
-    explicit IFileHandler(std::string const &path);
+    explicit IFile(std::string const &path);
 
-    virtual bool isFileValid() const;
+    virtual bool isFileValid() const = 0;
 
     const std::string &getFilePath() const;
 
@@ -18,7 +18,7 @@ protected:
 
     bool fileExists() const;
 
-    bool isFileExtensionValid(std::string const ext) const;
+    bool isFileExtension(std::string const ext) const;
 
 private:
     std::string getFileExtension() const;

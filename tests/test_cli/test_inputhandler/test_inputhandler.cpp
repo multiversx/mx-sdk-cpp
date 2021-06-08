@@ -1,5 +1,6 @@
 #include "gtest/gtest.h"
 #include "inputhandler/ext.h"
+#include "filehandler/pemreader.h"
 #include "utils/ext.h"
 #include <sodium.h>
 
@@ -332,8 +333,9 @@ TEST(JsonFileHandler, writeOutputFile)
     ih::wrapper::PemHandlerInputWrapper const pemWrapper(input);
     ih::wrapper::TransactionInputWrapper const transactionWrapper(input);
 
-    ih::PemInputHandler pemHandler(pemWrapper);
+    ih::PemFileReader pemHandler(pemWrapper.getPemFilePath());
     ih::JsonFileHandler jsonHandler(transactionWrapper.getOutputFile());
+
 
     Transaction transaction(transactionWrapper.getNonce(), transactionWrapper.getValue(),
                             transactionWrapper.getReceiver(), pemHandler.getAddress(),
@@ -345,22 +347,12 @@ TEST(JsonFileHandler, writeOutputFile)
     jsonHandler.writeDataToFile(transaction.getSerializedTransaction());
 }
 
-TEST(PemFileReader, printFileContent)
-{
-    std::map<uint32_t, std::string> inputData;
-    inputData[ARGS_TX_IDX_PEM_INPUT_FILE] = "..//testData//keys.pem";
-    ih::wrapper::PemHandlerInputWrapper const pemWrapper(inputData);
-    ih::PemInputHandler pemHandler(pemWrapper);
-
-    pemHandler.printFileContent();
-}
-
 TEST(PemFileReader, isPemFileValid_validFile)
 {
     std::map<uint32_t, std::string> inputData;
     inputData[ARGS_TX_IDX_PEM_INPUT_FILE] = "..//testData//keys.pem";
     ih::wrapper::PemHandlerInputWrapper const pemWrapper(inputData);
-    ih::PemInputHandler pemHandler(pemWrapper);
+    ih::PemFileReader pemHandler(pemWrapper.getPemFilePath());
 
     EXPECT_TRUE(pemHandler.isFileValid());
 }
@@ -370,7 +362,7 @@ TEST(PemFileReader, isPemFileValid_invalidFileExtension)
     std::map<uint32_t, std::string> inputData;
     inputData[ARGS_TX_IDX_PEM_INPUT_FILE] = "..//testData//keys.pme";
     ih::wrapper::PemHandlerInputWrapper const pemWrapper(inputData);
-    ih::PemInputHandler pemHandler(pemWrapper);
+    ih::PemFileReader pemHandler(pemWrapper.getPemFilePath());
 
     EXPECT_FALSE(pemHandler.isFileValid());
 }
@@ -380,7 +372,7 @@ TEST(PemFileReader, isPemFileValid_emptyFile)
     std::map<uint32_t, std::string> inputData;
     inputData[ARGS_TX_IDX_PEM_INPUT_FILE] = "..//testData//keysEmptyFile.pem";
     ih::wrapper::PemHandlerInputWrapper const pemWrapper(inputData);
-    ih::PemInputHandler pemHandler(pemWrapper);
+    ih::PemFileReader pemHandler(pemWrapper.getPemFilePath());
 
     EXPECT_FALSE(pemHandler.isFileValid());
 }
@@ -390,7 +382,7 @@ TEST(PemFileReader, getPublicPrivateKeys_expectSameResultFrom_libsodium)
     std::map<uint32_t, std::string> inputData;
     inputData[ARGS_TX_IDX_PEM_INPUT_FILE] = "..//testData//keys.pem";
     ih::wrapper::PemHandlerInputWrapper const pemWrapper(inputData);
-    ih::PemInputHandler pemHandler(pemWrapper);
+    ih::PemFileReader pemHandler(pemWrapper.getPemFilePath());
 
     unsigned char pemPk[crypto_sign_PUBLICKEYBYTES];
     unsigned char pemSk[crypto_sign_SECRETKEYBYTES];
@@ -427,7 +419,7 @@ TEST(PemFileReader, getSegwitAddress)
     std::map<uint32_t, std::string> inputData;
     inputData[ARGS_TX_IDX_PEM_INPUT_FILE] = "..//testData//keys.pem";
     ih::wrapper::PemHandlerInputWrapper const pemWrapper(inputData);
-    ih::PemInputHandler pemHandler(pemWrapper);
+    ih::PemFileReader pemHandler(pemWrapper.getPemFilePath());
 
     std::string pemAddress = pemHandler.getAddress().getBech32Address();
     std::string expectedAdr = "erd1sjsk3n2d0krq3pyxxtgf0q7j3t56sgusqaujj4n82l39t9h7jers6gslr4";

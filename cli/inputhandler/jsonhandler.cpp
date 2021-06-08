@@ -5,17 +5,17 @@
 namespace ih
 {
 JsonFileHandler::JsonFileHandler(std::string const &filePath) :
-        IFileHandler(filePath)
+        IFile(filePath)
 {}
 
 bool JsonFileHandler::isFileValid() const
 {
-    return IFileHandler::fileExists() && IFileHandler::isFileExtensionValid("json");
+    return IFile::fileExists() && IFile::isFileExtension("json");
 }
 
 void JsonFileHandler::writeDataToFile(std::string const &data)
 {
-    std::ofstream myFile(IFileHandler::getFilePath());
+    std::ofstream myFile(IFile::getFilePath());
 
     if (isFileValid())
     {
