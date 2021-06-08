@@ -464,6 +464,11 @@ TEST(dada,ddd)
     nlohmann::ordered_json j;
     j["da"] = 1;
     j["da"] = 2;
+    if(j.contains("da"))
+    {
+        int anaremere = 3;
+    }
+    int rnd = j.at("daa");
     std::string res = j.dump();
    // int const x = json.at<int>("da");
 }

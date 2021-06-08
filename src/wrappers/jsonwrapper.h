@@ -14,12 +14,18 @@ class JsonOrdered
 {
 public:
     explicit JsonOrdered()
-    {}
+    {
+    }
 
     template <typename T>
     void set(std::string const &key, T const &value)
     {
         j[key] = value;
+    }
+
+    bool contains(std::string const &key) const
+    {
+        return j.contains(key);
     }
 
     template <typename T>

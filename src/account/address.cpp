@@ -22,6 +22,14 @@ Address::Address(std::string const &bech32Address) :
         throw std::invalid_argument(ERROR_MSG_BECH32);
 }
 
+Address& Address::operator = (const Address &address)
+{
+    this->m_pk = address.m_pk;
+    this->m_bech32Address = address.m_bech32Address;
+
+    return *this;
+}
+
 bytes Address::getPublicKey() const
 {
     return (m_pk.empty()) ?

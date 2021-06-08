@@ -17,6 +17,8 @@ public:
 
     explicit Address(std::string const &bech32Address);
 
+    Address& operator = (const Address &address);
+
     bytes getPublicKey() const;
 
     std::string getBech32Address() const;
