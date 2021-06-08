@@ -36,6 +36,7 @@ errorMessage const ERROR_MSG_FILE_EMPTY = "File is empty!";
 errorMessage const ERROR_MSG_FILE_DOES_NOT_EXIST = "File does not exists!";
 errorMessage const ERROR_MSG_FILE_EXTENSION_INVALID = "File extension invalid!";
 errorMessage const ERROR_MSG_KEY_BYTES_SIZE = "Key bytes size invalid!";
+errorMessage const ERROR_MSG_SIGNATURE_ALREADY_DEFINED = "Transaction already has a signature!";
 
 std::map<errorCode, errorMessage> const errors =
         {

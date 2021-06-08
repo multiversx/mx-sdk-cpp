@@ -82,12 +82,12 @@ void handleCreateSignedTransactionWithPemFile(const std::map<uint32_t, std::stri
         (transactionInputWrapper.getNonce(), transactionInputWrapper.getValue(),
          transactionInputWrapper.getReceiver(), pemReader.getAddress(),
          transactionInputWrapper.getGasPrice(), transactionInputWrapper.getGasLimit(),
-         transactionInputWrapper.getData(), transactionInputWrapper.getChainId(),
-         transactionInputWrapper.getVersion());
+         transactionInputWrapper.getChainId(),transactionInputWrapper.getVersion(),
+         transactionInputWrapper.getData());
 
     Signer signer(pemReader.getPrivateKey());
     transaction.applySignature(signer);
-    jsonFile.writeDataToFile(transaction.getSerializedTransaction());
+    jsonFile.writeDataToFile(transaction.getSerialized());
 }
 
 void handleRequest(ih::RequestedCmd const &requestedCmd)

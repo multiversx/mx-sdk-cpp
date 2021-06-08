@@ -339,11 +339,11 @@ TEST(JsonFileHandler, writeOutputFile)
     Transaction transaction(transactionWrapper.getNonce(), transactionWrapper.getValue(),
                             Address(transactionWrapper.getReceiver()), pemHandler.getAddress(),
                             transactionWrapper.getGasPrice(), transactionWrapper.getGasLimit(),
-                            transactionWrapper.getData(), transactionWrapper.getChainId(),
-                            transactionWrapper.getVersion());
+                            transactionWrapper.getChainId(), transactionWrapper.getVersion(),
+                            transactionWrapper.getData());
     Signer signer(pemHandler.getPrivateKey());
     transaction.applySignature(signer);
-    jsonFile.writeDataToFile(transaction.getSerializedTransaction());
+    jsonFile.writeDataToFile(transaction.getSerialized());
 }
 
 class PemFileReaderConstructorFixture : public ::testing::Test
@@ -440,5 +440,31 @@ TEST(Address, getPubKey)
     Address adr("erd1sjsk3n2d0krq3pyxxtgf0q7j3t56sgusqaujj4n82l39t9h7jers6gslr4");
 
     EXPECT_EQ(adr.getPublicKey(),pubKeyFromPem);
+}
+
+#include "wrappers/jsonwrapper.h"
+
+
+
+
+TEST(dada,ddd)
+{
+    wrapper::json::JsonOrdered json;
+    json.set<int>("da",1);
+    int d = json.at<int>("da");
+    std::string x = json.getSerialized();
+
+    json.set<int>("da",2);
+    d = json.at<int>("da");
+    x = json.getSerialized();
+
+    json.deserialize("{ \"happy\": true, \"pi\": 3.141 }");
+    double dd = json.at<double>("pi");
+
+    nlohmann::ordered_json j;
+    j["da"] = 1;
+    j["da"] = 2;
+    std::string res = j.dump();
+   // int const x = json.at<int>("da");
 }
 

@@ -23,7 +23,7 @@ public:
 
     bool isDataEmpty() const
     {
-        return m_containsData;
+        return !m_containsData;
     }
 
     uint64_t getNonce() const
