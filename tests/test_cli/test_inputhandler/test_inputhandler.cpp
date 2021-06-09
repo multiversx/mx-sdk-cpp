@@ -339,8 +339,9 @@ TEST(JsonFileHandler, writeOutputFile)
     Transaction transaction(transactionWrapper.getNonce(), transactionWrapper.getValue(),
                             Address(transactionWrapper.getReceiver()), pemHandler.getAddress(),
                             transactionWrapper.getGasPrice(), transactionWrapper.getGasLimit(),
-                            transactionWrapper.getChainId(), transactionWrapper.getVersion(),
-                            transactionWrapper.getData());
+                            std::make_shared<std::string>(transactionWrapper.getData()),transactionWrapper.getChainId(),
+                            transactionWrapper.getVersion(),nullptr);
+
     Signer signer(pemHandler.getPrivateKey());
     transaction.applySignature(signer);
     jsonFile.writeDataToFile(transaction.getSerialized());
