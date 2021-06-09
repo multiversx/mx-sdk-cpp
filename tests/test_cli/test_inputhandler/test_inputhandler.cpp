@@ -340,7 +340,7 @@ TEST(JsonFileHandler, writeOutputFile)
                             Address(transactionWrapper.getReceiver()), pemHandler.getAddress(),
                             transactionWrapper.getGasPrice(), transactionWrapper.getGasLimit(),
                             std::make_shared<std::string>(transactionWrapper.getData()),transactionWrapper.getChainId(),
-                            transactionWrapper.getVersion(),nullptr);
+                            transactionWrapper.getVersion(), nullptr);
 
     Signer signer(pemHandler.getPrivateKey());
     transaction.applySignature(signer);

@@ -1,32 +1,35 @@
 #include "transaction/transaction.h"
+
+#include <utility>
 #include "jsonwrapper.h"
 #include "params.h"
 #include "hex.h"
 #include "base64.h"
 #include "errors.h"
 
-#define ON true
-#define OFF false
-
-//TODO: Allow creating transactions without nonce/gasPrice
 Transaction::Transaction(
         uint64_t const &nonce,
-        std::string const &value,
+        std::string value,
         Address const &receiver,
         Address const &sender,
         uint64_t const &gasPrice,
         uint64_t const &gasLimit,
         std::shared_ptr<std::string> data,
-        std::string const &chainID,
+        std::string chainID,
         uint64_t const &version,
         std::shared_ptr<std::string> signature):
-        m_nonce(nonce), m_value(value), m_receiver(receiver),
-        m_sender(sender), m_gasPrice(gasPrice), m_gasLimit(gasLimit),
-        m_chainID(chainID),m_version(version)
-{
-    m_data.reset(new std::string(*data));
-    m_signature.reset(new std::string(*data));
-}
+        m_nonce(nonce), m_value(std::move(value)), m_receiver(new Address(receiver)),
+        m_sender(new Address(sender)), m_gasPrice(gasPrice), m_gasLimit(gasLimit),
+        m_data(std::move(data)), m_chainID(std::move(chainID)), m_version(version),
+        m_signature(std::move(signature))
+{}
+
+Transaction::Transaction():
+        m_nonce(DEFAULT_NONCE), m_value(std::move(DEFAULT_VALUE)), m_receiver(DEFAULT_RECEIVER),
+        m_sender(DEFAULT_SENDER), m_gasPrice(DEFAULT_GAS_PRICE), m_gasLimit(DEFAULT_GAS_LIMIT),
+        m_data(DEFAULT_DATA), m_chainID(std::move(DEFAULT_CHAIN_ID)), m_version(DEFAULT_VERSION),
+        m_signature(DEFAULT_SIGNATURE)
+{}
 
 void Transaction::applySignature(Signer const &signer)
 {
@@ -41,12 +44,15 @@ void Transaction::applySignature(Signer const &signer)
 
 std::string Transaction::getSerialized() const
 {
+    if (m_receiver == nullptr) throw std::invalid_argument(ERROR_MSG_RECEIVER);
+    if (m_sender == nullptr) throw std::invalid_argument(ERROR_MSG_SENDER);
+
     wrapper::json::JsonOrdered json;
 
     json.set(STR_JSON_NONCE, m_nonce);
     json.set(STR_JSON_VALUE, m_value);
-    json.set(STR_JSON_RECEIVER, m_receiver.getBech32Address());
-    json.set(STR_JSON_SENDER, m_sender.getBech32Address());
+    json.set(STR_JSON_RECEIVER, (*m_receiver).getBech32Address());
+    json.set(STR_JSON_SENDER, (*m_sender).getBech32Address());
     json.set(STR_JSON_GAS_PRICE, m_gasPrice);
     json.set(STR_JSON_GAS_LIMIT, m_gasLimit);
     if (m_data != nullptr)
@@ -80,8 +86,8 @@ void Transaction::deserialize(std::string const& serializedTransaction)
 
     m_nonce = json.at<uint64_t>(STR_JSON_NONCE);
     m_value = json.at<std::string>(STR_JSON_VALUE);
-    m_receiver = Address(json.at<std::string>(STR_JSON_RECEIVER));
-    m_sender = Address(json.at<std::string>(STR_JSON_SENDER));
+    m_receiver.reset(new Address(json.at<std::string>(STR_JSON_RECEIVER)));
+    m_sender.reset(new Address(json.at<std::string>(STR_JSON_SENDER)));
     m_gasPrice = json.at<uint64_t>(STR_JSON_GAS_PRICE);
     m_gasLimit = json.at<uint64_t>(STR_JSON_GAS_LIMIT);
     m_chainID = json.at<std::string>(STR_JSON_CHAIN_ID);

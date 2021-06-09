@@ -9,23 +9,33 @@
 #include <cstdint>
 #include <string>
 
-#define DEFAULT_DATA std::string()
-#define DEFAULT_SIGNATURE std::string()
+#define DEFAULT_NONCE 0U
+#define DEFAULT_VALUE std::string()
+#define DEFAULT_RECEIVER nullptr
+#define DEFAULT_SENDER nullptr
+#define DEFAULT_GAS_PRICE 0U
+#define DEFAULT_GAS_LIMIT 0U
+#define DEFAULT_DATA nullptr
+#define DEFAULT_CHAIN_ID std::string()
+#define DEFAULT_VERSION 0U
+#define DEFAULT_SIGNATURE nullptr
 
 class Transaction
 {
 public:
     explicit Transaction(
             uint64_t const &nonce,
-            std::string const &value,
+            std::string value,
             Address const &receiver,
             Address const &sender,
             uint64_t const &gasPrice,
             uint64_t const &gasLimit,
             std::shared_ptr<std::string> data,
-            std::string const &chainID,
+            std::string chainID,
             uint64_t const &version,
             std::shared_ptr<std::string> signature);
+
+    explicit Transaction();
 
     void applySignature(Signer const &signer);
 
@@ -35,8 +45,8 @@ public:
 
     uint64_t m_nonce;
     std::string m_value;
-    Address m_receiver;
-    Address m_sender;
+    std::shared_ptr<Address> m_receiver;
+    std::shared_ptr<Address> m_sender;
     uint64_t m_gasPrice;
     uint64_t m_gasLimit;
     std::string m_chainID;
