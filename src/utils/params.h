@@ -4,16 +4,19 @@
 #include <map>
 #include <string>
 
-constexpr auto STR_JSON_NONCE = "nonce";
-constexpr auto STR_JSON_VALUE = "value";
-constexpr auto STR_JSON_RECEIVER = "receiver";
-constexpr auto STR_JSON_SENDER = "sender";
-constexpr auto STR_JSON_GAS_PRICE = "gasPrice";
-constexpr auto STR_JSON_GAS_LIMIT = "gasLimit";
-constexpr auto STR_JSON_DATA = "data";
-constexpr auto STR_JSON_CHAIN_ID = "chainID";
-constexpr auto STR_JSON_VERSION = "version";
-constexpr auto STR_JSON_SIGNATURE = "signature";
+constexpr auto TX_NONCE = "nonce";
+constexpr auto TX_VALUE = "value";
+constexpr auto TX_RECEIVER = "receiver";
+constexpr auto TX_SENDER = "sender";
+constexpr auto TX_RECEIVER_NAME = "receiverUsername";
+constexpr auto TX_SENDER_NAME = "senderUsername";
+constexpr auto TX_GAS_PRICE = "gasPrice";
+constexpr auto TX_GAS_LIMIT = "gasLimit";
+constexpr auto TX_DATA = "data";
+constexpr auto TX_CHAIN_ID = "chainID";
+constexpr auto TX_VERSION = "version";
+constexpr auto TX_SIGNATURE = "signature";
+constexpr auto TX_OPTIONS = "options";
 
 constexpr auto JSON_TX_IDX_NONCE = 0U;
 constexpr auto JSON_TX_IDX_VALUE = 1U;

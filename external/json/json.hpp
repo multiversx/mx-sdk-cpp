@@ -3472,7 +3472,7 @@ using get_template_function = decltype(std::declval<T>().template get<U>());
 template<typename BasicJsonType, typename T, typename = void>
 struct has_from_json : std::false_type {};
 
-// trait checking if j.get<T> is valid
+// trait checking if m_json.get<T> is valid
 // use this trait instead of std::is_constructible or std::is_convertible,
 // both rely on, or make use of implicit conversions, and thus fail when T
 // has several constructors/operator= (see https://github.com/nlohmann/json/issues/958)
@@ -4980,7 +4980,7 @@ null, 0, 0U, and false, etc.
 
 @tparam BasicJsonType basic_json specialization
 @param j JSON value to hash
-@return hash value of j
+@return hash value of m_json
 */
 template<typename BasicJsonType>
 std::size_t hash(const BasicJsonType& j)
@@ -12356,7 +12356,7 @@ class json_pointer
         auto* result = &j;
 
         // in case no reference tokens exist, return a reference to the JSON value
-        // j which will be overwritten by a primitive value
+        // m_json which will be overwritten by a primitive value
         for (const auto& reference_token : reference_tokens)
         {
             switch (result->type())
@@ -13147,7 +13147,7 @@ class binary_writer
 
     /*!
     @param[in] j  JSON value to serialize
-    @pre       j.type() == value_t::object
+    @pre       m_json.type() == value_t::object
     */
     void write_bson(const BasicJsonType& j)
     {
@@ -14107,7 +14107,7 @@ class binary_writer
     }
 
     /*!
-    @return The size of the BSON-encoded unsigned integer in @a j
+    @return The size of the BSON-encoded unsigned integer in @a m_json
     */
     static constexpr std::size_t calc_bson_unsigned_size(const std::uint64_t value) noexcept
     {
@@ -14205,8 +14205,8 @@ class binary_writer
     }
 
     /*!
-    @brief Calculates the size necessary to serialize the JSON value @a j with its @a name
-    @return The calculated size for the BSON document entry for @a j with the given @a name.
+    @brief Calculates the size necessary to serialize the JSON value @a m_json with its @a name
+    @return The calculated size for the BSON document entry for @a m_json with the given @a name.
     */
     static std::size_t calc_bson_element_size(const string_t& name,
             const BasicJsonType& j)
@@ -14250,9 +14250,9 @@ class binary_writer
     }
 
     /*!
-    @brief Serializes the JSON value @a j to BSON and associates it with the
+    @brief Serializes the JSON value @a m_json to BSON and associates it with the
            key @a name.
-    @param name The name to associate with the JSON entity @a j within the
+    @param name The name to associate with the JSON entity @a m_json within the
                 current BSON document
     */
     void write_bson_element(const string_t& name,
@@ -14297,7 +14297,7 @@ class binary_writer
 
     /*!
     @brief Calculates the size of the BSON serialization of the given
-           JSON-object @a j.
+           JSON-object @a m_json.
     @param[in] value  JSON value to serialize
     @pre       value.type() == value_t::object
     */
@@ -21410,7 +21410,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
     @return true if the JSON pointer can be resolved to a stored value, false
     otherwise.
 
-    @post If `j.contains(ptr)` returns true, it is safe to call `j[ptr]`.
+    @post If `m_json.contains(ptr)` returns true, it is safe to call `m_json[ptr]`.
 
     @throw parse_error.106   if an array index begins with '0'
     @throw parse_error.109   if an array index was not a number
@@ -21767,7 +21767,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
 
     @deprecated This stream operator is deprecated and will be removed in
                 future 4.0.0 of the library. Please use @ref items() instead;
-                that is, replace `json::iterator_wrapper(j)` with `j.items()`.
+                that is, replace `json::iterator_wrapper(m_json)` with `m_json.items()`.
     */
     JSON_HEDLEY_DEPRECATED_FOR(3.1.0, items())
     static iteration_proxy<iterator> iterator_wrapper(reference ref) noexcept
@@ -22742,7 +22742,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
     /*!
     @brief updates a JSON object from another object, overwriting existing keys
 
-    Inserts all values from JSON object @a j and overwrites existing keys.
+    Inserts all values from JSON object @a m_json and overwrites existing keys.
 
     @param[in] j  JSON object to read values from
 
@@ -23520,7 +23520,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
     /*!
     @brief serialize to stream
 
-    Serialize the given JSON value @a j to the output stream @a o. The JSON
+    Serialize the given JSON value @a m_json to the output stream @a o. The JSON
     value will be serialized using the @ref dump member function.
 
     - The indentation of the output can be controlled with the member variable
@@ -23568,7 +23568,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
     @deprecated This stream operator is deprecated and will be removed in
                 future 4.0.0 of the library. Please use
                 @ref operator<<(std::ostream&, const basic_json&)
-                instead; that is, replace calls like `j >> o;` with `o << j;`.
+                instead; that is, replace calls like `m_json >> o;` with `o << m_json;`.
     @since version 1.0.0; deprecated since version 3.0.0
     */
     JSON_HEDLEY_DEPRECATED_FOR(3.0.0, operator<<(std::ostream&, const basic_json&))
@@ -23840,7 +23840,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
     @deprecated This stream operator is deprecated and will be removed in
                 version 4.0.0 of the library. Please use
                 @ref operator>>(std::istream&, basic_json&)
-                instead; that is, replace calls like `j << i;` with `i >> j;`.
+                instead; that is, replace calls like `m_json << i;` with `i >> m_json;`.
     @since version 1.0.0; deprecated since version 3.0.0
     */
     JSON_HEDLEY_DEPRECATED_FOR(3.0.0, operator>>(std::istream&, basic_json&))
@@ -23971,7 +23971,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
     /*!
     @brief create a CBOR serialization of a given JSON value
 
-    Serializes a given JSON value @a j to a byte vector using the CBOR (Concise
+    Serializes a given JSON value @a m_json to a byte vector using the CBOR (Concise
     Binary Object Representation) serialization format. CBOR is a binary
     serialization format which aims to be more compact than JSON itself, yet
     more efficient to parse.
@@ -24047,7 +24047,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
     @param[in] j  JSON value to serialize
     @return CBOR serialization as byte vector
 
-    @complexity Linear in the size of the JSON value @a j.
+    @complexity Linear in the size of the JSON value @a m_json.
 
     @liveexample{The example shows the serialization of a JSON value to a byte
     vector in CBOR format.,to_cbor}
@@ -24082,7 +24082,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
     /*!
     @brief create a MessagePack serialization of a given JSON value
 
-    Serializes a given JSON value @a j to a byte vector using the MessagePack
+    Serializes a given JSON value @a m_json to a byte vector using the MessagePack
     serialization format. MessagePack is a binary serialization format which
     aims to be more compact than JSON itself, yet more efficient to parse.
 
@@ -24144,7 +24144,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
     @param[in] j  JSON value to serialize
     @return MessagePack serialization as byte vector
 
-    @complexity Linear in the size of the JSON value @a j.
+    @complexity Linear in the size of the JSON value @a m_json.
 
     @liveexample{The example shows the serialization of a JSON value to a byte
     vector in MessagePack format.,to_msgpack}
@@ -24177,7 +24177,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
     /*!
     @brief create a UBJSON serialization of a given JSON value
 
-    Serializes a given JSON value @a j to a byte vector using the UBJSON
+    Serializes a given JSON value @a m_json to a byte vector using the UBJSON
     (Universal Binary JSON) serialization format. UBJSON aims to be more compact
     than JSON itself, yet more efficient to parse.
 
@@ -24247,7 +24247,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
                          (must be combined with @a use_size = true)
     @return UBJSON serialization as byte vector
 
-    @complexity Linear in the size of the JSON value @a j.
+    @complexity Linear in the size of the JSON value @a m_json.
 
     @liveexample{The example shows the serialization of a JSON value to a byte
     vector in UBJSON format.,to_ubjson}
@@ -24283,7 +24283,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
 
 
     /*!
-    @brief Serializes the given JSON object `j` to BSON and returns a vector
+    @brief Serializes the given JSON object `m_json` to BSON and returns a vector
            containing the corresponding BSON-representation.
 
     BSON (Binary JSON) is a binary format in which zero or more ordered key/value pairs are
@@ -24313,11 +24313,11 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
     and the keys may not contain U+0000, since they are serialized a
     zero-terminated c-strings.
 
-    @throw out_of_range.407  if `j.is_number_unsigned() && j.get<std::uint64_t>() > 9223372036854775807`
-    @throw out_of_range.409  if a key in `j` contains a NULL (U+0000)
-    @throw type_error.317    if `!j.is_object()`
+    @throw out_of_range.407  if `m_json.is_number_unsigned() && m_json.get<std::uint64_t>() > 9223372036854775807`
+    @throw out_of_range.409  if a key in `m_json` contains a NULL (U+0000)
+    @throw type_error.317    if `!m_json.is_object()`
 
-    @pre The input `j` is required to be an object: `j.is_object() == true`.
+    @pre The input `m_json` is required to be an object: `m_json.is_object() == true`.
 
     @note Any BSON output created via @ref to_bson can be successfully parsed
           by @ref from_bson.
@@ -24325,7 +24325,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
     @param[in] j  JSON value to serialize
     @return BSON serialization as byte vector
 
-    @complexity Linear in the size of the JSON value @a j.
+    @complexity Linear in the size of the JSON value @a m_json.
 
     @liveexample{The example shows the serialization of a JSON value to a byte
     vector in BSON format.,to_bson}
@@ -24346,11 +24346,11 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
     }
 
     /*!
-    @brief Serializes the given JSON object `j` to BSON and forwards the
+    @brief Serializes the given JSON object `m_json` to BSON and forwards the
            corresponding BSON-representation to the given output_adapter `o`.
     @param j The JSON object to convert to BSON.
     @param o The output adapter that receives the binary BSON representation.
-    @pre The input `j` shall be an object: `j.is_object() == true`
+    @pre The input `m_json` shall be an object: `m_json.is_object() == true`
     @sa see @ref to_bson(const basic_json&)
     */
     static void to_bson(const basic_json& j, detail::output_adapter<uint8_t> o)
@@ -25101,8 +25101,8 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
 
     @note Empty objects and arrays are flattened by @ref flatten() to `null`
           values and can not unflattened to their original type. Apart from
-          this example, for a JSON value `j`, the following is always true:
-          `j == j.flatten().unflatten()`.
+          this example, for a JSON value `m_json`, the following is always true:
+          `m_json == m_json.flatten().unflatten()`.
 
     @complexity Linear in the size the JSON value.
 

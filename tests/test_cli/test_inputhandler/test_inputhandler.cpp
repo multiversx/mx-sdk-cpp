@@ -338,8 +338,10 @@ TEST(JsonFileHandler, writeOutputFile)
 
     Transaction transaction(transactionWrapper.getNonce(), transactionWrapper.getValue(),
                             Address(transactionWrapper.getReceiver()), pemHandler.getAddress(),
+                            nullptr, nullptr,
                             transactionWrapper.getGasPrice(), transactionWrapper.getGasLimit(),
-                            std::make_shared<std::string>(transactionWrapper.getData()),transactionWrapper.getChainId(),
+                            std::make_shared<std::string>(transactionWrapper.getData()),
+                            nullptr, transactionWrapper.getChainId(),
                             transactionWrapper.getVersion(), nullptr);
 
     Signer signer(pemHandler.getPrivateKey());
@@ -450,7 +452,12 @@ TEST(Address, getPubKey)
 
 TEST(dada,ddd)
 {
-    wrapper::json::JsonOrdered json;
+
+    nlohmann::ordered_json test;
+    std::string dddd= test.dump();
+
+
+    wrapper::json::OrderedJson json;
     json.set<int>("da",1);
     int d = json.at<int>("da");
     std::string x = json.getSerialized();

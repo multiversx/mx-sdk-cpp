@@ -5,48 +5,54 @@
 
 #include "internal/internal.h"
 #include "json/json.hpp"
+//TODO: Ugly include, must take care of CMake here
+#include "../utils/errors.h"
 
 namespace wrapper
 {
 namespace json
 {
-class JsonOrdered
+class OrderedJson
 {
 public:
-    explicit JsonOrdered()
-    {
-    }
+    explicit OrderedJson() = default;
 
     template <typename T>
     void set(std::string const &key, T const &value)
     {
-        j[key] = value;
+        m_json[key] = value;
     }
 
     bool contains(std::string const &key) const
     {
-        return j.contains(key);
+        return m_json.contains(key);
     }
 
     template <typename T>
     T at(std::string const &key) const
     {
-        return j.at(key);
+        return m_json.at(key);
     }
 
     std::string getSerialized() const
     {
-        return j.dump();
+        return m_json.dump();
     }
 
     void deserialize(std::string const& serialized)
     {
-        j = nlohmann::ordered_json::parse(serialized);
-        //j = (serialized)_json;
+        try
+        {
+            m_json = nlohmann::ordered_json::parse(serialized);
+        }
+        catch (...)
+        {
+            throw std::invalid_argument(ERROR_MSG_JSON);
+        }
     }
 
 private:
-    nlohmann::ordered_json j;
+    nlohmann::ordered_json m_json;
 };
 }
 }

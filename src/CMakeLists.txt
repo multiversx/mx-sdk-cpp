@@ -7,8 +7,8 @@ file(GLOB src
         account/address.cpp
         filehandler/ifile.cpp
         filehandler/pemreader.cpp
-        wrappers/cryptosignwrapper.h wrappers/cryptosignwrapper.cpp
-        wrappers/jsonwrapper.h wrappers/jsonwrapper.cpp)
+        wrappers/jsonwrapper.h
+        wrappers/cryptosignwrapper.h wrappers/cryptosignwrapper.cpp)
 
 include_directories(utils)
 include_directories(wrappers)
