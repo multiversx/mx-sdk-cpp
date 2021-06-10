@@ -19,19 +19,17 @@ JsonFile::JsonFile(std::string const &filePath) :
     }
 }
 
-bool JsonFile::checkFile() const
+void JsonFile::checkFile() const
 {
     if (!IFile::fileExists()) throw std::invalid_argument(ERROR_MSG_FILE_DOES_NOT_EXIST);
     if (!IFile::isFileExtension("json")) throw std::invalid_argument(ERROR_MSG_FILE_EXTENSION_INVALID);
-
-    return true;
 }
 
 void JsonFile::writeDataToFile(std::string const &data)
 {
     std::ofstream myFile(IFile::getFilePath());
 
-    if (checkFile())
+    if (IFile::fileExists())
     {
         myFile << data;
         myFile.close();

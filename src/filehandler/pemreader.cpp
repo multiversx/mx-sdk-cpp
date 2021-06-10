@@ -31,12 +31,10 @@ PemFileReader::PemFileReader(std::string const &filePath) :
     }
 }
 
-bool PemFileReader::checkFile() const
+void PemFileReader::checkFile() const
 {
     if (!IFile::fileExists()) throw std::invalid_argument(ERROR_MSG_FILE_DOES_NOT_EXIST);
     if (!IFile::isFileExtension("pem")) throw std::invalid_argument(ERROR_MSG_FILE_EXTENSION_INVALID);
-
-    return true;
 }
 
 Address PemFileReader::getAddress() const

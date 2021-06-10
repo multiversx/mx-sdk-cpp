@@ -8,6 +8,6 @@
 
 namespace util
 {
-bytes convertBits(bytes const &data, int fromBits, int toBits, bool pad);
+bytes convertBits(bytes const &data, unsigned int fromBits, unsigned int toBits, bool pad);
 }
 #endif

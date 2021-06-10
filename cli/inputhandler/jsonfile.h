@@ -1,4 +1,3 @@
-#pragma warning(disable:4996)
 #ifndef JSON_FILE_H
 #define JSON_FILE_H
 
@@ -16,7 +15,7 @@ public:
     void writeDataToFile(std::string const &data);
 
 protected:
-    bool checkFile() const override;
+    void checkFile() const override;
 };
 }
 
