@@ -12,7 +12,8 @@
 
 namespace internal
 {
-template <class T>
+
+template<class T>
 inline void set(nlohmann::ordered_json &json, std::string const &key, T const &value)
 {
     json[key] = value;
@@ -21,7 +22,7 @@ inline void set(nlohmann::ordered_json &json, std::string const &key, T const &v
 template<>
 inline void set<bytes>(nlohmann::ordered_json &json, std::string const &key, bytes const &value)
 {
-    std::string val(value.begin(),value.end());
+    std::string val(value.begin(), value.end());
     json[key] = util::base64::encode(val);
 }
 
@@ -55,10 +56,7 @@ public:
         internal::set(m_json, key, value);
     }
 
-    bool contains(std::string const &key) const
-    {
-        return m_json.contains(key);
-    }
+    bool contains(std::string const &key) const;
 
     template <typename T>
     T at(std::string const &key) const
@@ -73,22 +71,9 @@ public:
         }
     }
 
-    std::string serialize() const
-    {
-        return m_json.dump();
-    }
+    std::string serialize() const;
 
-    void deserialize(std::string const& serialized)
-    {
-        try
-        {
-            m_json = nlohmann::ordered_json::parse(serialized);
-        }
-        catch (...)
-        {
-            throw std::invalid_argument(ERROR_MSG_JSON);
-        }
-    }
+    void deserialize(std::string const& serialized);
 
 private:
     nlohmann::ordered_json m_json;
