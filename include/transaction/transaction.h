@@ -32,11 +32,11 @@ public:
             std::string value,
             Address const &receiver,
             Address const &sender,
-            std::shared_ptr<std::string> receiverUserName,
-            std::shared_ptr<std::string> senderUserName,
+            std::shared_ptr<bytes> receiverUserName,
+            std::shared_ptr<bytes> senderUserName,
             uint64_t const &gasPrice,
             uint64_t const &gasLimit,
-            std::shared_ptr<std::string> data,
+            std::shared_ptr<bytes> data,
             std::shared_ptr<std::string> signature,
             std::string chainID,
             uint64_t const &version,
@@ -52,15 +52,15 @@ public:
 
     uint64_t m_nonce;
     std::string m_value;
-    std::shared_ptr<std::string> m_receiverUserName;
-    std::shared_ptr<std::string> m_senderUserName;
+    std::shared_ptr<bytes> m_receiverUserName;
+    std::shared_ptr<bytes> m_senderUserName;
     std::shared_ptr<Address> m_receiver;
     std::shared_ptr<Address> m_sender;
     uint64_t m_gasPrice;
     uint64_t m_gasLimit;
     std::string m_chainID;
     uint64_t m_version;
-    std::shared_ptr<std::string> m_data;
+    std::shared_ptr<bytes> m_data;
     std::shared_ptr<std::string> m_signature;
     std::shared_ptr<uint32_t> m_options;
 };

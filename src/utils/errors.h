@@ -40,6 +40,7 @@ errorMessage const ERROR_MSG_FILE_DOES_NOT_EXIST = "File does not exists!";
 errorMessage const ERROR_MSG_FILE_EXTENSION_INVALID = "File extension invalid!";
 errorMessage const ERROR_MSG_KEY_BYTES_SIZE = "Key bytes size invalid!";
 errorMessage const ERROR_MSG_JSON = "Invalid json!";
+errorMessage const ERROR_MSG_JSON_KEY_NOT_FOUND = "Json does not contain key: ";
 
 std::map<errorCode, errorMessage> const errors =
         {

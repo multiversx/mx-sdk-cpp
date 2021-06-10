@@ -83,7 +83,7 @@ void handleCreateSignedTransactionWithPemFile(const std::map<uint32_t, std::stri
          transactionInputWrapper.getReceiver(), pemReader.getAddress(),
          nullptr, nullptr,
          transactionInputWrapper.getGasPrice(), transactionInputWrapper.getGasLimit(),
-         std::make_shared<std::string>(transactionInputWrapper.getData()), nullptr,
+         std::make_shared<bytes>(transactionInputWrapper.getData()), nullptr,
          transactionInputWrapper.getChainId(), transactionInputWrapper.getVersion(),
          nullptr);
 

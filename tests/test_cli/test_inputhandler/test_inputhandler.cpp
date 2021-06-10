@@ -340,7 +340,7 @@ TEST(JsonFileHandler, writeOutputFile)
                             Address(transactionWrapper.getReceiver()), pemHandler.getAddress(),
                             nullptr, nullptr,
                             transactionWrapper.getGasPrice(), transactionWrapper.getGasLimit(),
-                            std::make_shared<std::string>(transactionWrapper.getData()),
+                            std::make_shared<bytes>(transactionWrapper.getData()),
                             nullptr, transactionWrapper.getChainId(),
                             transactionWrapper.getVersion(), nullptr);
 

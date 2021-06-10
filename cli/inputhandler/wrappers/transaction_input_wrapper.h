@@ -7,6 +7,7 @@
 #include "iwrapper.h"
 #include "utils/params.h"
 #include "account/address.h"
+#include "internal/internal.h"
 
 namespace ih
 {
@@ -51,9 +52,14 @@ public:
         return std::stoul(getInputData().at(ARGS_TX_IDX_GAS_LIMIT));
     }
 
-    std::string getData() const
+    bytes getData() const
     {
-        return (isDataEmpty()) ? ("") : getInputData().at(ARGS_TX_IDX_DATA);
+        if (!isDataEmpty())
+        {
+            std::string userData = getInputData().at(ARGS_TX_IDX_DATA);
+            return bytes(userData.begin(),userData.end());
+        }
+        else return bytes();
     }
 
     std::string getChainId() const

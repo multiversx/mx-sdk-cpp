@@ -22,11 +22,11 @@ Transaction::Transaction(
         std::string value,
         Address const &receiver,
         Address const &sender,
-        std::shared_ptr<std::string> receiverUserName,
-        std::shared_ptr<std::string> senderUserName,
+        std::shared_ptr<bytes> receiverUserName,
+        std::shared_ptr<bytes> senderUserName,
         uint64_t const &gasPrice,
         uint64_t const &gasLimit,
-        std::shared_ptr<std::string> data,
+        std::shared_ptr<bytes> data,
         std::shared_ptr<std::string> signature,
         std::string chainID,
         uint64_t const &version,
@@ -88,10 +88,7 @@ std::string Transaction::serialize() const
     internal::setValueIfNotNull(json, TX_SENDER_NAME, m_senderUserName);
     json.set(TX_GAS_PRICE, m_gasPrice);
     json.set(TX_GAS_LIMIT, m_gasLimit);
-    if (m_data != nullptr)
-    {
-        json.set(TX_DATA, util::base64::encode(*m_data));
-    }
+    internal::setValueIfNotNull(json, TX_DATA, m_data);
     internal::setValueIfNotNull(json, TX_SIGNATURE, m_signature);
     json.set(TX_CHAIN_ID, m_chainID);
     json.set(TX_VERSION, m_version);
@@ -133,7 +130,7 @@ void Transaction::deserialize(std::string const &serializedTransaction)
 
     if (json.contains(TX_DATA))
     {
-        m_data = std::make_shared<std::string>(json.at<std::string>(TX_DATA));
+        m_data = std::make_shared<bytes>(json.at<bytes>(TX_DATA));
     }
     if (json.contains(TX_SIGNATURE))
     {
@@ -141,11 +138,11 @@ void Transaction::deserialize(std::string const &serializedTransaction)
     }
     if (json.contains(TX_RECEIVER_NAME))
     {
-        m_receiverUserName = std::make_shared<std::string>(json.at<std::string>(TX_RECEIVER_NAME));
+        m_receiverUserName = std::make_shared<bytes>(json.at<bytes>(TX_RECEIVER_NAME));
     }
     if (json.contains(TX_SENDER_NAME))
     {
-        m_senderUserName = std::make_shared<std::string>(json.at<std::string>(TX_SENDER_NAME));
+        m_senderUserName = std::make_shared<bytes>(json.at<bytes>(TX_SENDER_NAME));
     }
     if (json.contains(TX_OPTIONS))
     {
