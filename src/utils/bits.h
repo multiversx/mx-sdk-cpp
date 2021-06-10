@@ -7,6 +7,6 @@
 namespace util
 {
 std::vector<uint8_t> convertBits(unsigned char *data, unsigned int dataLength,
-                                 int fromBits, int toBits, bool pad);
+                                 unsigned int fromBits, unsigned int toBits, bool pad);
 }
 #endif

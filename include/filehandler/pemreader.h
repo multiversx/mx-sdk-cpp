@@ -22,7 +22,7 @@ public:
     bytes getPrivateKey() const;
 
 protected:
-    bool checkFile() const override;
+    void checkFile() const override;
 
 private:
     std::string getFileContent() const;
