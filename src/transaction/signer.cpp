@@ -4,11 +4,12 @@
 #include "cryptosignwrapper.h"
 #include "errors.h"
 
-Signer:: Signer(bytes const &secretKey) :
-        m_sk(secretKey)
+Signer:: Signer(bytes const &seed)
 {
-    if (secretKey.size() != SECRET_KEY_BYTES_LENGTH)
-        throw std::length_error(ERROR_MSG_KEY_BYTES_SIZE);
+    if (seed.size() != SEED_BYTES_LENGTH)
+       throw std::length_error(ERROR_MSG_KEY_BYTES_SIZE);
+
+    m_sk = wrapper::crypto::getSecretKey(seed);
 }
 
 std::string Signer::getSignature(std::string const &message) const

@@ -16,7 +16,7 @@ namespace crypto
 {
 std::string getSignature(bytes const &secretKey, std::string const &message);
 
-bytes getSecretKey(bytes publicKey, bytes const &seed);
+bytes getSecretKey(bytes const &seed);
 }
 }
 

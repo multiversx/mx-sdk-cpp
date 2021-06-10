@@ -29,11 +29,11 @@ std::string getSignature(bytes const &secretKey, std::string const &message)
     return util::uCharToStr(sig, sigLength);
 }
 
-bytes getSecretKey(bytes publicKey, bytes const &seed)
+bytes getSecretKey(bytes const &seed)
 {
-    auto pk = reinterpret_cast<unsigned char*>(publicKey.data());
     auto sd = reinterpret_cast<const unsigned char*>(seed.data());
 
+    unsigned char pk[PUBLIC_KEY_BYTES_LENGTH];
     unsigned char sk[SECRET_KEY_BYTES_LENGTH];
 
     crypto_sign_seed_keypair(pk, sk, sd);
