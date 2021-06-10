@@ -7,6 +7,16 @@
 #include "base64.h"
 #include "errors.h"
 
+namespace internal
+{
+    template <typename T>
+    void setValueIfNotNull(wrapper::json::OrderedJson &json, std::string const& key, std::shared_ptr<T> const &val)
+    {
+        if (val != nullptr)
+            json.set(key, *val);
+    }
+}
+
 Transaction::Transaction(
         uint64_t const &nonce,
         std::string value,
@@ -20,7 +30,7 @@ Transaction::Transaction(
         std::shared_ptr<std::string> signature,
         std::string chainID,
         uint64_t const &version,
-        std::shared_ptr<uint32_t> options):
+        std::shared_ptr<uint32_t> options) :
         m_nonce(nonce),
         m_value(std::move(value)),
         m_receiver(new Address(receiver)),
@@ -34,10 +44,9 @@ Transaction::Transaction(
         m_chainID(std::move(chainID)),
         m_version(version),
         m_options(std::move(options))
-
 {}
 
-Transaction::Transaction():
+Transaction::Transaction() :
         m_nonce(DEFAULT_NONCE),
         m_value(DEFAULT_VALUE),
         m_receiver(DEFAULT_RECEIVER),
@@ -51,21 +60,20 @@ Transaction::Transaction():
         m_chainID(DEFAULT_CHAIN_ID),
         m_version(DEFAULT_VERSION),
         m_options(DEFAULT_OPTIONS)
-
 {}
 
 void Transaction::applySignature(Signer const &signer)
 {
-    if(m_signature != nullptr)
+    if (m_signature != nullptr)
         m_signature = nullptr;
 
-    std::string const jsonSerialized = getSerialized();
+    std::string const jsonSerialized = serialize();
     std::string signature = util::stringToHex(signer.getSignature(jsonSerialized));
 
-    m_signature.reset(new std::string (signature));
+    m_signature.reset(new std::string(signature));
 }
 
-std::string Transaction::getSerialized() const
+std::string Transaction::serialize() const
 {
     if (m_receiver == nullptr) throw std::invalid_argument(ERROR_MSG_RECEIVER);
     if (m_sender == nullptr) throw std::invalid_argument(ERROR_MSG_SENDER);
@@ -76,35 +84,23 @@ std::string Transaction::getSerialized() const
     json.set(TX_VALUE, m_value);
     json.set(TX_RECEIVER, (*m_receiver).getBech32Address());
     json.set(TX_SENDER, (*m_sender).getBech32Address());
-    if (m_receiverUserName != nullptr)
-    {
-        json.set(TX_RECEIVER_NAME, *m_receiverUserName);
-    }
-    if (m_senderUserName != nullptr)
-    {
-        json.set(TX_SENDER_NAME, *m_senderUserName);
-    }
+    internal::setValueIfNotNull(json, TX_RECEIVER_NAME, m_receiverUserName);
+    internal::setValueIfNotNull(json, TX_SENDER_NAME, m_senderUserName);
     json.set(TX_GAS_PRICE, m_gasPrice);
     json.set(TX_GAS_LIMIT, m_gasLimit);
     if (m_data != nullptr)
     {
         json.set(TX_DATA, util::base64::encode(*m_data));
     }
-    if (m_signature != nullptr)
-    {
-        json.set(TX_SIGNATURE, *m_signature);
-    }
+    internal::setValueIfNotNull(json, TX_SIGNATURE, m_signature);
     json.set(TX_CHAIN_ID, m_chainID);
     json.set(TX_VERSION, m_version);
-    if (m_options != nullptr)
-    {
-        json.set(TX_OPTIONS, *m_receiverUserName);
-    }
+    internal::setValueIfNotNull(json, TX_OPTIONS, m_options);
 
-    return json.getSerialized();
+    return json.serialize();
 }
 
-void Transaction::deserialize(std::string const& serializedTransaction)
+void Transaction::deserialize(std::string const &serializedTransaction)
 {
     wrapper::json::OrderedJson json;
 
@@ -112,9 +108,9 @@ void Transaction::deserialize(std::string const& serializedTransaction)
     {
         json.deserialize(serializedTransaction);
     }
-    catch (...)
+    catch (std::invalid_argument const &err)
     {
-        throw;
+        throw err;
     }
 
     if (!json.contains(TX_NONCE)) throw std::invalid_argument(ERROR_MSG_NONCE);
@@ -137,22 +133,22 @@ void Transaction::deserialize(std::string const& serializedTransaction)
 
     if (json.contains(TX_DATA))
     {
-        m_data = std::make_unique<std::string>(json.at<std::string>(TX_DATA));
+        m_data = std::make_shared<std::string>(json.at<std::string>(TX_DATA));
     }
     if (json.contains(TX_SIGNATURE))
     {
-        m_signature = std::make_unique<std::string>(json.at<std::string>(TX_SIGNATURE));
+        m_signature = std::make_shared<std::string>(json.at<std::string>(TX_SIGNATURE));
     }
     if (json.contains(TX_RECEIVER_NAME))
     {
-        m_receiverUserName = std::make_unique<std::string>(json.at<std::string>(TX_RECEIVER_NAME));
+        m_receiverUserName = std::make_shared<std::string>(json.at<std::string>(TX_RECEIVER_NAME));
     }
     if (json.contains(TX_SENDER_NAME))
     {
-        m_senderUserName = std::make_unique<std::string>(json.at<std::string>(TX_SENDER_NAME));
+        m_senderUserName = std::make_shared<std::string>(json.at<std::string>(TX_SENDER_NAME));
     }
     if (json.contains(TX_OPTIONS))
     {
-        m_options = std::make_unique<uint32_t>(json.at<uint32_t>(TX_OPTIONS));
+        m_options = std::make_shared<uint32_t>(json.at<uint32_t>(TX_OPTIONS));
     }
 }

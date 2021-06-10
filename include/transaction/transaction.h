@@ -46,7 +46,7 @@ public:
 
     void applySignature(Signer const &signer);
 
-    std::string getSerialized() const;
+    std::string serialize() const;
 
     void deserialize(std::string const& serializedTransaction);
 

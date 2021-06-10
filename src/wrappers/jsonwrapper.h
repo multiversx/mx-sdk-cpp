@@ -34,7 +34,7 @@ public:
         return m_json.at(key);
     }
 
-    std::string getSerialized() const
+    std::string serialize() const
     {
         return m_json.dump();
     }

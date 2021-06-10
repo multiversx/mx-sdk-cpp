@@ -346,7 +346,9 @@ TEST(JsonFileHandler, writeOutputFile)
 
     Signer signer(pemHandler.getPrivateKey());
     transaction.applySignature(signer);
-    jsonFile.writeDataToFile(transaction.getSerialized());
+    jsonFile.writeDataToFile(transaction.serialize());
+    transaction.deserialize("{\"nonce\":5,\"value\":\"10000000000000000000\",\"receiver\":\"erd10536tc3s886yqxtln74u6mztuwl5gy9k9gp8fttxda0klgxg979srtg5wt\",\"sender\":\"erd1sjsk3n2d0krq3pyxxtgf0q7j3t56sgusqaujj4n82l39t9h7jers6gslr4\",\"gasPrice\":1000000000,\"gasLimit\":50000,\"data\":\"test\",\"signature\":\"62af8fa927e4f1ebd64fb8d7cca8aac9d5d33fefa4b185d44bb16ecefc2a7214304b4654406fe76fa36207fbb91f245586f66500cc554a3eb798faab8c435706\",\"chainID\":\"T\",\"version\":1}");
+    jsonFile.writeDataToFile(transaction.serialize());
 }
 
 class PemFileReaderConstructorFixture : public ::testing::Test
@@ -449,9 +451,29 @@ TEST(Address, getPubKey)
 
 
 
+TEST(dddddd,ddddddd)
+{
+    nlohmann::ordered_json j;
+    std::string mesaj = "dAsdasdsa";
+    bytes ceva(mesaj.begin(),mesaj.end());
+
+    std::string mesaj2(ceva.begin(),ceva.end());
+
+    j["ddddd"] = ceva;
+    j["ceva"] = mesaj2;
+    std::cerr<< "AICI:::::::::::::::::" << j.dump();
+}
 
 TEST(dada,ddd)
 {
+
+    nlohmann::ordered_json j;
+    bytes ceva;
+    ceva.push_back(uint8_t('A'));
+
+    j["ddddd"] = ceva;
+    std::cerr<< "AICI:::::::::::::::::" << j.dump();
+
 
     nlohmann::ordered_json test;
     std::string dddd= test.dump();
@@ -460,16 +482,16 @@ TEST(dada,ddd)
     wrapper::json::OrderedJson json;
     json.set<int>("da",1);
     int d = json.at<int>("da");
-    std::string x = json.getSerialized();
+    std::string x = json.serialize();
 
     json.set<int>("da",2);
     d = json.at<int>("da");
-    x = json.getSerialized();
+    x = json.serialize();
 
     json.deserialize("{ \"happy\": true, \"pi\": 3.141 }");
     double dd = json.at<double>("pi");
 
-    nlohmann::ordered_json j;
+
     j["da"] = 1;
     j["da"] = 2;
     if(j.contains("da"))

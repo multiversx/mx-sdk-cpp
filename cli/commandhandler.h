@@ -89,7 +89,7 @@ void handleCreateSignedTransactionWithPemFile(const std::map<uint32_t, std::stri
 
     Signer signer(pemReader.getPrivateKey());
     transaction.applySignature(signer);
-    jsonFile.writeDataToFile(transaction.getSerialized());
+    jsonFile.writeDataToFile(transaction.serialize());
 }
 
 void handleRequest(ih::RequestedCmd const &requestedCmd)
