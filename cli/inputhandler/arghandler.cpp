@@ -1,6 +1,6 @@
 #include "arghandler.h"
 
-#include <stdint.h>
+#include <cstdint>
 #include <limits>
 
 
@@ -9,9 +9,9 @@ namespace internal
 // Generic template function to check for user input value.
 // Expects input to be an unsigned long int.
 template<typename T>
-bool isUserInputValid(std::string const arg)
+bool isUserInputValid(std::string const &arg)
 {
-    if ((arg.size() == 0) || (arg.size() > std::numeric_limits<uint64_t>::digits)) return false;
+    if ((arg.empty()) || (arg.size() > std::numeric_limits<uint64_t>::digits)) return false;
 
     std::string::const_iterator it = arg.begin();
     while (it != arg.end() && isdigit(*it)) ++it;
@@ -21,17 +21,17 @@ bool isUserInputValid(std::string const arg)
 // Specialization template function to check for user input value.
 // Expects input to be a non-empty string.
 template<>
-bool isUserInputValid<std::string>(std::string const arg)
+bool isUserInputValid<std::string>(std::string const &arg)
 {
-    return (arg.size() != 0);
+    return (!arg.empty());
 }
 }
 
 namespace ih
 {
 
-RequestedCmd::RequestedCmd(std::map<uint32_t, std::string> const userInputs,
-                           RequestType const reqType, errorCode const errCode) :
+RequestedCmd::RequestedCmd(std::map<uint32_t, std::string> const &userInputs,
+                           RequestType const &reqType, errorCode const &errCode) :
         m_userInputs(userInputs),
         m_requestType(reqType),
         m_errCode(errCode)
@@ -59,26 +59,25 @@ ArgHandler::ArgHandler(int const &argc, char *const argv[]) : m_errCode(ERROR_NO
     {
         for (int ct = 1; ct < argc; ++ct)
         {
-            m_arguments.push_back(std::string(argv[ct]));
+            m_arguments.emplace_back(argv[ct]);
         }
     }
 }
 
-bool ArgHandler::isSubCmd(uint32_t const subCmdIdx, std::string const subCmd) const
+bool ArgHandler::isSubCmd(uint32_t const subCmdIdx, std::string const &subCmd) const
 {
     if (argCount() <= subCmdIdx) return false;
     return (m_arguments[subCmdIdx] == subCmd);
 }
 
-bool ArgHandler::isCmdGroup(std::string const arg) const
+bool ArgHandler::isCmdGroup(std::string const &arg) const
 {
     if (argCount() == 0) return false;
     return (m_arguments[0] == arg);
 }
 
-
 template<typename T>
-bool ArgHandler::checkAndSetUserInput(uint32_t const argIdx, std::string const arg,
+bool ArgHandler::checkAndSetUserInput(uint32_t const &argIdx, std::string const &arg,
                                       std::map<uint32_t, std::string> &userInputs, uint32_t userInputIdx,
                                       errorCode errCode)
 {
@@ -95,7 +94,7 @@ bool ArgHandler::checkAndSetUserInput(uint32_t const argIdx, std::string const a
 
     std::string const userArg = m_arguments[argIdx];
     std::string const userCmd = userArg.substr(0, arg.size());
-    bool const isCmdValid = (userCmd == arg) ? (true) : (false);
+    bool const isCmdValid = (userCmd == arg);
 
     if (isCmdValid)
     {
@@ -150,7 +149,7 @@ RequestedCmd ArgHandler::getRequestedCmd()
     return RequestedCmd(userInputs, reqType, m_errCode);
 }
 
-int ArgHandler::argCount() const
+unsigned long ArgHandler::argCount() const
 {
     return m_arguments.size();
 }

@@ -6,6 +6,28 @@
 #include "inputhandler/ext.h"
 #include "erdsdk.h"
 
+namespace internal
+{
+
+Transaction createTransaction(ih::wrapper::TransactionInputWrapper const &txWrapper, Address const& senderAddress)
+{
+    //TODO: Maybe in the future add a transaction builder here
+    return Transaction
+            (txWrapper.getNonce(), txWrapper.getValue(),
+             txWrapper.getReceiver(), senderAddress,
+             txWrapper.getGasPrice(), txWrapper.getGasLimit(),
+             txWrapper.getData(), txWrapper.getChainId(),
+             txWrapper.getVersion());
+}
+
+void signTransaction(Transaction &transaction, bytes const& seed)
+{
+    Signer signer(seed);
+    transaction.applySignature(signer);
+}
+
+}
+
 namespace cli
 {
 typedef std::map<std::string, std::vector<std::string>> commandGroupMap;
@@ -17,15 +39,15 @@ static commandGroupMap const cmdGroupMap =
                 {"help",        {}}
         };
 
-void showSubGroupAvailableCmds(std::string cmdGroup)
+void showSubGroupAvailableCmds(std::string const &cmdGroup)
 {
     std::vector<std::string> cmd = cmdGroupMap.at(cmdGroup);
 
-    if (cmd.size() == 0) std::cerr << "-";
+    if (cmd.empty()) std::cerr << "-";
 
     else
     {
-        for (std::string subCmd : cmd)
+        for (std::string const &subCmd : cmd)
         {
             std::cerr << subCmd << " ";
         }
@@ -36,10 +58,10 @@ void showInfo()
 {
     std::cerr << "----\nInfo\n----\n\nCommand groups: Avaiable arguments\n";
 
-    for (auto it = cmdGroupMap.begin(); it != cmdGroupMap.end(); ++it)
+    for (const auto & it : cmdGroupMap)
     {
-        std::cerr << it->first << ": ";
-        showSubGroupAvailableCmds(it->first);
+        std::cerr << it.first << ": ";
+        showSubGroupAvailableCmds(it.first);
         std::cerr << "\n";
     }
 }
@@ -66,47 +88,24 @@ void handleLoadPemFile(const std::map<uint32_t, std::string> &userInputs)
 {
     ih::wrapper::PemHandlerInputWrapper const pemInputWrapper(userInputs);
     ih::PemFileReader pemReader(pemInputWrapper.getPemFilePath());
-
-    if (pemReader.isFileValid())
-    {
-        std::cerr << "Bech32 address: " << pemReader.getAddress().getBech32Address() << "\n";
-    }
-    else
-    {
-        reportError(ERROR_PEM_INPUT_FILE);
-    }
+    std::cerr << "File loaded successfully! Bech32 address: " << pemReader.getAddress().getBech32Address() << "\n";
 }
 
 void handleCreateSignedTransactionWithPemFile(const std::map<uint32_t, std::string> &userInputs)
 {
-    ih::wrapper::PemHandlerInputWrapper const pemInputWrapper(userInputs);
     ih::wrapper::TransactionInputWrapper const transactionInputWrapper(userInputs);
+    ih::wrapper::PemHandlerInputWrapper const pemInputWrapper(userInputs);
 
-    ih::JsonFileHandler jsonHandler(transactionInputWrapper.getOutputFile());
-    ih::PemFileReader pemFileHandler(pemInputWrapper.getPemFilePath());
+    ih::JsonFile jsonFile(transactionInputWrapper.getOutputFile());
+    ih::PemFileReader pemReader(pemInputWrapper.getPemFilePath());
 
-    if (!pemFileHandler.isFileValid())
-    {
-        reportError(ERROR_PEM_INPUT_FILE);
-    }
-    else if (!jsonHandler.isFileValid())
-    {
-        reportError(ERROR_JSON_OUT_FILE);
-    }
-    else
-    {
-        Transaction transaction
-                (transactionInputWrapper.getNonce(), transactionInputWrapper.getValue(), transactionInputWrapper.getReceiver(),
-                 pemFileHandler.getAddress(), transactionInputWrapper.getGasPrice(), transactionInputWrapper.getGasLimit(),
-                 transactionInputWrapper.getData(), transactionInputWrapper.getChainId(), transactionInputWrapper.getVersion());
+    Transaction transaction = internal::createTransaction(transactionInputWrapper, pemReader.getAddress());
+    internal::signTransaction(transaction,pemReader.getSeed());
 
-        Signer signer(pemFileHandler.getPrivateKey());
-        transaction.applySignature(signer);
-        jsonHandler.writeDataToFile(transaction.getSerializedTransaction());
-    }
+    jsonFile.writeDataToFile(transaction.getSerializedTransaction());
 }
 
-void handleRequest(ih::RequestedCmd const requestedCmd)
+void handleRequest(ih::RequestedCmd const &requestedCmd)
 {
     switch (requestedCmd.getRequestType())
     {

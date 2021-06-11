@@ -1,40 +1,50 @@
 #include "filehandler/pemreader.h"
+#include "errors.h"
 #include "base64.h"
 #include "hex.h"
 
 #include <fstream>
 #include <iostream>
 #include <sodium.h>
+#include <stdexcept>
 
 namespace ih
 {
-PemFileReader::PemFileReader(std::string const filePath) :
+PemFileReader::PemFileReader(std::string const &filePath) :
         IFile(filePath)
 {
-    m_fileContent = getFileContent();
+    try
+    {
+        PemFileReader::checkFile();
+
+        std::string const fileContent = getFileContent();
+        if (fileContent.empty())
+            throw std::invalid_argument(ERROR_MSG_FILE_EMPTY);
+
+        m_fileKeyBytes = getKeyBytesFromContent(fileContent);
+        if(m_fileKeyBytes.size() != (crypto_sign_PUBLICKEYBYTES + crypto_sign_SEEDBYTES))
+            throw std::length_error(ERROR_MSG_KEY_BYTES_SIZE);
+    }
+    catch (std::exception const &error)
+    {
+        throw;
+    }
 }
 
-bool PemFileReader::isFileValid() const
+void PemFileReader::checkFile() const
 {
-    return IFile::fileExists() &&
-           IFile::isFileExtension("pem") &&
-           (m_fileContent != "");
+    if (!IFile::fileExists()) throw std::invalid_argument(ERROR_MSG_FILE_DOES_NOT_EXIST);
+    if (!IFile::isFileExtension("pem")) throw std::invalid_argument(ERROR_MSG_FILE_EXTENSION_INVALID);
 }
 
 Address PemFileReader::getAddress() const
 {
-    bytes keyBytes = getKeyBytesFromFile();
-    keyBytes.erase(keyBytes.begin(), keyBytes.begin() + crypto_sign_PUBLICKEYBYTES);
-
-    return Address(keyBytes);
+    return Address(bytes(m_fileKeyBytes.begin() + crypto_sign_PUBLICKEYBYTES,m_fileKeyBytes.end()));
 }
 
 bytes PemFileReader::getSeed() const
 {
-    bytes keyBytes = getKeyBytesFromFile();
-    keyBytes.erase(keyBytes.begin() + crypto_sign_PUBLICKEYBYTES, keyBytes.end());
-
-    return keyBytes;
+    return bytes(m_fileKeyBytes.begin(),m_fileKeyBytes.begin() + crypto_sign_PUBLICKEYBYTES);
 }
 
 bytes PemFileReader::getPrivateKey() const
@@ -54,17 +64,16 @@ bytes PemFileReader::getPrivateKey() const
     return bytes(sk, sk + crypto_sign_SECRETKEYBYTES);
 }
 
-bytes PemFileReader::getKeyBytesFromFile() const
+bytes PemFileReader::getKeyBytesFromContent(std::string const &content) const
 {
-    std::string keyHex = util::base64::decode(m_fileContent);
-
+    std::string const keyHex = util::base64::decode(content);
     return util::hexToBytes(keyHex);
 }
 
 std::string PemFileReader::getFileContent() const
 {
     std::string line;
-    std::string keyLines = "";
+    std::string keyLines;
     std::ifstream inFile(IFile::getFilePath());
 
     if (inFile.is_open())

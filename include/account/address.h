@@ -7,11 +7,14 @@
 class Address
 {
     std::string const hrp = "erd";
+    int const kNoBitsInByte = 8;
+    int const kNoBitsInBech32 = 5;
+
 public:
 
-    Address(bytes const &publicKey);
+    explicit Address(bytes const &publicKey);
 
-    Address(std::string const &bech32Address);
+    explicit Address(std::string const &bech32Address);
 
     bytes getPublicKey() const;
 
@@ -20,6 +23,8 @@ public:
 private:
 
     std::string computeBech32Address() const;
+
+    bytes computePkFromBech32() const;
 
     bytes m_pk;
     std::string m_bech32Address;

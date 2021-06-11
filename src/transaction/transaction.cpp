@@ -3,16 +3,17 @@
 #include "hex.h"
 #include "base64.h"
 
+//TODO: Allow creating transactions without nonce/gasPrice
 Transaction::Transaction(
-        uint64_t nonce,
-        std::string value,
-        Address receiver,
-        Address sender,
-        uint64_t gasPrice,
-        uint64_t gasLimit,
-        std::string data,
-        std::string chainID,
-        uint64_t version)
+        uint64_t const &nonce,
+        std::string const &value,
+        Address const &receiver,
+        Address const &sender,
+        uint64_t const &gasPrice,
+        uint64_t const &gasLimit,
+        std::string const &data,
+        std::string const &chainID,
+        uint64_t const &version)
 {
     m_jsonTransaction[STR_JSON_NONCE] = nonce;
     m_jsonTransaction[STR_JSON_VALUE] = value;
@@ -28,7 +29,7 @@ Transaction::Transaction(
     m_jsonTransaction[STR_JSON_VERSION] = version;
 }
 
-void Transaction::applySignature(Signer signer)
+void Transaction::applySignature(Signer const &signer)
 {
     std::string const jsonSerialized = getSerializedTransaction();
     std::string const signature = signer.getSignature(jsonSerialized);

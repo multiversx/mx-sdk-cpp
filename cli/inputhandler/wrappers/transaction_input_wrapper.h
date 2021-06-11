@@ -3,8 +3,10 @@
 
 #include <string>
 #include <map>
+
 #include "iwrapper.h"
 #include "utils/params.h"
+#include "account/address.h"
 
 namespace ih
 {
@@ -13,11 +15,10 @@ namespace wrapper
 class TransactionInputWrapper : public IWrapper
 {
 public:
-    TransactionInputWrapper(std::map<uint32_t, std::string> const &inputData) :
+    explicit TransactionInputWrapper(std::map<uint32_t, std::string> const &inputData) :
             IWrapper(inputData)
     {
-        m_containsData = (getInputData().find(ARGS_TX_IDX_DATA) != getInputData().end()) ?
-                         (true) : (false);
+        m_containsData = (getInputData().find(ARGS_TX_IDX_DATA) != getInputData().end());
     }
 
     bool isDataEmpty() const
@@ -35,9 +36,9 @@ public:
         return getInputData().at(ARGS_TX_IDX_VALUE);
     }
 
-    std::string getReceiver() const
+    Address getReceiver() const
     {
-        return getInputData().at(ARGS_TX_IDX_RECEIVER);
+        return Address(getInputData().at(ARGS_TX_IDX_RECEIVER));
     }
 
     uint64_t getGasPrice() const
@@ -57,7 +58,7 @@ public:
 
     std::string getChainId() const
     {
-        return JSON_TX_DEFAULT_CHAIN_ID;;
+        return JSON_TX_DEFAULT_CHAIN_ID;
     }
 
     uint64_t getVersion() const

@@ -7,11 +7,11 @@
 class Account
 {
 public:
-    Account(Address const &address);
+    explicit Account(Address address);
 
-    const Account getAddress() const;
+    const Address& getAddress() const;
 
-    const std::string getBalance() const;
+    const std::string& getBalance() const;
 
 private:
     std::string m_balance;

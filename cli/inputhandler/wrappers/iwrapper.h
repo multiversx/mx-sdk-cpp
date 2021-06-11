@@ -1,5 +1,5 @@
-#ifndef IWRAPPER_H
-#define IWRAPPER_H
+#ifndef I_WRAPPER_H
+#define I_WRAPPER_H
 
 #include <string>
 #include <map>
@@ -11,7 +11,7 @@ namespace wrapper
 class IWrapper
 {
 public:
-    IWrapper(std::map<uint32_t, std::string> const &inputData) :
+    explicit IWrapper(std::map<uint32_t, std::string> const &inputData) :
             m_inputData(inputData)
     {}
 

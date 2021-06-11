@@ -334,55 +334,68 @@ TEST(JsonFileHandler, writeOutputFile)
     ih::wrapper::TransactionInputWrapper const transactionWrapper(input);
 
     ih::PemFileReader pemHandler(pemWrapper.getPemFilePath());
-    ih::JsonFileHandler jsonHandler(transactionWrapper.getOutputFile());
-
+    ih::JsonFile jsonFile(transactionWrapper.getOutputFile());
 
     Transaction transaction(transactionWrapper.getNonce(), transactionWrapper.getValue(),
-                            transactionWrapper.getReceiver(), pemHandler.getAddress(),
+                            Address(transactionWrapper.getReceiver()), pemHandler.getAddress(),
                             transactionWrapper.getGasPrice(), transactionWrapper.getGasLimit(),
                             transactionWrapper.getData(), transactionWrapper.getChainId(),
                             transactionWrapper.getVersion());
     Signer signer(pemHandler.getPrivateKey());
     transaction.applySignature(signer);
-    jsonHandler.writeDataToFile(transaction.getSerializedTransaction());
+    jsonFile.writeDataToFile(transaction.getSerializedTransaction());
 }
 
-TEST(PemFileReader, isPemFileValid_validFile)
+class PemFileReaderConstructorFixture : public ::testing::Test
 {
-    std::map<uint32_t, std::string> inputData;
-    inputData[ARGS_TX_IDX_PEM_INPUT_FILE] = "..//testData//keys.pem";
-    ih::wrapper::PemHandlerInputWrapper const pemWrapper(inputData);
-    ih::PemFileReader pemHandler(pemWrapper.getPemFilePath());
+public:
+    template <typename T>
+    void expectException(std::string const &filePath, errorMessage const &errMsg)
+    {
+        EXPECT_THROW({
+                         try
+                         {
+                             ih::PemFileReader pemHandler(filePath);
+                         }
+                         catch(const T &e)
+                         {
+                             EXPECT_EQ( errMsg, e.what() );
+                             throw;
+                         }
+                     }, T );
+    }
 
-    EXPECT_TRUE(pemHandler.isFileValid());
-}
+};
 
-TEST(PemFileReader, isPemFileValid_invalidFileExtension)
+TEST_F(PemFileReaderConstructorFixture, validFile)
 {
-    std::map<uint32_t, std::string> inputData;
-    inputData[ARGS_TX_IDX_PEM_INPUT_FILE] = "..//testData//keys.pme";
-    ih::wrapper::PemHandlerInputWrapper const pemWrapper(inputData);
-    ih::PemFileReader pemHandler(pemWrapper.getPemFilePath());
-
-    EXPECT_FALSE(pemHandler.isFileValid());
+    EXPECT_NO_THROW(ih::PemFileReader pemHandler("..//testData//keys.pem"));
 }
 
-TEST(PemFileReader, isPemFileValid_emptyFile)
+TEST_F(PemFileReaderConstructorFixture, invalidFile_NotEnoughBytes)
 {
-    std::map<uint32_t, std::string> inputData;
-    inputData[ARGS_TX_IDX_PEM_INPUT_FILE] = "..//testData//keysEmptyFile.pem";
-    ih::wrapper::PemHandlerInputWrapper const pemWrapper(inputData);
-    ih::PemFileReader pemHandler(pemWrapper.getPemFilePath());
-
-    EXPECT_FALSE(pemHandler.isFileValid());
+    expectException<std::length_error>("..//testData//keysNotEnoughBytes.pem",ERROR_MSG_KEY_BYTES_SIZE);
 }
+
+TEST_F(PemFileReaderConstructorFixture, invalidFile_invalidFileExtension)
+{
+    expectException<std::invalid_argument>("..//testData//keys.pme",ERROR_MSG_FILE_EXTENSION_INVALID);
+}
+
+TEST_F(PemFileReaderConstructorFixture, invalidFile_emptyFile)
+{
+    expectException<std::invalid_argument>("..//testData//keysEmptyFile.pem",ERROR_MSG_FILE_EMPTY);
+}
+
+TEST_F(PemFileReaderConstructorFixture, invalidFile_notExisting)
+{
+    expectException<std::invalid_argument>("..//testData//thisFileDoesNotExist.pem",ERROR_MSG_FILE_DOES_NOT_EXIST);
+}
+
 
 TEST(PemFileReader, getPublicPrivateKeys_expectSameResultFrom_libsodium)
 {
-    std::map<uint32_t, std::string> inputData;
-    inputData[ARGS_TX_IDX_PEM_INPUT_FILE] = "..//testData//keys.pem";
-    ih::wrapper::PemHandlerInputWrapper const pemWrapper(inputData);
-    ih::PemFileReader pemHandler(pemWrapper.getPemFilePath());
+    ih::PemFileReader pemHandler("..//testData//keys.pem");
 
     unsigned char pemPk[crypto_sign_PUBLICKEYBYTES];
     unsigned char pemSk[crypto_sign_SECRETKEYBYTES];
@@ -416,13 +429,22 @@ TEST(PemFileReader, getPublicPrivateKeys_expectSameResultFrom_libsodium)
 
 TEST(PemFileReader, getSegwitAddress)
 {
-    std::map<uint32_t, std::string> inputData;
-    inputData[ARGS_TX_IDX_PEM_INPUT_FILE] = "..//testData//keys.pem";
-    ih::wrapper::PemHandlerInputWrapper const pemWrapper(inputData);
-    ih::PemFileReader pemHandler(pemWrapper.getPemFilePath());
+    ih::PemFileReader pemHandler("..//testData//keys.pem");
 
     std::string pemAddress = pemHandler.getAddress().getBech32Address();
     std::string expectedAdr = "erd1sjsk3n2d0krq3pyxxtgf0q7j3t56sgusqaujj4n82l39t9h7jers6gslr4";
 
     EXPECT_EQ(pemAddress, expectedAdr);
 }
+
+//TODO: This test will be moved in another unit test file, when the unit test ticket is started.
+TEST(Address, getPubKey)
+{
+    ih::PemFileReader pemHandler("..//testData//keys.pem");
+
+    bytes pubKeyFromPem = pemHandler.getAddress().getPublicKey();
+    Address adr("erd1sjsk3n2d0krq3pyxxtgf0q7j3t56sgusqaujj4n82l39t9h7jers6gslr4");
+
+    EXPECT_EQ(adr.getPublicKey(),pubKeyFromPem);
+}
+

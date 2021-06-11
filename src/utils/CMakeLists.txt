@@ -3,6 +3,7 @@ file(GLOB utils
         bits.h bits.cpp
         hex.h hex.cpp
         params.h
+        errors.h
         strchr.h
         )
 

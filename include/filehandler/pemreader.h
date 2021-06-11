@@ -1,5 +1,5 @@
-#ifndef PEMHANDLER_H
-#define PEMHANDLER_H
+#ifndef PEM_HANDLER_H
+#define PEM_HANDLER_H
 
 #include <string>
 #include <vector>
@@ -13,9 +13,7 @@ namespace ih
 class PemFileReader : public IFile
 {
 public:
-    explicit PemFileReader(std::string const filePath);
-
-    bool isFileValid() const override;
+    explicit PemFileReader(std::string const &filePath);
 
     Address getAddress() const;
 
@@ -23,12 +21,15 @@ public:
 
     bytes getPrivateKey() const;
 
+protected:
+    void checkFile() const override;
+
 private:
     std::string getFileContent() const;
 
-    bytes getKeyBytesFromFile() const;
+    bytes getKeyBytesFromContent(std::string const &content) const;
 
-    std::string m_fileContent;
+    bytes m_fileKeyBytes;
 };
 }
 

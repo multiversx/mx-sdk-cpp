@@ -2,7 +2,6 @@
 #define ERD_HEX_H
 
 #include <string>
-#include "params.h"
 #include "internal/internal.h"
 
 namespace util

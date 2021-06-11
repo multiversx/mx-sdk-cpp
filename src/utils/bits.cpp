@@ -1,25 +1,25 @@
 #include "bits.h"
+#include "errors.h"
 
 namespace util
 {
 std::vector<uint8_t> convertBits(unsigned char *data, unsigned int const dataLength,
-                                 int const fromBits, int const toBits, bool const pad)
+                                 unsigned int const fromBits, unsigned int const toBits, bool const pad)
 {
-    int acc = 0;
-    int bits = 0;
+    unsigned int acc = 0;
+    unsigned int bits = 0;
     std::vector<uint8_t> ret;
-    int maxv = (1 << toBits) - 1;
-    int maxAcc = (1 << (fromBits + toBits - 1)) - 1;
+    unsigned int maxVal = (1 << toBits) - 1;
+    unsigned int maxAcc = (1 << (fromBits + toBits - 1)) - 1;
 
-    for (unsigned int ct = 0; ct < dataLength; ++ct)
+    unsigned int ct = 0;
+    for (unsigned char value = *data; ct<dataLength; value = *++data)
     {
-        char value = *data;
-
         int valueAsInt = value & 0xff;
 
         if ((valueAsInt < 0) || (valueAsInt >> fromBits != 0))
         {
-            //TODO: throw new Exceptions.CannotConvertBitsException();
+            throw std::invalid_argument(ERROR_MSG_CONVERT_BITS);
         }
 
         acc = ((acc << fromBits) | valueAsInt) & maxAcc;
@@ -28,22 +28,21 @@ std::vector<uint8_t> convertBits(unsigned char *data, unsigned int const dataLen
         while (bits >= toBits)
         {
             bits -= toBits;
-            ret.push_back((acc >> bits) & maxv);
+            ret.push_back((acc >> bits) & maxVal);
         }
-
-        value = *++data;
+        ct++;
     }
 
     if (pad)
     {
         if (bits > 0)
         {
-            ret.push_back((acc << (toBits - bits)) & maxv);
+            ret.push_back((acc << (toBits - bits)) & maxVal);
         }
     }
-    else if (bits >= fromBits || ((acc << (toBits - bits)) & maxv) != 0)
+    else if (bits >= fromBits || ((acc << (toBits - bits)) & maxVal) != 0)
     {
-        //TODO: throw new Exceptions.CannotConvertBitsException();
+        throw std::invalid_argument(ERROR_MSG_CONVERT_BITS);
     }
 
     return ret;
