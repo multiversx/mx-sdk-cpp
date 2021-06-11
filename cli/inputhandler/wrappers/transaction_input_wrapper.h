@@ -27,7 +27,7 @@ inline std::shared_ptr<T> getUserInputIfExists(std::map<uint32_t, std::string> c
 
 template<>
 inline std::shared_ptr<bytes> getUserInputIfExists(std::map<uint32_t, std::string> const &userInputs,
-                                            unsigned int const &idx, bool const &exists)
+                                                   unsigned int const &idx, bool const &exists)
 {
     if (exists)
     {
