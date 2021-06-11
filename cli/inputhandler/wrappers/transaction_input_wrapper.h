@@ -10,6 +10,35 @@
 #include "internal/internal.h"
 #include "transaction/transaction.h"
 
+namespace internal
+{
+template<class T>
+inline std::shared_ptr<T> getUserInputIfExists(std::map<uint32_t, std::string> const &userInputs,
+                                               unsigned int const &idx, bool const &exists)
+{
+    if (exists)
+    {
+        std::string const& userInput = userInputs.at(idx);
+        auto const input = std::stoul(userInput);
+        return std::make_shared<T>(input);
+    }
+    else return nullptr;
+}
+
+template<>
+inline std::shared_ptr<bytes> getUserInputIfExists(std::map<uint32_t, std::string> const &userInputs,
+                                            unsigned int const &idx, bool const &exists)
+{
+    if (exists)
+    {
+        std::string const& userInput = userInputs.at(idx);
+        bytes const input(userInput.begin(),userInput.end());
+        return std::make_shared<bytes>(input);
+    }
+    else return nullptr;
+}
+}
+
 namespace ih
 {
 namespace wrapper
@@ -43,12 +72,12 @@ public:
 
     std::shared_ptr<bytes> getReceiverName() const
     {
-        return getUserInputIfExists<bytes>(ARGS_TX_IDX_RECEIVER_NAME, m_containsReceiverName);
+        return internal::getUserInputIfExists<bytes>(getInputData(), ARGS_TX_IDX_RECEIVER_NAME, m_containsReceiverName);
     }
 
     std::shared_ptr<bytes> getSenderName() const
     {
-        return getUserInputIfExists<bytes>(ARGS_TX_IDX_SENDER_NAME, m_containsSenderName);
+        return internal::getUserInputIfExists<bytes>(getInputData(), ARGS_TX_IDX_SENDER_NAME, m_containsSenderName);
     }
 
     uint64_t getGasPrice() const
@@ -63,7 +92,7 @@ public:
 
     std::shared_ptr<bytes> getData() const
     {
-        return getUserInputIfExists<bytes>(ARGS_TX_IDX_DATA, m_containsData);
+        return internal::getUserInputIfExists<bytes>(getInputData(), ARGS_TX_IDX_DATA, m_containsData);
     }
 
     std::shared_ptr<std::string> getSignature() const
@@ -93,22 +122,10 @@ public:
 
     std::shared_ptr<uint32_t> getOptions() const
     {
-        return DEFAULT_OPTIONS;
+        return internal::getUserInputIfExists<uint32_t>(getInputData(), ARGS_TX_IDX_OPTIONS, m_containsOptions);
     }
 
 private:
-
-    template<class T>
-    std::shared_ptr<T> getUserInputIfExists(unsigned int const &idx, bool const &exists) const
-    {
-        if (exists)
-        {
-            std::string const userInput = getInputData().at(idx);
-            bytes const input(userInput.begin(),userInput.end());
-            return std::make_shared<T>(input);
-        }
-        else return nullptr;
-    }
 
     bool m_containsData;
     bool m_containsReceiverName;
