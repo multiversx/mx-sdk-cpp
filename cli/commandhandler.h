@@ -6,6 +6,28 @@
 #include "inputhandler/ext.h"
 #include "erdsdk.h"
 
+namespace internal
+{
+
+Transaction createTransaction(ih::wrapper::TransactionInputWrapper const &txWrapper, Address const& senderAddress)
+{
+    //TODO: Maybe in the future add a transaction builder here
+    return Transaction
+            (txWrapper.getNonce(), txWrapper.getValue(),
+             txWrapper.getReceiver(), senderAddress,
+             txWrapper.getGasPrice(), txWrapper.getGasLimit(),
+             txWrapper.getData(), txWrapper.getChainId(),
+             txWrapper.getVersion());
+}
+
+void signTransaction(Transaction &transaction, bytes const& seed)
+{
+    Signer signer(seed);
+    transaction.applySignature(signer);
+}
+
+}
+
 namespace cli
 {
 typedef std::map<std::string, std::vector<std::string>> commandGroupMap;
@@ -77,16 +99,9 @@ void handleCreateSignedTransactionWithPemFile(const std::map<uint32_t, std::stri
     ih::JsonFile jsonFile(transactionInputWrapper.getOutputFile());
     ih::PemFileReader pemReader(pemInputWrapper.getPemFilePath());
 
-    //TODO: Maybe in the future add a transaction builder here
-    Transaction transaction
-        (transactionInputWrapper.getNonce(), transactionInputWrapper.getValue(),
-         transactionInputWrapper.getReceiver(), pemReader.getAddress(),
-         transactionInputWrapper.getGasPrice(), transactionInputWrapper.getGasLimit(),
-         transactionInputWrapper.getData(), transactionInputWrapper.getChainId(),
-         transactionInputWrapper.getVersion());
+    Transaction transaction = internal::createTransaction(transactionInputWrapper, pemReader.getAddress());
+    internal::signTransaction(transaction,pemReader.getSeed());
 
-    Signer signer(pemReader.getPrivateKey());
-    transaction.applySignature(signer);
     jsonFile.writeDataToFile(transaction.getSerializedTransaction());
 }
 
