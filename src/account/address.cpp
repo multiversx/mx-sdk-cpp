@@ -10,7 +10,7 @@ Address::Address(bytes const &publicKey) :
         m_pk(publicKey),
         m_bech32Address()
 {
-    if (publicKey.size() != PUBLIC_KEY_BYTES_LENGTH)
+    if (publicKey.size() != PUBLIC_KEY_LENGTH)
         throw std::length_error(ERROR_MSG_KEY_BYTES_SIZE);
 }
 

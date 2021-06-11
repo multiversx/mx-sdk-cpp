@@ -6,7 +6,7 @@
 
 Signer:: Signer(bytes const &seed)
 {
-    if (seed.size() != SEED_BYTES_LENGTH)
+    if (seed.size() != SEED_LENGTH)
        throw std::length_error(ERROR_MSG_KEY_BYTES_SIZE);
 
     m_sk = wrapper::crypto::getSecretKey(seed);

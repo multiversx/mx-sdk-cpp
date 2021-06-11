@@ -2,6 +2,7 @@
 #include "inputhandler/ext.h"
 #include "filehandler/pemreader.h"
 #include "utils/ext.h"
+#include "wrappers/cryptosignwrapper.h"
 #include <sodium.h>
 
 TEST(ArgHandler, getRequestedCmd_getRequestType_noArgument_expectInvalid)
@@ -399,32 +400,19 @@ TEST_F(PemFileReaderConstructorFixture, invalidFile_notExisting)
 }
 
 
-TEST(PemFileReader, getPublicSecretKeys_expectSameResultFrom_libsodium)
+TEST(PemFileReader, getPublicSecretKeys_expectSameResultFrom_libsodiumWrapper)
 {
     ih::PemFileReader pemHandler("..//testData//keys.pem");
 
     bytes seedBytes = pemHandler.getSeed();
-    bytes skBytes = pemHandler.getSecretKey();
-    bytes pkBytes = pemHandler.getAddress().getPublicKey();
+    bytes skPem = pemHandler.getSecretKey();
+    bytes pkPem = pemHandler.getAddress().getPublicKey();
 
-    auto pemPk = reinterpret_cast<unsigned char*> (pkBytes.data());
-    auto pemSk = reinterpret_cast<unsigned char*> (skBytes.data());
-    auto pemSeed = reinterpret_cast<unsigned char*> (seedBytes.data());
+    bytes const skWrapper = wrapper::crypto::getSecretKey(seedBytes);
+    bytes const pkWrapper = wrapper::crypto::getPublicKey(seedBytes);
 
-    unsigned char sodiumPk[crypto_sign_PUBLICKEYBYTES];
-    unsigned char sodiumSk[crypto_sign_SECRETKEYBYTES];
-
-    crypto_sign_seed_keypair(sodiumPk, sodiumSk, pemSeed);
-
-    for (int currByte = 0; currByte < crypto_sign_PUBLICKEYBYTES; currByte++)
-    {
-        EXPECT_EQ(sodiumPk[currByte], pemPk[currByte]);
-    }
-
-    for (int currByte = 0; currByte < crypto_sign_SECRETKEYBYTES; currByte++)
-    {
-        EXPECT_EQ(sodiumSk[currByte], pemSk[currByte]);
-    }
+    EXPECT_EQ(pkWrapper, pkPem);
+    EXPECT_EQ(skWrapper, skPem);
 }
 
 TEST(PemFileReader, getSegwitAddress)
