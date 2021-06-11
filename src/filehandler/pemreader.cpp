@@ -22,7 +22,7 @@ PemFileReader::PemFileReader(std::string const &filePath) :
             throw std::invalid_argument(ERROR_MSG_FILE_EMPTY);
 
         m_fileKeyBytes = getKeyBytesFromContent(fileContent);
-        if(m_fileKeyBytes.size() != (SEED_BYTES_LENGTH + PUBLIC_KEY_BYTES_LENGTH))
+        if(m_fileKeyBytes.size() != (SEED_LENGTH + PUBLIC_KEY_LENGTH))
             throw std::length_error(ERROR_MSG_KEY_BYTES_SIZE);
     }
     catch (std::exception const &error)
@@ -39,13 +39,13 @@ void PemFileReader::checkFile() const
 
 Address PemFileReader::getAddress() const
 {
-    bytes const pubKey(m_fileKeyBytes.begin() + SEED_BYTES_LENGTH, m_fileKeyBytes.end());
+    bytes const pubKey(m_fileKeyBytes.begin() + SEED_LENGTH, m_fileKeyBytes.end());
     return Address(pubKey);
 }
 
 bytes PemFileReader::getSeed() const
 {
-    return bytes(m_fileKeyBytes.begin(), m_fileKeyBytes.begin() + SEED_BYTES_LENGTH);
+    return bytes(m_fileKeyBytes.begin(), m_fileKeyBytes.begin() + SEED_LENGTH);
 }
 
 bytes PemFileReader::getSecretKey() const
