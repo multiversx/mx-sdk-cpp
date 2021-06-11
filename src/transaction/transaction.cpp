@@ -77,8 +77,8 @@ void Transaction::sign(Signer const &signer)
     if (m_signature != nullptr)
         m_signature = nullptr;
 
-    std::string const jsonSerialized = serialize();
-    std::string const tmpSign = signer.getSignature(jsonSerialized);
+    std::string const txSerialized = Transaction::serialize();
+    std::string const tmpSign = signer.getSignature(txSerialized);
     std::string const signature = util::stringToHex(tmpSign);
 
     m_signature.reset(new std::string(signature));
