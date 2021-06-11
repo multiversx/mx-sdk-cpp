@@ -88,7 +88,7 @@ void handleCreateSignedTransactionWithPemFile(const std::map<uint32_t, std::stri
          nullptr);
 
     Signer signer(pemReader.getPrivateKey());
-    transaction.applySignature(signer);
+    transaction.sign(signer);
     jsonFile.writeDataToFile(transaction.serialize());
 }
 

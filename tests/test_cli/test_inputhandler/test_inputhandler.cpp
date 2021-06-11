@@ -345,7 +345,7 @@ TEST(JsonFileHandler, writeOutputFile)
                             transactionWrapper.getVersion(), nullptr);
 
     Signer signer(pemHandler.getPrivateKey());
-    transaction.applySignature(signer);
+    transaction.sign(signer);
     jsonFile.writeDataToFile(transaction.serialize());
     transaction.deserialize("{\"nonce\":5,\"value\":\"10000000000000000000\",\"receiver\":\"erd10536tc3s886yqxtln74u6mztuwl5gy9k9gp8fttxda0klgxg979srtg5wt\",\"sender\":\"erd1sjsk3n2d0krq3pyxxtgf0q7j3t56sgusqaujj4n82l39t9h7jers6gslr4\",\"gasPrice\":1000000000,\"gasLimit\":50000,\"data\":\"test\",\"signature\":\"62af8fa927e4f1ebd64fb8d7cca8aac9d5d33fefa4b185d44bb16ecefc2a7214304b4654406fe76fa36207fbb91f245586f66500cc554a3eb798faab8c435706\",\"chainID\":\"T\",\"version\":1}");
     jsonFile.writeDataToFile(transaction.serialize());

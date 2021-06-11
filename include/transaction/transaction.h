@@ -1,13 +1,12 @@
 #ifndef ERD_TRANSACTION_H
 #define ERD_TRANSACTION_H
 
-#include "json/json.hpp"
-
 #include "account/address.h"
 #include "transaction/signer.h"
 
 #include <cstdint>
 #include <string>
+#include <memory>
 
 #define DEFAULT_NONCE 0U
 #define DEFAULT_VALUE "0"
@@ -44,7 +43,7 @@ public:
 
     explicit Transaction();
 
-    void applySignature(Signer const &signer);
+    void sign(Signer const &signer);
 
     std::string serialize() const;
 
