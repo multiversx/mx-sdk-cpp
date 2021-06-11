@@ -337,18 +337,19 @@ TEST(JsonFileHandler, writeOutputFile)
     ih::JsonFile jsonFile(transactionWrapper.getOutputFile());
 
     Transaction transaction(transactionWrapper.getNonce(), transactionWrapper.getValue(),
-                            Address(transactionWrapper.getReceiver()), pemHandler.getAddress(),
-                            nullptr, nullptr,
+                            transactionWrapper.getReceiver(), pemHandler.getAddress(),
+                            transactionWrapper.getReceiverName(), transactionWrapper.getSenderName(),
                             transactionWrapper.getGasPrice(), transactionWrapper.getGasLimit(),
-                            std::make_shared<bytes>(transactionWrapper.getData()),
-                            nullptr, transactionWrapper.getChainId(),
-                            transactionWrapper.getVersion(), nullptr);
+                            transactionWrapper.getData(),
+                            transactionWrapper.getSignature(), transactionWrapper.getChainId(),
+                            transactionWrapper.getVersion(), transactionWrapper.getOptions());
 
-    Signer signer(pemHandler.getPrivateKey());
+    Signer signer(pemHandler.getSeed());
     transaction.sign(signer);
     jsonFile.writeDataToFile(transaction.serialize());
     transaction.deserialize("{\"nonce\":5,\"value\":\"10000000000000000000\",\"receiver\":\"erd10536tc3s886yqxtln74u6mztuwl5gy9k9gp8fttxda0klgxg979srtg5wt\",\"sender\":\"erd1sjsk3n2d0krq3pyxxtgf0q7j3t56sgusqaujj4n82l39t9h7jers6gslr4\",\"gasPrice\":1000000000,\"gasLimit\":50000,\"data\":\"test\",\"signature\":\"62af8fa927e4f1ebd64fb8d7cca8aac9d5d33fefa4b185d44bb16ecefc2a7214304b4654406fe76fa36207fbb91f245586f66500cc554a3eb798faab8c435706\",\"chainID\":\"T\",\"version\":1}");
     jsonFile.writeDataToFile(transaction.serialize());
+
 }
 
 class PemFileReaderConstructorFixture : public ::testing::Test
@@ -398,12 +399,12 @@ TEST_F(PemFileReaderConstructorFixture, invalidFile_notExisting)
 }
 
 
-TEST(PemFileReader, getPublicPrivateKeys_expectSameResultFrom_libsodium)
+TEST(PemFileReader, getPublicSecretKeys_expectSameResultFrom_libsodium)
 {
     ih::PemFileReader pemHandler("..//testData//keys.pem");
 
     bytes seedBytes = pemHandler.getSeed();
-    bytes skBytes = pemHandler.getPrivateKey();
+    bytes skBytes = pemHandler.getSecretKey();
     bytes pkBytes = pemHandler.getAddress().getPublicKey();
 
     auto pemPk = reinterpret_cast<unsigned char*> (pkBytes.data());
@@ -445,5 +446,39 @@ TEST(Address, getPubKey)
     Address adr("erd1sjsk3n2d0krq3pyxxtgf0q7j3t56sgusqaujj4n82l39t9h7jers6gslr4");
 
     EXPECT_EQ(adr.getPublicKey(),pubKeyFromPem);
+}
+
+//TODO: - Change this ugly tests in future ticket, because Transaction class is going to be completely changed.
+// -Move these tests in separate file in the tests ticket
+// -Add more tests for different signatures/transactions
+TEST(Signer, getSignature)
+{
+    bytes seed = util::hexToBytes("1a927e2af5306a9bb2ea777f73e06ecc0ac9aaa72fb4ea3fecf659451394cccf");
+    Signer signer(seed);
+
+    std::string msg = "{\"nonce\":0,\"value\":\"0\",\"receiver\":\"erd1cux02zersde0l7hhklzhywcxk4u9n4py5tdxyx7vrvhnza2r4gmq4vw35r\",\"sender\":\"erd1l453hd0gt5gzdp7czpuall8ggt2dcv5zwmfdf3sd3lguxseux2fsmsgldz\",\"gasPrice\":1000000000,\"gasLimit\":50000,\"data\":\"Zm9v\",\"chainID\":\"1\",\"version\":1}";
+    std::string actualSignature = signer.getSignature(msg);
+    std::string expectedSignature = "b5fddb8c16fa7f6123cb32edc854f1e760a3eb62c6dc420b5a4c0473c58befd45b621b31a448c5b59e21428f2bc128c80d0ee1caa4f2bf05a12be857ad451b00";
+
+    EXPECT_EQ(util::stringToHex(actualSignature), expectedSignature);
+}
+
+TEST(Signer, getSignature2)
+{
+    bytes seed = util::hexToBytes("1a927e2af5306a9bb2ea777f73e06ecc0ac9aaa72fb4ea3fecf659451394cccf");
+    Signer signer(seed);
+
+    Address sender("erd1l453hd0gt5gzdp7czpuall8ggt2dcv5zwmfdf3sd3lguxseux2fsmsgldz");
+    Address receiver("erd1cux02zersde0l7hhklzhywcxk4u9n4py5tdxyx7vrvhnza2r4gmq4vw35r");
+
+    std::string const dataStr = "foo";
+    auto data  = std::make_shared<bytes>(dataStr.begin(),dataStr.end());
+    Transaction transaction(0, "0", receiver, sender, DEFAULT_SENDER_NAME, DEFAULT_RECEIVER_NAME, 1000000000, 50000, data, DEFAULT_SIGNATURE, DEFAULT_CHAIN_ID, DEFAULT_VERSION, DEFAULT_OPTIONS);
+    std::string expectedSerializedTx = "{\"nonce\":0,\"value\":\"0\",\"receiver\":\"erd1cux02zersde0l7hhklzhywcxk4u9n4py5tdxyx7vrvhnza2r4gmq4vw35r\",\"sender\":\"erd1l453hd0gt5gzdp7czpuall8ggt2dcv5zwmfdf3sd3lguxseux2fsmsgldz\",\"gasPrice\":1000000000,\"gasLimit\":50000,\"data\":\"Zm9v\",\"chainID\":\"1\",\"version\":1}";
+    EXPECT_EQ(expectedSerializedTx,transaction.serialize());
+
+    std::string expectedSignature = "b5fddb8c16fa7f6123cb32edc854f1e760a3eb62c6dc420b5a4c0473c58befd45b621b31a448c5b59e21428f2bc128c80d0ee1caa4f2bf05a12be857ad451b00";
+    std::string actualSignature = signer.getSignature(expectedSerializedTx);
+    EXPECT_EQ(util::stringToHex(actualSignature),expectedSignature);
 }
 

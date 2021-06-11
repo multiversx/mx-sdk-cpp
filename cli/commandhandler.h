@@ -6,6 +6,30 @@
 #include "inputhandler/ext.h"
 #include "erdsdk.h"
 
+namespace internal
+{
+
+Transaction createTransaction(ih::wrapper::TransactionInputWrapper const &txWrapper, Address const& senderAddress)
+{
+    //TODO: Maybe in the future add a transaction builder here
+    return Transaction
+            (txWrapper.getNonce(), txWrapper.getValue(),
+             txWrapper.getReceiver(), senderAddress,
+             txWrapper.getReceiverName(), txWrapper.getSenderName(),
+             txWrapper.getGasPrice(), txWrapper.getGasLimit(),
+             txWrapper.getData(), txWrapper.getSignature(),
+             txWrapper.getChainId(), txWrapper.getVersion(),
+             txWrapper.getOptions());
+}
+
+void signTransaction(Transaction &transaction, bytes const& seed)
+{
+    Signer signer(seed);
+    transaction.sign(signer);
+}
+
+}
+
 namespace cli
 {
 typedef std::map<std::string, std::vector<std::string>> commandGroupMap;
@@ -77,18 +101,9 @@ void handleCreateSignedTransactionWithPemFile(const std::map<uint32_t, std::stri
     ih::JsonFile jsonFile(transactionInputWrapper.getOutputFile());
     ih::PemFileReader pemReader(pemInputWrapper.getPemFilePath());
 
-    //TODO: Maybe in the future add a transaction builder here
-    Transaction transaction
-        (transactionInputWrapper.getNonce(), transactionInputWrapper.getValue(),
-         transactionInputWrapper.getReceiver(), pemReader.getAddress(),
-         nullptr, nullptr,
-         transactionInputWrapper.getGasPrice(), transactionInputWrapper.getGasLimit(),
-         std::make_shared<bytes>(transactionInputWrapper.getData()), nullptr,
-         transactionInputWrapper.getChainId(), transactionInputWrapper.getVersion(),
-         nullptr);
+    Transaction transaction = internal::createTransaction(transactionInputWrapper, pemReader.getAddress());
+    internal::signTransaction(transaction,pemReader.getSeed());
 
-    Signer signer(pemReader.getPrivateKey());
-    transaction.sign(signer);
     jsonFile.writeDataToFile(transaction.serialize());
 }
 

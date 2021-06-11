@@ -18,26 +18,16 @@ constexpr auto TX_VERSION = "version";
 constexpr auto TX_SIGNATURE = "signature";
 constexpr auto TX_OPTIONS = "options";
 
-constexpr auto JSON_TX_IDX_NONCE = 0U;
-constexpr auto JSON_TX_IDX_VALUE = 1U;
-constexpr auto JSON_TX_IDX_RECEIVER = 2U;
-constexpr auto JSON_TX_IDX_SENDER = 3U;
-constexpr auto JSON_TX_IDX_GAS_PRICE = 4U;
-constexpr auto JSON_TX_IDX_GAS_LIMIT = 5U;
-constexpr auto JSON_TX_IDX_DATA = 6U;
-constexpr auto JSON_TX_IDX_CHAIN_ID = 7U;
-constexpr auto JSON_TX_IDX_VERSION = 8U;
-
-constexpr auto JSON_TX_DEFAULT_CHAIN_ID = "T";
-constexpr auto JSON_TX_DEFAULT_VERSION = 1U;
-
 constexpr auto ARGS_TX_IDX_NONCE = 0U;
 constexpr auto ARGS_TX_IDX_VALUE = 1U;
 constexpr auto ARGS_TX_IDX_RECEIVER = 2U;
-constexpr auto ARGS_TX_IDX_GAS_PRICE = 3U;
-constexpr auto ARGS_TX_IDX_GAS_LIMIT = 4U;
-constexpr auto ARGS_TX_IDX_PEM_INPUT_FILE = 5U;
-constexpr auto ARGS_TX_IDX_JSON_OUT_FILE = 6U;
-constexpr auto ARGS_TX_IDX_DATA = 7U;
+constexpr auto ARGS_TX_IDX_RECEIVER_NAME = 3U;
+constexpr auto ARGS_TX_IDX_SENDER_NAME = 4U;
+constexpr auto ARGS_TX_IDX_GAS_PRICE = 5U;
+constexpr auto ARGS_TX_IDX_GAS_LIMIT = 6U;
+constexpr auto ARGS_TX_IDX_PEM_INPUT_FILE = 7U;
+constexpr auto ARGS_TX_IDX_JSON_OUT_FILE = 8U;
+constexpr auto ARGS_TX_IDX_DATA = 9U;
+constexpr auto ARGS_TX_IDX_OPTIONS= 10U;
 
 #endif

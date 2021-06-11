@@ -22,7 +22,7 @@ PemFileReader::PemFileReader(std::string const &filePath) :
             throw std::invalid_argument(ERROR_MSG_FILE_EMPTY);
 
         m_fileKeyBytes = getKeyBytesFromContent(fileContent);
-        if(m_fileKeyBytes.size() != (PUBLIC_KEY_BYTES_LENGTH + SEED_BYTES_LENGTH))
+        if(m_fileKeyBytes.size() != (SEED_BYTES_LENGTH + PUBLIC_KEY_BYTES_LENGTH))
             throw std::length_error(ERROR_MSG_KEY_BYTES_SIZE);
     }
     catch (std::exception const &error)
@@ -31,30 +31,28 @@ PemFileReader::PemFileReader(std::string const &filePath) :
     }
 }
 
-bool PemFileReader::checkFile() const
+void PemFileReader::checkFile() const
 {
     if (!IFile::fileExists()) throw std::invalid_argument(ERROR_MSG_FILE_DOES_NOT_EXIST);
     if (!IFile::isFileExtension("pem")) throw std::invalid_argument(ERROR_MSG_FILE_EXTENSION_INVALID);
-
-    return true;
 }
 
 Address PemFileReader::getAddress() const
 {
-    return Address(bytes(m_fileKeyBytes.begin() + PUBLIC_KEY_BYTES_LENGTH, m_fileKeyBytes.end()));
+    bytes const pubKey(m_fileKeyBytes.begin() + SEED_BYTES_LENGTH, m_fileKeyBytes.end());
+    return Address(pubKey);
 }
 
 bytes PemFileReader::getSeed() const
 {
-    return bytes(m_fileKeyBytes.begin(), m_fileKeyBytes.begin() + PUBLIC_KEY_BYTES_LENGTH);
+    return bytes(m_fileKeyBytes.begin(), m_fileKeyBytes.begin() + SEED_BYTES_LENGTH);
 }
 
-bytes PemFileReader::getPrivateKey() const
+bytes PemFileReader::getSecretKey() const
 {
     bytes const seedBytes = getSeed();
-    bytes const pkBytes = getAddress().getPublicKey();
 
-    return wrapper::crypto::getSecretKey(pkBytes,seedBytes);
+    return wrapper::crypto::getSecretKey(seedBytes);
 }
 
 bytes PemFileReader::getKeyBytesFromContent(std::string const &content) const

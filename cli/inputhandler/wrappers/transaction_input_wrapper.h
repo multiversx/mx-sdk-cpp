@@ -8,6 +8,7 @@
 #include "utils/params.h"
 #include "account/address.h"
 #include "internal/internal.h"
+#include "transaction/transaction.h"
 
 namespace ih
 {
@@ -20,11 +21,9 @@ public:
             IWrapper(inputData)
     {
         m_containsData = (getInputData().find(ARGS_TX_IDX_DATA) != getInputData().end());
-    }
-
-    bool isDataEmpty() const
-    {
-        return !m_containsData;
+        m_containsReceiverName = (getInputData().find(ARGS_TX_IDX_RECEIVER_NAME) != getInputData().end());
+        m_containsSenderName = (getInputData().find(ARGS_TX_IDX_SENDER_NAME) != getInputData().end());
+        m_containsOptions = (getInputData().find(ARGS_TX_IDX_OPTIONS) != getInputData().end());
     }
 
     uint64_t getNonce() const
@@ -42,6 +41,16 @@ public:
         return Address(getInputData().at(ARGS_TX_IDX_RECEIVER));
     }
 
+    std::shared_ptr<bytes> getReceiverName() const
+    {
+        return getUserInputIfExists<bytes>(ARGS_TX_IDX_RECEIVER_NAME, m_containsReceiverName);
+    }
+
+    std::shared_ptr<bytes> getSenderName() const
+    {
+        return getUserInputIfExists<bytes>(ARGS_TX_IDX_SENDER_NAME, m_containsSenderName);
+    }
+
     uint64_t getGasPrice() const
     {
         return std::stoul(getInputData().at(ARGS_TX_IDX_GAS_PRICE));
@@ -52,24 +61,24 @@ public:
         return std::stoul(getInputData().at(ARGS_TX_IDX_GAS_LIMIT));
     }
 
-    bytes getData() const
+    std::shared_ptr<bytes> getData() const
     {
-        if (!isDataEmpty())
-        {
-            std::string userData = getInputData().at(ARGS_TX_IDX_DATA);
-            return bytes(userData.begin(),userData.end());
-        }
-        else return bytes();
+        return getUserInputIfExists<bytes>(ARGS_TX_IDX_DATA, m_containsData);
+    }
+
+    std::shared_ptr<std::string> getSignature() const
+    {
+        return DEFAULT_SIGNATURE;
     }
 
     std::string getChainId() const
     {
-        return JSON_TX_DEFAULT_CHAIN_ID;
+        return DEFAULT_CHAIN_ID;
     }
 
     uint64_t getVersion() const
     {
-        return JSON_TX_DEFAULT_VERSION;
+        return DEFAULT_VERSION;
     }
 
     std::string getInputFile() const
@@ -82,8 +91,29 @@ public:
         return getInputData().at(ARGS_TX_IDX_JSON_OUT_FILE);
     }
 
+    std::shared_ptr<uint32_t> getOptions() const
+    {
+        return DEFAULT_OPTIONS;
+    }
+
 private:
+
+    template<class T>
+    std::shared_ptr<T> getUserInputIfExists(unsigned int const &idx, bool const &exists) const
+    {
+        if (exists)
+        {
+            std::string const userInput = getInputData().at(idx);
+            bytes const input(userInput.begin(),userInput.end());
+            return std::make_shared<T>(input);
+        }
+        else return nullptr;
+    }
+
     bool m_containsData;
+    bool m_containsReceiverName;
+    bool m_containsSenderName;
+    bool m_containsOptions;
 };
 }
 }

@@ -3,13 +3,13 @@
 
 namespace util
 {
-bytes convertBits(bytes const &data, int const fromBits, int const toBits, bool const pad)
+bytes convertBits(bytes const &data, unsigned int const fromBits, unsigned int const toBits, bool const pad)
 {
-    int acc = 0;
-    int bits = 0;
+    unsigned int acc = 0;
+    unsigned int bits = 0;
     std::vector<uint8_t> ret;
-    int maxV = (1 << toBits) - 1;
-    int maxAcc = (1 << (fromBits + toBits - 1)) - 1;
+    unsigned int maxVal = (1 << toBits) - 1;
+    unsigned int maxAcc = (1 << (fromBits + toBits - 1)) - 1;
 
     for (auto const &value : data)
     {
@@ -26,7 +26,7 @@ bytes convertBits(bytes const &data, int const fromBits, int const toBits, bool 
         while (bits >= toBits)
         {
             bits -= toBits;
-            ret.push_back((acc >> bits) & maxV);
+            ret.push_back((acc >> bits) & maxVal);
         }
     }
 
@@ -34,10 +34,10 @@ bytes convertBits(bytes const &data, int const fromBits, int const toBits, bool 
     {
         if (bits > 0)
         {
-            ret.push_back((acc << (toBits - bits)) & maxV);
+            ret.push_back((acc << (toBits - bits)) & maxVal);
         }
     }
-    else if (bits >= fromBits || ((acc << (toBits - bits)) & maxV) != 0)
+    else if (bits >= fromBits || ((acc << (toBits - bits)) & maxVal) != 0)
     {
         throw std::invalid_argument(ERROR_MSG_CONVERT_BITS);
     }

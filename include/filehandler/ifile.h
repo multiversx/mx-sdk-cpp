@@ -13,7 +13,7 @@ public:
     const std::string &getFilePath() const;
 
 protected:
-    virtual bool checkFile() const = 0;
+    virtual void checkFile() const = 0;
 
     bool fileExists() const;
 

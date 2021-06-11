@@ -19,10 +19,10 @@ public:
 
     bytes getSeed() const;
 
-    bytes getPrivateKey() const;
+    bytes getSecretKey() const;
 
 protected:
-    bool checkFile() const override;
+    void checkFile() const override;
 
 private:
     std::string getFileContent() const;
