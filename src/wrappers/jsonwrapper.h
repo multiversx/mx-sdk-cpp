@@ -21,7 +21,7 @@ inline void set(nlohmann::ordered_json &json, std::string const &key, T const &v
 template<>
 inline void set<bytes>(nlohmann::ordered_json &json, std::string const &key, bytes const &value)
 {
-    std::string val(value.begin(), value.end());
+    std::string const val(value.begin(), value.end());
     json[key] = util::base64::encode(val);
 }
 
@@ -34,7 +34,9 @@ inline T at(nlohmann::ordered_json const &json, std::string const &key)
 template<>
 inline bytes at<bytes>(nlohmann::ordered_json const &json, std::string const &key)
 {
-    std::string val = json.at(key);
+    std::string const tmp = json.at(key);
+    std::string const val = util::base64::decode(tmp);
+
     return bytes(val.begin(), val.end());
 }
 

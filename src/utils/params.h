@@ -28,6 +28,7 @@ constexpr auto ARGS_TX_IDX_GAS_LIMIT = 6U;
 constexpr auto ARGS_TX_IDX_PEM_INPUT_FILE = 7U;
 constexpr auto ARGS_TX_IDX_JSON_OUT_FILE = 8U;
 constexpr auto ARGS_TX_IDX_DATA = 9U;
-constexpr auto ARGS_TX_IDX_OPTIONS= 10U;
+constexpr auto ARGS_TX_IDX_CHAIN_ID = 10U;
+constexpr auto ARGS_TX_IDX_OPTIONS= 11U;
 
 #endif
