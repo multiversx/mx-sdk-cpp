@@ -328,8 +328,8 @@ TEST(JsonFileHandler, writeOutputFile)
     input[ARGS_TX_IDX_GAS_PRICE] = "1000000000";
     input[ARGS_TX_IDX_GAS_LIMIT] = "50000";
     input[ARGS_TX_IDX_DATA] = "test";
-    input[ARGS_TX_IDX_PEM_INPUT_FILE] = "..//testData//keys.pem";
-    input[ARGS_TX_IDX_JSON_OUT_FILE] = "..//testData//outputJson.json";
+    input[ARGS_TX_IDX_PEM_INPUT_FILE] = "..//..//testData//keysValid1.pem";
+    input[ARGS_TX_IDX_JSON_OUT_FILE] = "..//..//testData//outputJson.json";
 
     ih::wrapper::PemHandlerInputWrapper const pemWrapper(input);
     ih::wrapper::TransactionInputWrapper const transactionWrapper(input);
@@ -351,73 +351,6 @@ TEST(JsonFileHandler, writeOutputFile)
     transaction.deserialize("{\"nonce\":5,\"value\":\"10000000000000000000\",\"receiver\":\"erd10536tc3s886yqxtln74u6mztuwl5gy9k9gp8fttxda0klgxg979srtg5wt\",\"sender\":\"erd1sjsk3n2d0krq3pyxxtgf0q7j3t56sgusqaujj4n82l39t9h7jers6gslr4\",\"gasPrice\":1000000000,\"gasLimit\":50000,\"data\":\"test\",\"signature\":\"62af8fa927e4f1ebd64fb8d7cca8aac9d5d33fefa4b185d44bb16ecefc2a7214304b4654406fe76fa36207fbb91f245586f66500cc554a3eb798faab8c435706\",\"chainID\":\"T\",\"version\":1}");
     jsonFile.writeDataToFile(transaction.serialize());
 
-}
-
-class PemFileReaderConstructorFixture : public ::testing::Test
-{
-public:
-    template <typename T>
-    void expectException(std::string const &filePath, errorMessage const &errMsg)
-    {
-        EXPECT_THROW({
-                         try
-                         {
-                             ih::PemFileReader pemHandler(filePath);
-                         }
-                         catch(const T &e)
-                         {
-                             EXPECT_EQ( errMsg, e.what() );
-                             throw;
-                         }
-                     }, T );
-    }
-
-};
-
-TEST_F(PemFileReaderConstructorFixture, validFile)
-{
-    EXPECT_NO_THROW(ih::PemFileReader pemHandler("..//testData//keys.pem"));
-}
-
-TEST_F(PemFileReaderConstructorFixture, invalidFile_NotEnoughBytes)
-{
-    expectException<std::length_error>("..//testData//keysNotEnoughBytes.pem",ERROR_MSG_KEY_BYTES_SIZE);
-}
-
-TEST_F(PemFileReaderConstructorFixture, invalidFile_invalidFileExtension)
-{
-    expectException<std::invalid_argument>("..//testData//keys.pme",ERROR_MSG_FILE_EXTENSION_INVALID);
-}
-
-TEST_F(PemFileReaderConstructorFixture, invalidFile_emptyFile)
-{
-    expectException<std::invalid_argument>("..//testData//keysEmptyFile.pem",ERROR_MSG_FILE_EMPTY);
-}
-
-TEST_F(PemFileReaderConstructorFixture, invalidFile_notExisting)
-{
-    expectException<std::invalid_argument>("..//testData//thisFileDoesNotExist.pem",ERROR_MSG_FILE_DOES_NOT_EXIST);
-}
-
-TEST(PemFileReader, getSegwitAddress)
-{
-    ih::PemFileReader pemHandler("..//testData//keys.pem");
-
-    std::string pemAddress = pemHandler.getAddress().getBech32Address();
-    std::string expectedAdr = "erd1sjsk3n2d0krq3pyxxtgf0q7j3t56sgusqaujj4n82l39t9h7jers6gslr4";
-
-    EXPECT_EQ(pemAddress, expectedAdr);
-}
-
-//TODO: This test will be moved in another unit test file, when the unit test ticket is started.
-TEST(Address, getPubKey)
-{
-    ih::PemFileReader pemHandler("..//testData//keys.pem");
-
-    bytes pubKeyFromPem = pemHandler.getAddress().getPublicKey();
-    Address adr("erd1sjsk3n2d0krq3pyxxtgf0q7j3t56sgusqaujj4n82l39t9h7jers6gslr4");
-
-    EXPECT_EQ(adr.getPublicKey(),pubKeyFromPem);
 }
 
 //TODO: - Change this ugly tests in future ticket, because Transaction class is going to be completely changed.
