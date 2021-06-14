@@ -41,18 +41,6 @@ bytes getSecretKey(bytes const &seed)
     return bytes(sk, sk + SECRET_KEY_LENGTH);
 }
 
-bytes getPublicKey(bytes const &seed)
-{
-    auto sd = reinterpret_cast<const unsigned char*>(seed.data());
-
-    unsigned char pk[PUBLIC_KEY_LENGTH];
-    unsigned char sk[SECRET_KEY_LENGTH];
-
-    crypto_sign_seed_keypair(pk, sk, sd);
-
-    return bytes(pk, pk + PUBLIC_KEY_LENGTH);
-}
-
 }
 }
 

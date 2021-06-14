@@ -393,22 +393,6 @@ TEST_F(PemFileReaderConstructorFixture, invalidFile_notExisting)
     expectException<std::invalid_argument>("..//testData//thisFileDoesNotExist.pem",ERROR_MSG_FILE_DOES_NOT_EXIST);
 }
 
-
-TEST(PemFileReader, getPublicSecretKeys_expectSameResultFrom_libsodiumWrapper)
-{
-    ih::PemFileReader pemHandler("..//testData//keys.pem");
-
-    bytes seedBytes = pemHandler.getSeed();
-    bytes skPem = pemHandler.getSecretKey();
-    bytes pkPem = pemHandler.getAddress().getPublicKey();
-
-    bytes const skWrapper = wrapper::crypto::getSecretKey(seedBytes);
-    bytes const pkWrapper = wrapper::crypto::getPublicKey(seedBytes);
-
-    EXPECT_EQ(pkWrapper, pkPem);
-    EXPECT_EQ(skWrapper, skPem);
-}
-
 TEST(PemFileReader, getSegwitAddress)
 {
     ih::PemFileReader pemHandler("..//testData//keys.pem");
