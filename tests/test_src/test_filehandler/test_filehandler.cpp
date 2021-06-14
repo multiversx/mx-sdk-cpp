@@ -93,14 +93,3 @@ TEST_P(PemFileReaderParametrized, getSeed_getPublicKey_getBech32Address)
     EXPECT_EQ(pemPubKey, util::hexToBytes(currParam.publicKey));
     EXPECT_EQ(pemBech32Address, currParam.bech32Address);
 }
-
-//TODO: This test will be moved in another unit test file, when the unit test ticket is started.
-TEST(Address, getPubKey)
-{
-    ih::PemFileReader pemHandler("..//..//testData//keysValid1.pem");
-
-    bytes pubKeyFromPem = pemHandler.getAddress().getPublicKey();
-    Address adr("erd1sjsk3n2d0krq3pyxxtgf0q7j3t56sgusqaujj4n82l39t9h7jers6gslr4");
-
-    EXPECT_EQ(adr.getPublicKey(),pubKeyFromPem);
-}
