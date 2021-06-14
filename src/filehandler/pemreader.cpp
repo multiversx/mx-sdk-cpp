@@ -48,13 +48,6 @@ bytes PemFileReader::getSeed() const
     return bytes(m_fileKeyBytes.begin(), m_fileKeyBytes.begin() + SEED_LENGTH);
 }
 
-bytes PemFileReader::getSecretKey() const
-{
-    bytes const seedBytes = getSeed();
-
-    return wrapper::crypto::getSecretKey(seedBytes);
-}
-
 bytes PemFileReader::getKeyBytesFromContent(std::string const &content) const
 {
     std::string const keyHex = util::base64::decode(content);

@@ -19,8 +19,6 @@ public:
 
     bytes getSeed() const;
 
-    bytes getSecretKey() const;
-
 protected:
     void checkFile() const override;
 
