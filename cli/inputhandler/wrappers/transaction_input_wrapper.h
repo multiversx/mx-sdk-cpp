@@ -53,6 +53,7 @@ public:
         m_containsReceiverName = (getInputData().find(ARGS_TX_IDX_RECEIVER_NAME) != getInputData().end());
         m_containsSenderName = (getInputData().find(ARGS_TX_IDX_SENDER_NAME) != getInputData().end());
         m_containsOptions = (getInputData().find(ARGS_TX_IDX_OPTIONS) != getInputData().end());
+        m_containsChainID = (getInputData().find(ARGS_TX_IDX_CHAIN_ID) != getInputData().end());
     }
 
     uint64_t getNonce() const
@@ -102,7 +103,7 @@ public:
 
     std::string getChainId() const
     {
-        return DEFAULT_CHAIN_ID;
+        return m_containsChainID ? (getInputData().at(ARGS_TX_IDX_CHAIN_ID)) : (DEFAULT_CHAIN_ID);
     }
 
     uint64_t getVersion() const
@@ -131,6 +132,7 @@ private:
     bool m_containsReceiverName;
     bool m_containsSenderName;
     bool m_containsOptions;
+    bool m_containsChainID;
 };
 }
 }
