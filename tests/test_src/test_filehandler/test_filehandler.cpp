@@ -83,11 +83,11 @@ TEST_P(PemFileReaderParametrized, getSeed_getPublicKey_getBech32Address)
 {
     pemData const& currParam = GetParam();
 
-    ih::PemFileReader const pemHandler(currParam.filePath);
+    ih::PemFileReader const pemReader(currParam.filePath);
 
-    bytes const pemSeed = pemHandler.getSeed();
-    bytes const pemPubKey = pemHandler.getAddress().getPublicKey();
-    std::string const pemBech32Address = pemHandler.getAddress().getBech32Address();
+    bytes const pemSeed = pemReader.getSeed();
+    bytes const pemPubKey = pemReader.getAddress().getPublicKey();
+    std::string const pemBech32Address = pemReader.getAddress().getBech32Address();
 
     EXPECT_EQ(pemSeed, util::hexToBytes(currParam.seed));
     EXPECT_EQ(pemPubKey, util::hexToBytes(currParam.publicKey));

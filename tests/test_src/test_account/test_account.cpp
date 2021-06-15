@@ -94,6 +94,7 @@ TEST(Address, assignmentOperator)
 TEST(Account, getAddress_getPublicKey_getBech32Address)
 {
     std::string const bech32Addr = "erd1spyavw0956vq68xj8y4tenjpq2wd5a9p2c6j8gsz7ztyrnpxrruqzu66jx";
+
     Address const address(bech32Addr);
     Account const account(address);
 

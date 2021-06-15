@@ -40,6 +40,7 @@ errorMessage const ERROR_MSG_FILE_DOES_NOT_EXIST = "File does not exists.";
 errorMessage const ERROR_MSG_FILE_EXTENSION_INVALID = "File extension invalid.";
 errorMessage const ERROR_MSG_KEY_BYTES_SIZE = "Key bytes size invalid.";
 errorMessage const ERROR_MSG_JSON_SERIALIZED = "Invalid serialized json string.";
+errorMessage const ERROR_MSG_JSON_SERIALIZE_EMPTY = "Empty json.";
 errorMessage const ERROR_MSG_JSON_KEY_NOT_FOUND = "Json does not contain key: ";
 errorMessage const ERROR_MSG_JSON_SET = "Json can not insert key:  ";
 
