@@ -8,8 +8,7 @@
 #include "account/address.h"
 #include "internal/internal.h"
 
-namespace ih
-{
+
 class PemFileReader : public IFile
 {
 public:
@@ -29,6 +28,6 @@ private:
 
     bytes m_fileKeyBytes;
 };
-}
+
 
 #endif

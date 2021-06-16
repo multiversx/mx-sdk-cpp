@@ -89,7 +89,7 @@ bool init()
 void handleLoadPemFile(const std::map<uint32_t, std::string> &userInputs)
 {
     ih::wrapper::PemHandlerInputWrapper const pemInputWrapper(userInputs);
-    ih::PemFileReader pemReader(pemInputWrapper.getPemFilePath());
+    PemFileReader pemReader(pemInputWrapper.getPemFilePath());
     std::cerr << "File loaded successfully! Bech32 address: " << pemReader.getAddress().getBech32Address() << "\n";
 }
 
@@ -99,7 +99,7 @@ void handleCreateSignedTransactionWithPemFile(const std::map<uint32_t, std::stri
     ih::wrapper::PemHandlerInputWrapper const pemInputWrapper(userInputs);
 
     ih::JsonFile jsonFile(transactionInputWrapper.getOutputFile());
-    ih::PemFileReader pemReader(pemInputWrapper.getPemFilePath());
+    PemFileReader pemReader(pemInputWrapper.getPemFilePath());
 
     Transaction transaction = internal::createTransaction(transactionInputWrapper, pemReader.getAddress());
     internal::signTransaction(transaction,pemReader.getSeed());

@@ -2,8 +2,6 @@
 #include <fstream>
 #include <utility>
 
-namespace ih
-{
 IFile::IFile(std::string path) :
         m_filePath(std::move(path))
 {}
@@ -35,4 +33,4 @@ std::string IFile::getFileExtension() const
     return ext;
 }
 
-}
+

@@ -314,7 +314,7 @@ TEST(JsonFileHandler, writeOutputFile)
     ih::wrapper::PemHandlerInputWrapper const pemWrapper(input);
     ih::wrapper::TransactionInputWrapper const transactionWrapper(input);
 
-    ih::PemFileReader pemHandler(pemWrapper.getPemFilePath());
+    PemFileReader pemHandler(pemWrapper.getPemFilePath());
     ih::JsonFile jsonFile(transactionWrapper.getOutputFile());
 
     Transaction transaction(transactionWrapper.getNonce(), transactionWrapper.getValue(),
@@ -340,4 +340,6 @@ TEST(JsonFileHandler, writeOutputFile)
     EXPECT_EQ(writtenTx, expectedTxSerialized);
 }
 
+//TODO: Split tests file in headers + CPP
+//TODO: Put every API inside erd namespace
 

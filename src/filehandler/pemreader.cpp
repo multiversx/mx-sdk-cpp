@@ -8,8 +8,6 @@
 #include <iostream>
 #include <stdexcept>
 
-namespace ih
-{
 PemFileReader::PemFileReader(std::string const &filePath) :
         IFile(filePath)
 {
@@ -72,4 +70,4 @@ std::string PemFileReader::getFileContent() const
 
     return keyLines;
 }
-}
+

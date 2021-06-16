@@ -13,7 +13,7 @@ public:
         EXPECT_THROW({
                          try
                          {
-                             ih::PemFileReader pemHandler(filePath);
+                             PemFileReader pemHandler(filePath);
                          }
                          catch(const T &e)
                          {
@@ -27,7 +27,7 @@ public:
 
 TEST_F(PemFileReaderConstructorFixture, validFile)
 {
-    EXPECT_NO_THROW(ih::PemFileReader pemHandler("..//..//testData//keysValid1.pem"));
+    EXPECT_NO_THROW(PemFileReader pemHandler("..//..//testData//keysValid1.pem"));
 }
 
 TEST_F(PemFileReaderConstructorFixture, invalidFile_notEnoughBytes)
@@ -83,7 +83,7 @@ TEST_P(PemFileReaderParametrized, getSeed_getPublicKey_getBech32Address)
 {
     pemData const& currParam = GetParam();
 
-    ih::PemFileReader const pemReader(currParam.filePath);
+    PemFileReader const pemReader(currParam.filePath);
 
     bytes const pemSeed = pemReader.getSeed();
     bytes const pemPubKey = pemReader.getAddress().getPublicKey();
