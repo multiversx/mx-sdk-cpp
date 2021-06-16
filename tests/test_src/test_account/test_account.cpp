@@ -64,7 +64,7 @@ INSTANTIATE_TEST_CASE_P (
                    "erd1spyavw0956vq68xj8y4tenjpq2wd5a9p2c6j8gsz7ztyrnpxrruqzu66jx"},    // Bech32 address
 
          addrData {"b2a11555ce521e4944e09ab17549d85b487dcd26c84b5017a39e31a3670889ba",   // Public key
-                  "erd1k2s324ww2g0yj38qn2ch2jwctdy8mnfxep94q9arncc6xecg3xaq6mjse8"}));  // Bech32 address
+                   "erd1k2s324ww2g0yj38qn2ch2jwctdy8mnfxep94q9arncc6xecg3xaq6mjse8"}));  // Bech32 address
 
 TEST_P(AddressParametrized, getPublicKey_getBech32Address)
 {
