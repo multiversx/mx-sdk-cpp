@@ -333,7 +333,7 @@ struct invalidSerializedTxData
 class TransactionDeserializeInvalidDataParametrized : public ::testing::TestWithParam<invalidSerializedTxData>
 {
 public:
-    void expectSerializeExceptionMsg(std::string const &serializedTx, errorMessage const &errMsg)
+    void expectDeserializeExceptionMsg(std::string const &serializedTx, errorMessage const &errMsg)
     {
         EXPECT_THROW({
                          try
@@ -395,7 +395,7 @@ TEST_P(TransactionDeserializeInvalidDataParametrized, deserialize_missingData)
 {
     invalidSerializedTxData const& currParam = GetParam();
 
-    expectSerializeExceptionMsg(currParam.serializedTx, currParam.errMsg);
+    expectDeserializeExceptionMsg(currParam.serializedTx, currParam.errMsg);
 }
 
 class TransactionSerializeFixture : public ::testing::Test

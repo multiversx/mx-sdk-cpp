@@ -4,6 +4,7 @@
 #include "utils/ext.h"
 #include "wrappers/cryptosignwrapper.h"
 #include <sodium.h>
+#include <fstream>
 
 TEST(ArgHandler, getRequestedCmd_getRequestType_noArgument_expectInvalid)
 {
@@ -296,28 +297,6 @@ TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidData_expect
     EXPECT_EQ(argHandler.getRequestedCmd().getErrorCode(), ERROR_DATA);
 }
 
-//class ErrorReportParametrized : public ::testing::TestWithParam<errorCode> {};
-//
-//INSTANTIATE_TEST_CASE_P(
-//  AllErrors,
-//  ErrorReportParametrized,
-//  ::testing::Values(ERROR_PEM_INPUT_FILE, ERROR_VALUE, ERROR_NONCE, ERROR_GAS_PRICE, ERROR_RECEIVER,
-//                    ERROR_GAS_LIMIT, ERROR_PEM_INPUT_FILE, ERROR_JSON_OUT_FILE, ERROR_DATA ,
-//                    ERROR_SODIUM_INIT, 111U));
-//
-//TEST_P(ErrorReportParametrized, reportError_differentErrors)
-//{
-//  int const argc = 1;
-//  char* argv[argc];
-//
-//  argv[0] = "ERDProject.exe";
-//
-//  errorCode const& currParam = GetParam();
-//
-//  reportError(currParam);
-//}
-
-
 TEST(JsonFileHandler, writeOutputFile)
 {
     std::map<uint32_t, std::string> input;
@@ -348,14 +327,17 @@ TEST(JsonFileHandler, writeOutputFile)
 
     Signer signer(pemHandler.getSeed());
     transaction.sign(signer);
+    std::string const txSerialized = transaction.serialize();
 
-    std::string const txSerialized = "{\"nonce\":5,\"value\":\"10000000000000000000\",\"receiver\":\"erd10536tc3s886yqxtln74u6mztuwl5gy9k9gp8fttxda0klgxg979srtg5wt\",\"sender\":\"erd1sjsk3n2d0krq3pyxxtgf0q7j3t56sgusqaujj4n82l39t9h7jers6gslr4\",\"gasPrice\":1000000000,\"gasLimit\":50000,\"data\":\"dGVzdA==\",\"signature\":\"62af8fa927e4f1ebd64fb8d7cca8aac9d5d33fefa4b185d44bb16ecefc2a7214304b4654406fe76fa36207fbb91f245586f66500cc554a3eb798faab8c435706\",\"chainID\":\"T\",\"version\":1}";
-    EXPECT_EQ (transaction.serialize(), txSerialized);
+    jsonFile.writeDataToFile(txSerialized);
 
-    transaction.deserialize(txSerialized);
-    EXPECT_EQ(transaction.serialize(),txSerialized);
+    std::string writtenTx;
+    std::ifstream inFile(transactionWrapper.getOutputFile());
+    std::getline(inFile, writtenTx);
 
-    jsonFile.writeDataToFile(transaction.serialize());
+    std::string const expectedTxSerialized = "{\"nonce\":5,\"value\":\"10000000000000000000\",\"receiver\":\"erd10536tc3s886yqxtln74u6mztuwl5gy9k9gp8fttxda0klgxg979srtg5wt\",\"sender\":\"erd1sjsk3n2d0krq3pyxxtgf0q7j3t56sgusqaujj4n82l39t9h7jers6gslr4\",\"gasPrice\":1000000000,\"gasLimit\":50000,\"data\":\"dGVzdA==\",\"signature\":\"62af8fa927e4f1ebd64fb8d7cca8aac9d5d33fefa4b185d44bb16ecefc2a7214304b4654406fe76fa36207fbb91f245586f66500cc554a3eb798faab8c435706\",\"chainID\":\"T\",\"version\":1}";
+    EXPECT_EQ(txSerialized, expectedTxSerialized);
+    EXPECT_EQ(writtenTx, expectedTxSerialized);
 }
 
 
