@@ -130,6 +130,24 @@ INSTANTIATE_TEST_CASE_P (
         /* Signer seed         */   {"1a927e2af5306a9bb2ea777f73e06ecc0ac9aaa72fb4ea3fecf659451394cccf",
         /* Nonce               */   8,
         /* Value               */   "10000000000000000000",
+        /* Receiver username   */   "Jon",
+        /* Sender username     */   "Doe",
+        /* Receiver            */   Address("erd1cux02zersde0l7hhklzhywcxk4u9n4py5tdxyx7vrvhnza2r4gmq4vw35r"),
+        /* Sender              */   Address("erd1l453hd0gt5gzdp7czpuall8ggt2dcv5zwmfdf3sd3lguxseux2fsmsgldz"),
+        /* Gas price           */   1000000000,
+        /* Gas limit           */   50000,
+        /* Chain ID            */   "1",
+        /* Version             */   2,
+        /* Data                */   "",
+        /* Signature           */   std::make_shared<std::string>("dummy"),
+        /* Options             */   std::make_shared<uint32_t>(2),
+        /* Expected serialized */   "{\"nonce\":8,\"value\":\"10000000000000000000\",\"receiver\":\"erd1cux02zersde0l7hhklzhywcxk4u9n4py5tdxyx7vrvhnza2r4gmq4vw35r\",\"sender\":\"erd1l453hd0gt5gzdp7czpuall8ggt2dcv5zwmfdf3sd3lguxseux2fsmsgldz\",\"receiverUsername\":\"Sm9u\",\"senderUsername\":\"RG9l\",\"gasPrice\":1000000000,\"gasLimit\":50000,\"signature\":\"dummy\",\"chainID\":\"1\",\"version\":2,\"options\":2}",
+        /* Expected signature  */   "4aaaf591252cb4ca39a63038eec003371860a927a2fb7ab0cbe9cf29f6feb03ea932b7dd943388bbeecf092ce18bf8e15c912d125d24cae3ee76d6ebbc519b02"},
+
+        signSerializedTxData
+        /* Signer seed         */   {"1a927e2af5306a9bb2ea777f73e06ecc0ac9aaa72fb4ea3fecf659451394cccf",
+        /* Nonce               */   8,
+        /* Value               */   "10000000000000000000",
         /* Receiver username   */   "",
         /* Sender username     */   "",
         /* Receiver            */   Address("erd1cux02zersde0l7hhklzhywcxk4u9n4py5tdxyx7vrvhnza2r4gmq4vw35r"),
@@ -295,11 +313,11 @@ INSTANTIATE_TEST_CASE_P (
         /* Gas price        */  1000000000,
         /* Gas limit        */  50000,
         /* Chain ID         */  "T",
-        /* Version          */  DEFAULT_VERSION,
+        /* Version          */  2,
         /* Data             */  "test",
         /* Signature        */  std::make_shared<std::string>("62af8fa927e4f1ebd64fb8d7cca8aac9d5d33fefa4b185d44bb16ecefc2a7214304b4654406fe76fa36207fbb91f245586f66500cc554a3eb798faab8c435706"),
-        /* Options          */  DEFAULT_OPTIONS,
-        /* Serialized       */  "{\"nonce\":5,\"value\":\"10000000000000000000\",\"receiver\":\"erd10536tc3s886yqxtln74u6mztuwl5gy9k9gp8fttxda0klgxg979srtg5wt\",\"sender\":\"erd1sjsk3n2d0krq3pyxxtgf0q7j3t56sgusqaujj4n82l39t9h7jers6gslr4\",\"receiverUsername\":\"Sm9u\",\"senderUsername\":\"RG9l\",\"gasPrice\":1000000000,\"gasLimit\":50000,\"data\":\"dGVzdA==\",\"signature\":\"62af8fa927e4f1ebd64fb8d7cca8aac9d5d33fefa4b185d44bb16ecefc2a7214304b4654406fe76fa36207fbb91f245586f66500cc554a3eb798faab8c435706\",\"chainID\":\"T\",\"version\":1}"}));
+        /* Options          */  std::make_shared<uint32_t>(1),
+        /* Serialized       */  "{\"nonce\":5,\"value\":\"10000000000000000000\",\"receiver\":\"erd10536tc3s886yqxtln74u6mztuwl5gy9k9gp8fttxda0klgxg979srtg5wt\",\"sender\":\"erd1sjsk3n2d0krq3pyxxtgf0q7j3t56sgusqaujj4n82l39t9h7jers6gslr4\",\"receiverUsername\":\"Sm9u\",\"senderUsername\":\"RG9l\",\"gasPrice\":1000000000,\"gasLimit\":50000,\"data\":\"dGVzdA==\",\"signature\":\"62af8fa927e4f1ebd64fb8d7cca8aac9d5d33fefa4b185d44bb16ecefc2a7214304b4654406fe76fa36207fbb91f245586f66500cc554a3eb798faab8c435706\",\"chainID\":\"T\",\"version\":2,\"options\":1}"}));
 
 
 TEST_P(TransactionDeserializeParametrized, deserialize)
@@ -321,7 +339,7 @@ TEST_P(TransactionDeserializeParametrized, deserialize)
     EXPECT_EQ(transaction.m_chainID,  currParam.chainID);
     EXPECT_EQ(transaction.m_version,  currParam.version);
     EXPECT_PTR_EQ(transaction.m_signature,  currParam.signature);
-    EXPECT_EQ(transaction.m_options,  currParam.options);
+    EXPECT_PTR_EQ(transaction.m_options,  currParam.options);
 }
 
 struct invalidSerializedTxData
