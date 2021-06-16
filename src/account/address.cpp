@@ -3,14 +3,14 @@
 #include "bech32/bech32.h"
 #include "errors.h"
 
-#include <sodium.h>
+#include <cryptosignwrapper.h>
 #include <stdexcept>
 
 Address::Address(bytes const &publicKey) :
         m_pk(publicKey),
         m_bech32Address()
 {
-    if (publicKey.size() != crypto_sign_PUBLICKEYBYTES)
+    if (publicKey.size() != PUBLIC_KEY_LENGTH)
         throw std::length_error(ERROR_MSG_KEY_BYTES_SIZE);
 }
 
@@ -36,17 +36,15 @@ std::string Address::getBech32Address() const
 
 std::string Address::computeBech32Address() const
 {
-    unsigned char pk[crypto_sign_PUBLICKEYBYTES];
-    std::copy(m_pk.begin(), m_pk.end(), pk);
+    bytes const pk5BitsPerByte = util::convertBits(m_pk, kNoBitsInByte, kNoBitsInBech32, true);
 
-    return util::bech32::encode(hrp, util::convertBits(pk, crypto_sign_PUBLICKEYBYTES, kNoBitsInByte, kNoBitsInBech32, true));
+    return util::bech32::encode(hrp, pk5BitsPerByte);
 }
 
 bytes Address::computePkFromBech32() const
 {
-    bytes pk5BitsPerByte = util::bech32::decode(m_bech32Address).second;
-    auto pkCharPtr = reinterpret_cast<unsigned char*>(pk5BitsPerByte.data());
-    //TODO: Change convertBits to take bytes as input parameter;
-    return util::convertBits(pkCharPtr, pk5BitsPerByte.size(), kNoBitsInBech32, kNoBitsInByte, false);
+    bytes const pk5BitsPerByte = util::bech32::decode(m_bech32Address).second;
+
+    return util::convertBits(pk5BitsPerByte, kNoBitsInBech32, kNoBitsInByte, false);
 }
 

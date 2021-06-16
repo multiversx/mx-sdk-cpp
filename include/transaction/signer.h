@@ -6,7 +6,7 @@
 class Signer
 {
 public:
-    explicit Signer(bytes const &secretKey);
+    explicit Signer(bytes const &seed);
 
     std::string getSignature(std::string const &message) const;
 

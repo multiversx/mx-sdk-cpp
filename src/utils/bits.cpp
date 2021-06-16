@@ -3,8 +3,7 @@
 
 namespace util
 {
-std::vector<uint8_t> convertBits(unsigned char *data, unsigned int const dataLength,
-                                 unsigned int const fromBits, unsigned int const toBits, bool const pad)
+bytes convertBits(bytes const &data, unsigned int const fromBits, unsigned int const toBits, bool const pad)
 {
     unsigned int acc = 0;
     unsigned int bits = 0;
@@ -12,8 +11,7 @@ std::vector<uint8_t> convertBits(unsigned char *data, unsigned int const dataLen
     unsigned int maxVal = (1 << toBits) - 1;
     unsigned int maxAcc = (1 << (fromBits + toBits - 1)) - 1;
 
-    unsigned int ct = 0;
-    for (unsigned char value = *data; ct<dataLength; value = *++data)
+    for (auto const &value : data)
     {
         int valueAsInt = value & 0xff;
 
@@ -30,7 +28,6 @@ std::vector<uint8_t> convertBits(unsigned char *data, unsigned int const dataLen
             bits -= toBits;
             ret.push_back((acc >> bits) & maxVal);
         }
-        ct++;
     }
 
     if (pad)

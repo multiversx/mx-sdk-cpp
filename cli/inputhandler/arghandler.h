@@ -5,7 +5,6 @@
 #include <vector>
 #include <map>
 
-#include "utils/params.h"
 #include "utils/errors.h"
 
 namespace ih
