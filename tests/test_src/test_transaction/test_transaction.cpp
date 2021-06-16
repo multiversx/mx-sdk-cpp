@@ -252,6 +252,7 @@ INSTANTIATE_TEST_CASE_P (
         /* Signature        */  nullptr,
         /* Options          */  DEFAULT_OPTIONS,
         /* Serialized */        "{\"nonce\":8,\"value\":\"10000000000000000000\",\"receiver\":\"erd1cux02zersde0l7hhklzhywcxk4u9n4py5tdxyx7vrvhnza2r4gmq4vw35r\",\"sender\":\"erd1l453hd0gt5gzdp7czpuall8ggt2dcv5zwmfdf3sd3lguxseux2fsmsgldz\",\"gasPrice\":1000000000,\"gasLimit\":50000,\"chainID\":\"1\",\"version\":1}"},
+
         deserializedTxData
         /* Nonce            */  {5,
         /* Value            */  "10000000000000000000",
@@ -323,4 +324,117 @@ TEST_P(TransactionDeserializeParametrized, deserialize)
     EXPECT_EQ(transaction.m_options,  currParam.options);
 }
 
+struct invalidSerializedTxData
+{
+    std::string serializedTx;
+    errorMessage errMsg;
+};
 
+class TransactionDeserializeInvalidDataParametrized : public ::testing::TestWithParam<invalidSerializedTxData>
+{
+public:
+    void expectSerializeExceptionMsg(std::string const &serializedTx, errorMessage const &errMsg)
+    {
+        EXPECT_THROW({
+                         try
+                         {
+                             Transaction tx;
+                             tx.deserialize(serializedTx);
+                         }
+                         catch (const std::invalid_argument &e)
+                         {
+                             EXPECT_EQ(errMsg, e.what());
+                             throw;
+                         }
+                     }, std::invalid_argument);
+    }
+};
+
+INSTANTIATE_TEST_CASE_P (
+        InvalidData,
+        TransactionDeserializeInvalidDataParametrized,
+        ::testing::Values(
+        invalidSerializedTxData
+        /* Serialized tx */   {"{\"value\":\"0\",\"receiver\":\"erd1cux02zersde0l7hhklzhywcxk4u9n4py5tdxyx7vrvhnza2r4gmq4vw35r\",\"sender\":\"erd1l453hd0gt5gzdp7czpuall8ggt2dcv5zwmfdf3sd3lguxseux2fsmsgldz\",\"gasPrice\":1000000000,\"gasLimit\":50000,\"data\":\"Zm9v\",\"chainID\":\"1\",\"version\":1}",
+        /* Error msg     */   ERROR_MSG_NONCE},
+
+        invalidSerializedTxData
+        /* Serialized tx */   {"{\"nonce\":0,\"receiver\":\"erd1cux02zersde0l7hhklzhywcxk4u9n4py5tdxyx7vrvhnza2r4gmq4vw35r\",\"sender\":\"erd1l453hd0gt5gzdp7czpuall8ggt2dcv5zwmfdf3sd3lguxseux2fsmsgldz\",\"gasPrice\":1000000000,\"gasLimit\":50000,\"data\":\"Zm9v\",\"chainID\":\"1\",\"version\":1}",
+        /* Error msg     */   ERROR_MSG_VALUE},
+
+        invalidSerializedTxData
+        /* Serialized tx */   {"{\"nonce\":0,\"value\":\"0\",\"sender\":\"erd1l453hd0gt5gzdp7czpuall8ggt2dcv5zwmfdf3sd3lguxseux2fsmsgldz\",\"gasPrice\":1000000000,\"gasLimit\":50000,\"data\":\"Zm9v\",\"chainID\":\"1\",\"version\":1}",
+        /* Error msg     */   ERROR_MSG_RECEIVER},
+
+        invalidSerializedTxData
+        /* Serialized tx */   {"{\"nonce\":0,\"value\":\"0\",\"receiver\":\"erd1cux02zersde0l7hhklzhywcxk4u9n4py5tdxyx7vrvhnza2r4gmq4vw35r\",\"gasPrice\":1000000000,\"gasLimit\":50000,\"data\":\"Zm9v\",\"chainID\":\"1\",\"version\":1}",
+        /* Error msg     */   ERROR_MSG_SENDER},
+
+        invalidSerializedTxData
+        /* Serialized tx */   {"{\"nonce\":0,\"value\":\"0\",\"receiver\":\"erd1cux02zersde0l7hhklzhywcxk4u9n4py5tdxyx7vrvhnza2r4gmq4vw35r\",\"sender\":\"erd1l453hd0gt5gzdp7czpuall8ggt2dcv5zwmfdf3sd3lguxseux2fsmsgldz\",\"gasLimit\":50000,\"data\":\"Zm9v\",\"chainID\":\"1\",\"version\":1}",
+        /* Error msg     */   ERROR_MSG_GAS_PRICE},
+
+        invalidSerializedTxData
+        /* Serialized tx */   {"{\"nonce\":0,\"value\":\"0\",\"receiver\":\"erd1cux02zersde0l7hhklzhywcxk4u9n4py5tdxyx7vrvhnza2r4gmq4vw35r\",\"sender\":\"erd1l453hd0gt5gzdp7czpuall8ggt2dcv5zwmfdf3sd3lguxseux2fsmsgldz\",\"gasPrice\":1000000000,\"data\":\"Zm9v\",\"chainID\":\"1\",\"version\":1}",
+        /* Error msg     */   ERROR_MSG_GAS_LIMIT},
+
+        invalidSerializedTxData
+        /* Serialized tx */   {"{\"nonce\":0,\"value\":\"0\",\"receiver\":\"erd1cux02zersde0l7hhklzhywcxk4u9n4py5tdxyx7vrvhnza2r4gmq4vw35r\",\"sender\":\"erd1l453hd0gt5gzdp7czpuall8ggt2dcv5zwmfdf3sd3lguxseux2fsmsgldz\",\"gasPrice\":1000000000,\"gasLimit\":50000,\"data\":\"Zm9v\",\"version\":1}",
+        /* Error msg     */   ERROR_MSG_CHAIN_ID},
+
+        invalidSerializedTxData
+        /* Serialized tx */   {"{\"nonce\":0,\"value\":\"0\",\"receiver\":\"erd1cux02zersde0l7hhklzhywcxk4u9n4py5tdxyx7vrvhnza2r4gmq4vw35r\",\"sender\":\"erd1l453hd0gt5gzdp7czpuall8ggt2dcv5zwmfdf3sd3lguxseux2fsmsgldz\",\"gasPrice\":1000000000,\"gasLimit\":50000,\"data\":\"Zm9v\",\"chainID\":\"1\"}",
+        /* Error msg     */   ERROR_MSG_VERSION},
+
+        invalidSerializedTxData
+        /* Serialized tx */   {"{invalid serialized json}",
+        /* Error msg     */   ERROR_MSG_JSON_SERIALIZED}
+                ));
+
+TEST_P(TransactionDeserializeInvalidDataParametrized, deserialize_missingData)
+{
+    invalidSerializedTxData const& currParam = GetParam();
+
+    expectSerializeExceptionMsg(currParam.serializedTx, currParam.errMsg);
+}
+
+class TransactionSerializeFixture : public ::testing::Test
+{
+public:
+    template <typename ErrorType>
+    void expectSerializeException(Transaction &tx, errorMessage const &errMsg)
+    {
+        EXPECT_THROW({
+                         try
+                         {
+                             tx.serialize();
+                         }
+                         catch(const ErrorType &e)
+                         {
+                             EXPECT_EQ( errMsg, e.what() );
+                             throw;
+                         }
+                     }, ErrorType );
+    }
+};
+
+TEST_F(TransactionSerializeFixture, serialize_missingFields)
+{
+    Transaction tx;
+
+    Address const sender("erd10536tc3s886yqxtln74u6mztuwl5gy9k9gp8fttxda0klgxg979srtg5wt");
+    Address const receiver("erd1sjsk3n2d0krq3pyxxtgf0q7j3t56sgusqaujj4n82l39t9h7jers6gslr4");
+
+    tx.m_sender = std::make_shared<Address>(sender);
+    tx.m_receiver = std::make_shared<Address>(receiver);
+
+    EXPECT_NO_THROW(tx.serialize());
+
+    tx.m_sender = nullptr;
+    tx.m_receiver = std::make_shared<Address>(receiver);
+    expectSerializeException<std::invalid_argument>(tx, ERROR_MSG_SENDER);
+
+    tx.m_sender = std::make_shared<Address>(sender);
+    tx.m_receiver = nullptr;
+    expectSerializeException<std::invalid_argument>(tx, ERROR_MSG_RECEIVER);
+}
