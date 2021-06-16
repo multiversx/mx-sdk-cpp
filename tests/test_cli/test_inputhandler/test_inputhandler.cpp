@@ -340,6 +340,8 @@ TEST(JsonFileHandler, writeOutputFile)
     EXPECT_EQ(writtenTx, expectedTxSerialized);
 }
 
+//TODO: Create CMake function to automatically run all tests
+//TODO: Design CMake to automatically ->link all libraries + include all directories<- for every newly added test file
 //TODO: Split tests file in headers + CPP
 //TODO: Put every API inside erd namespace
 
