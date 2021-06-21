@@ -1,7 +1,6 @@
 #ifndef ERD_WRAPPER_HTTP_H
 #define ERD_WRAPPER_HTTP_H
 
-#include <string>
 #include "http/httplib.h"
 
 #define STATUS_CODE_OK 200
@@ -31,12 +30,12 @@ public:
     Result get(std::string const &path)
     {
         int status = STATUS_CODE_DEFAULT;
-        bool error = false;
+        bool err = false;
         std::string body;
 
         m_client.Get(path.c_str());
 
-        if (auto res = m_client.Get(path.c_str()))
+        if (auto const res = m_client.Get(path.c_str()))
         {
             status = res->status;
 
@@ -47,22 +46,27 @@ public:
         }
         else
         {
-            error = (res.error() != httplib::Error::Success);
+            err = error(res);
         }
 
-        return Result{status, error, body, getStatusMessage(status)};
+        return Result{status, err, body, getStatusMessage(status)};
     }
 
     Result post(std::string const &path, std::string const &message)
     {
-        auto res = m_client.Post(path.c_str(), message, "text/plain");
+        auto const res = m_client.Post(path.c_str(), message, "text/plain");
 
-        return Result{res->status, res.error() != httplib::Error::Success, res->body, getStatusMessage(res->status)};
+        return Result{res->status, error(res), res->body, getStatusMessage(res->status)};
     }
 
 private:
 
-    std::string getStatusMessage(int const &status)
+    bool error(httplib::Result const &res) const
+    {
+        return res.error() != httplib::Error::Success;
+    }
+
+    std::string getStatusMessage(int const &status) const
     {
         return (status == STATUS_CODE_OK) ? STATUS_MSG_OK : std::string(httplib::detail::status_message(status));
     }
