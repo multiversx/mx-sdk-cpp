@@ -159,12 +159,13 @@ TEST(ClientWrapper, get_validClient)
     EXPECT_FALSE(res.error);
     EXPECT_EQ(res.status, STATUS_CODE_OK);
     EXPECT_FALSE(res.body.empty());
+    EXPECT_TRUE(res.body.find("success"));
     EXPECT_EQ(res.statusMessage, STATUS_MSG_OK);
 }
 
 TEST(ClientWrapper, get_invalidClient)
 {
-    wrapper::http::Client client("https://api.elronddddd.com");
+    wrapper::http::Client client("https://api.elronddd.com");
     wrapper::http::Result res =  client.get("/address/erd1l453hd0gt5gzdp7czpuall8ggt2dcv5zwmfdf3sd3lguxseux2fsmsgldz");
 
     EXPECT_TRUE(res.error);
@@ -173,7 +174,7 @@ TEST(ClientWrapper, get_invalidClient)
     EXPECT_NE(res.statusMessage, STATUS_MSG_OK);
 }
 
-TEST(ClientWrapper, post)
+TEST(ClientWrapper, post_validClient)
 {
     wrapper::http::Client client("https://api.elrond.com");
     wrapper::http::Result res =  client.post("/transaction/send", "test");
@@ -181,5 +182,18 @@ TEST(ClientWrapper, post)
     EXPECT_FALSE(res.error);
     EXPECT_EQ(res.status, STATUS_CODE_BAD_REQUEST);
     EXPECT_FALSE(res.body.empty());
+    EXPECT_TRUE(res.body.find("error"));
     EXPECT_NE(res.statusMessage, STATUS_MSG_OK);
 }
+
+TEST(ClientWrapper, post_invalidClient)
+{
+    wrapper::http::Client client("https://api.elronddd.com");
+    wrapper::http::Result res =  client.post("/transaction/send", "test");
+
+    EXPECT_TRUE(res.error);
+    EXPECT_NE(res.status, STATUS_CODE_OK);
+    EXPECT_TRUE(res.body.empty());
+    EXPECT_NE(res.statusMessage, STATUS_MSG_OK);
+}
+
