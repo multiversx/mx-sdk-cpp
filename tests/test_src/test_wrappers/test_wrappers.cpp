@@ -2,6 +2,7 @@
 
 #include "utils/hex.h"
 #include "wrappers/jsonwrapper.h"
+#include "wrappers/httpwrapper.h"
 #include "wrappers/cryptosignwrapper.h"
 
 class OrderedJsonFixture : public ::testing::Test
@@ -148,4 +149,37 @@ TEST(CryptoWrapper, getSignature)
     EXPECT_EQ(signature.size(), SIGNATURE_LENGTH);
     EXPECT_EQ(util::stringToHex(signature), expectedSignature);
 
+}
+
+TEST(ClientWrapper, get_validClient)
+{
+    wrapper::http::Client client("https://api.elrond.com");
+    wrapper::http::Result res =  client.get("/address/erd1l453hd0gt5gzdp7czpuall8ggt2dcv5zwmfdf3sd3lguxseux2fsmsgldz");
+
+    EXPECT_FALSE(res.error);
+    EXPECT_EQ(res.status, STATUS_CODE_OK);
+    EXPECT_FALSE(res.body.empty());
+    EXPECT_EQ(res.statusMessage, STATUS_MSG_OK);
+}
+
+TEST(ClientWrapper, get_invalidClient)
+{
+    wrapper::http::Client client("https://api.elronddddd.com");
+    wrapper::http::Result res =  client.get("/address/erd1l453hd0gt5gzdp7czpuall8ggt2dcv5zwmfdf3sd3lguxseux2fsmsgldz");
+
+    EXPECT_TRUE(res.error);
+    EXPECT_NE(res.status, STATUS_CODE_OK);
+    EXPECT_TRUE(res.body.empty());
+    EXPECT_NE(res.statusMessage, STATUS_MSG_OK);
+}
+
+TEST(ClientWrapper, post)
+{
+    wrapper::http::Client client("https://api.elrond.com");
+    wrapper::http::Result res =  client.post("/transaction/send", "test");
+
+    EXPECT_FALSE(res.error);
+    EXPECT_EQ(res.status, STATUS_CODE_BAD_REQUEST);
+    EXPECT_FALSE(res.body.empty());
+    EXPECT_NE(res.statusMessage, STATUS_MSG_OK);
 }

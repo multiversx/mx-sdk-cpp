@@ -4,7 +4,13 @@
 #include <string>
 #include "http/httplib.h"
 
+#define STATUS_CODE_OK 200
+#define STATUS_CODE_BAD_REQUEST 400
+#define STATUS_CODE_DEFAULT -1
+#define STATUS_MSG_OK "Ok"
 
+namespace wrapper
+{
 namespace http
 {
 
@@ -13,18 +19,20 @@ struct Result
     int status;
     bool error;
     std::string body;
+    std::string statusMessage;
 };
 
 class Client
 {
 public:
-    explicit Client(std::string const &url): m_client(url.c_str()){}
+    explicit Client(std::string const &url) : m_client(url.c_str())
+    {}
 
     Result get(std::string const &path)
     {
-        std::string body;
-        int status = -1;
+        int status = STATUS_CODE_DEFAULT;
         bool error = false;
+        std::string body;
 
         m_client.Get(path.c_str());
 
@@ -32,7 +40,7 @@ public:
         {
             status = res->status;
 
-            if (res->status == 200)
+            if (status == STATUS_CODE_OK)
             {
                 body = res->body;
             }
@@ -42,24 +50,26 @@ public:
             error = (res.error() != httplib::Error::Success);
         }
 
-        return Result{status, error, body};
+        return Result{status, error, body, getStatusMessage(status)};
     }
 
     Result post(std::string const &path, std::string const &message)
     {
-        auto res = m_client.Post(path.c_str(), message.c_str(), "text/plain");
+        auto res = m_client.Post(path.c_str(), message, "text/plain");
 
-        return Result {res->status, res.error() != httplib::Error::Success, res->body};
-    }
-
-    std::string getStatusMessage(int const &status)
-    {
-        return  std::string(httplib::detail::status_message(status));
+        return Result{res->status, res.error() != httplib::Error::Success, res->body, getStatusMessage(res->status)};
     }
 
 private:
+
+    std::string getStatusMessage(int const &status)
+    {
+        return (status == STATUS_CODE_OK) ? STATUS_MSG_OK : std::string(httplib::detail::status_message(status));
+    }
+
     httplib::Client m_client;
 };
-}
 
+} // http
+} // wrapper
 #endif
