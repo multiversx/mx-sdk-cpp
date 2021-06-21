@@ -3,9 +3,8 @@
 
 #include "http/httplib.h"
 
-#define STATUS_CODE_OK 200
-#define STATUS_CODE_BAD_REQUEST 400
 #define STATUS_CODE_DEFAULT -1
+#define STATUS_CODE_OK 200
 #define STATUS_MSG_OK "Ok"
 
 namespace wrapper
@@ -58,7 +57,8 @@ public:
         bool err = false;
         std::string body;
 
-        auto const res = m_client.Post(path.c_str(), message, "text/plain");
+        char const *contentType = "text/plain";
+        auto const res = m_client.Post(path.c_str(), message, contentType);
 
         if (res)
         {

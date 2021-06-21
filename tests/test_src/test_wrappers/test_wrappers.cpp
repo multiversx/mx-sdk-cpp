@@ -180,7 +180,7 @@ TEST(ClientWrapper, post_validClient)
     wrapper::http::Result res =  client.post("/transaction/send", "test");
 
     EXPECT_FALSE(res.error);
-    EXPECT_EQ(res.status, STATUS_CODE_BAD_REQUEST);
+    EXPECT_EQ(res.status, 400); // 400 = BAD REQUEST
     EXPECT_FALSE(res.body.empty());
     EXPECT_TRUE(res.body.find("error"));
     EXPECT_NE(res.statusMessage, STATUS_MSG_OK);
