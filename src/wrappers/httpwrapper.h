@@ -37,11 +37,7 @@ public:
         if (res)
         {
             status = res->status;
-
-            if (status == STATUS_CODE_OK)
-            {
-                body = res->body;
-            }
+            body = res->body;
         }
         else
         {

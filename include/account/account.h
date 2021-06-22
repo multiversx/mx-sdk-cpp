@@ -9,11 +9,16 @@ class Account
 public:
     explicit Account(Address address);
 
+    explicit Account(Address address, std::string balance, uint64_t nonce);
+
     const Address& getAddress() const;
 
     const std::string& getBalance() const;
 
+    const uint64_t& getNonce() const;
+
 private:
+    uint64_t m_nonce;
     std::string m_balance;
     Address const m_address;
 };

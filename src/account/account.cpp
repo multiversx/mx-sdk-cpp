@@ -4,7 +4,14 @@
 
 Account::Account(Address address) :
         m_address(std::move(address)),
-        m_balance()
+        m_balance(),
+        m_nonce()
+{}
+
+Account::Account(Address address, std::string balance, uint64_t nonce) :
+        m_address(std::move(address)),
+        m_balance(std::move(balance)),
+        m_nonce(nonce)
 {}
 
 const Address& Account::getAddress() const
@@ -15,5 +22,10 @@ const Address& Account::getAddress() const
 const std::string& Account::getBalance() const
 {
     return m_balance;
+}
+
+const uint64_t& Account::getNonce() const
+{
+    return m_nonce;
 }
 
