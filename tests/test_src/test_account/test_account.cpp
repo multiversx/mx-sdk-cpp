@@ -80,15 +80,34 @@ TEST_P(AddressParametrized, getPublicKey_getBech32Address)
     EXPECT_EQ(adr1.getBech32Address(), adr2.getBech32Address());
 }
 
-TEST(Address, assignmentOperator)
+TEST(Address, comparsionOperator_bech32Address)
 {
-    Address adr1("erd1sjsk3n2d0krq3pyxxtgf0q7j3t56sgusqaujj4n82l39t9h7jers6gslr4");
-    Address adr2("erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th");
+    Address const adr1("erd1sjsk3n2d0krq3pyxxtgf0q7j3t56sgusqaujj4n82l39t9h7jers6gslr4");
+    Address const adr2("erd1sjsk3n2d0krq3pyxxtgf0q7j3t56sgusqaujj4n82l39t9h7jers6gslr4");
+    Address const adr3("erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th");
 
-    adr1 = adr2;
+    EXPECT_TRUE(adr1 == adr2);
+    EXPECT_FALSE(adr1 == adr3);
+}
 
-    EXPECT_EQ(adr1.getPublicKey(), adr2.getPublicKey());
-    EXPECT_EQ(adr1.getBech32Address(), adr2.getBech32Address());
+TEST(Address, comparsionOperator_pubKey)
+{
+    Address const adr1(util::hexToBytes("0139472eff6886771a982f3083da5d421f24c29181e63888228dc81ca60d69e1"));
+    Address const adr2(util::hexToBytes("0139472eff6886771a982f3083da5d421f24c29181e63888228dc81ca60d69e1"));
+    Address const adr3("erd1sjsk3n2d0krq3pyxxtgf0q7j3t56sgusqaujj4n82l39t9h7jers6gslr4");
+
+    EXPECT_TRUE(adr1 == adr2);
+    EXPECT_FALSE(adr1 == adr3);
+}
+
+TEST(Address, comparsionOperator_bech32Address_pubKey)
+{
+    Address const adr1(util::hexToBytes("0139472eff6886771a982f3083da5d421f24c29181e63888228dc81ca60d69e1"));
+    Address const adr2("erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th");
+    Address const adr3(util::hexToBytes("8049d639e5a6980d1cd2392abcce41029cda74a1563523a202f09641cc2618f8"));
+
+    EXPECT_TRUE(adr1 == adr2);
+    EXPECT_FALSE(adr1 == adr3);
 }
 
 TEST(Account, getAddress_getPublicKey_getBech32Address)
