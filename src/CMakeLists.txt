@@ -17,5 +17,6 @@ add_library(src ${src})
 
 target_link_libraries(src PUBLIC utils)
 target_link_libraries(src PUBLIC external)
+target_link_libraries(src LINK_PUBLIC ${LIBSODIUM_LIBRARY})
 	
 

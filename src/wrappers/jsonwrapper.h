@@ -56,6 +56,11 @@ public:
         return m_json.contains(key);
     }
 
+    bool empty() const
+    {
+        return m_json.empty();
+    }
+
     template <typename T>
     void set(std::string const &key, T const &value)
     {
@@ -84,6 +89,7 @@ public:
 
     std::string serialize() const
     {
+        if (empty()) throw std::invalid_argument(ERROR_MSG_JSON_SERIALIZE_EMPTY);
         return m_json.dump();
     }
 

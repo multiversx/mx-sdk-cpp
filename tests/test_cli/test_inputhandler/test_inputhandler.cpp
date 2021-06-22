@@ -4,6 +4,7 @@
 #include "utils/ext.h"
 #include "wrappers/cryptosignwrapper.h"
 #include <sodium.h>
+#include <fstream>
 
 TEST(ArgHandler, getRequestedCmd_getRequestType_noArgument_expectInvalid)
 {
@@ -296,28 +297,6 @@ TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidData_expect
     EXPECT_EQ(argHandler.getRequestedCmd().getErrorCode(), ERROR_DATA);
 }
 
-//class ErrorReportParametrized : public ::testing::TestWithParam<errorCode> {};
-//
-//INSTANTIATE_TEST_CASE_P(
-//  AllErrors,
-//  ErrorReportParametrized,
-//  ::testing::Values(ERROR_PEM_INPUT_FILE, ERROR_VALUE, ERROR_NONCE, ERROR_GAS_PRICE, ERROR_RECEIVER,
-//                    ERROR_GAS_LIMIT, ERROR_PEM_INPUT_FILE, ERROR_JSON_OUT_FILE, ERROR_DATA ,
-//                    ERROR_SODIUM_INIT, 111U));
-//
-//TEST_P(ErrorReportParametrized, reportError_differentErrors)
-//{
-//  int const argc = 1;
-//  char* argv[argc];
-//
-//  argv[0] = "ERDProject.exe";
-//
-//  errorCode const& currParam = GetParam();
-//
-//  reportError(currParam);
-//}
-
-
 TEST(JsonFileHandler, writeOutputFile)
 {
     std::map<uint32_t, std::string> input;
@@ -329,13 +308,13 @@ TEST(JsonFileHandler, writeOutputFile)
     input[ARGS_TX_IDX_GAS_LIMIT] = "50000";
     input[ARGS_TX_IDX_DATA] = "test";
     input[ARGS_TX_IDX_CHAIN_ID] = "T";
-    input[ARGS_TX_IDX_PEM_INPUT_FILE] = "..//testData//keys.pem";
-    input[ARGS_TX_IDX_JSON_OUT_FILE] = "..//testData//outputJson.json";
+    input[ARGS_TX_IDX_PEM_INPUT_FILE] = "..//..//testData//keysValid1.pem";
+    input[ARGS_TX_IDX_JSON_OUT_FILE] = "..//..//testData//outputJson.json";
 
     ih::wrapper::PemHandlerInputWrapper const pemWrapper(input);
     ih::wrapper::TransactionInputWrapper const transactionWrapper(input);
 
-    ih::PemFileReader pemHandler(pemWrapper.getPemFilePath());
+    PemFileReader pemHandler(pemWrapper.getPemFilePath());
     ih::JsonFile jsonFile(transactionWrapper.getOutputFile());
 
     Transaction transaction(transactionWrapper.getNonce(), transactionWrapper.getValue(),
@@ -348,114 +327,21 @@ TEST(JsonFileHandler, writeOutputFile)
 
     Signer signer(pemHandler.getSeed());
     transaction.sign(signer);
+    std::string const txSerialized = transaction.serialize();
 
-    std::string const txSerialized = "{\"nonce\":5,\"value\":\"10000000000000000000\",\"receiver\":\"erd10536tc3s886yqxtln74u6mztuwl5gy9k9gp8fttxda0klgxg979srtg5wt\",\"sender\":\"erd1sjsk3n2d0krq3pyxxtgf0q7j3t56sgusqaujj4n82l39t9h7jers6gslr4\",\"gasPrice\":1000000000,\"gasLimit\":50000,\"data\":\"dGVzdA==\",\"signature\":\"62af8fa927e4f1ebd64fb8d7cca8aac9d5d33fefa4b185d44bb16ecefc2a7214304b4654406fe76fa36207fbb91f245586f66500cc554a3eb798faab8c435706\",\"chainID\":\"T\",\"version\":1}";
-    EXPECT_EQ (transaction.serialize(), txSerialized);
+    jsonFile.writeDataToFile(txSerialized);
 
-    transaction.deserialize(txSerialized);
-    EXPECT_EQ(transaction.serialize(),txSerialized);
+    std::string writtenTx;
+    std::ifstream inFile(transactionWrapper.getOutputFile());
+    std::getline(inFile, writtenTx);
 
-    jsonFile.writeDataToFile(transaction.serialize());
+    std::string const expectedTxSerialized = "{\"nonce\":5,\"value\":\"10000000000000000000\",\"receiver\":\"erd10536tc3s886yqxtln74u6mztuwl5gy9k9gp8fttxda0klgxg979srtg5wt\",\"sender\":\"erd1sjsk3n2d0krq3pyxxtgf0q7j3t56sgusqaujj4n82l39t9h7jers6gslr4\",\"gasPrice\":1000000000,\"gasLimit\":50000,\"data\":\"dGVzdA==\",\"signature\":\"62af8fa927e4f1ebd64fb8d7cca8aac9d5d33fefa4b185d44bb16ecefc2a7214304b4654406fe76fa36207fbb91f245586f66500cc554a3eb798faab8c435706\",\"chainID\":\"T\",\"version\":1}";
+    EXPECT_EQ(txSerialized, expectedTxSerialized);
+    EXPECT_EQ(writtenTx, expectedTxSerialized);
 }
 
-class PemFileReaderConstructorFixture : public ::testing::Test
-{
-public:
-    template <typename T>
-    void expectException(std::string const &filePath, errorMessage const &errMsg)
-    {
-        EXPECT_THROW({
-                         try
-                         {
-                             ih::PemFileReader pemHandler(filePath);
-                         }
-                         catch(const T &e)
-                         {
-                             EXPECT_EQ( errMsg, e.what() );
-                             throw;
-                         }
-                     }, T );
-    }
-
-};
-
-TEST_F(PemFileReaderConstructorFixture, validFile)
-{
-    EXPECT_NO_THROW(ih::PemFileReader pemHandler("..//testData//keys.pem"));
-}
-
-TEST_F(PemFileReaderConstructorFixture, invalidFile_NotEnoughBytes)
-{
-    expectException<std::length_error>("..//testData//keysNotEnoughBytes.pem",ERROR_MSG_KEY_BYTES_SIZE);
-}
-
-TEST_F(PemFileReaderConstructorFixture, invalidFile_invalidFileExtension)
-{
-    expectException<std::invalid_argument>("..//testData//keys.pme",ERROR_MSG_FILE_EXTENSION_INVALID);
-}
-
-TEST_F(PemFileReaderConstructorFixture, invalidFile_emptyFile)
-{
-    expectException<std::invalid_argument>("..//testData//keysEmptyFile.pem",ERROR_MSG_FILE_EMPTY);
-}
-
-TEST_F(PemFileReaderConstructorFixture, invalidFile_notExisting)
-{
-    expectException<std::invalid_argument>("..//testData//thisFileDoesNotExist.pem",ERROR_MSG_FILE_DOES_NOT_EXIST);
-}
-
-TEST(PemFileReader, getSegwitAddress)
-{
-    ih::PemFileReader pemHandler("..//testData//keys.pem");
-
-    std::string pemAddress = pemHandler.getAddress().getBech32Address();
-    std::string expectedAdr = "erd1sjsk3n2d0krq3pyxxtgf0q7j3t56sgusqaujj4n82l39t9h7jers6gslr4";
-
-    EXPECT_EQ(pemAddress, expectedAdr);
-}
-
-//TODO: This test will be moved in another unit test file, when the unit test ticket is started.
-TEST(Address, getPubKey)
-{
-    ih::PemFileReader pemHandler("..//testData//keys.pem");
-
-    bytes pubKeyFromPem = pemHandler.getAddress().getPublicKey();
-    Address adr("erd1sjsk3n2d0krq3pyxxtgf0q7j3t56sgusqaujj4n82l39t9h7jers6gslr4");
-
-    EXPECT_EQ(adr.getPublicKey(),pubKeyFromPem);
-}
-
-//TODO: - Change this ugly tests in future ticket, because Transaction class is going to be completely changed.
-// -Move these tests in separate file in the tests ticket
-// -Add more tests for different signatures/transactions
-TEST(Signer, getSignature)
-{
-    bytes seed = util::hexToBytes("1a927e2af5306a9bb2ea777f73e06ecc0ac9aaa72fb4ea3fecf659451394cccf");
-    Signer signer(seed);
-
-    std::string msg = "{\"nonce\":0,\"value\":\"0\",\"receiver\":\"erd1cux02zersde0l7hhklzhywcxk4u9n4py5tdxyx7vrvhnza2r4gmq4vw35r\",\"sender\":\"erd1l453hd0gt5gzdp7czpuall8ggt2dcv5zwmfdf3sd3lguxseux2fsmsgldz\",\"gasPrice\":1000000000,\"gasLimit\":50000,\"data\":\"Zm9v\",\"chainID\":\"1\",\"version\":1}";
-    std::string actualSignature = signer.getSignature(msg);
-    std::string expectedSignature = "b5fddb8c16fa7f6123cb32edc854f1e760a3eb62c6dc420b5a4c0473c58befd45b621b31a448c5b59e21428f2bc128c80d0ee1caa4f2bf05a12be857ad451b00";
-
-    EXPECT_EQ(util::stringToHex(actualSignature), expectedSignature);
-}
-
-TEST(Signer, getSignature2)
-{
-    bytes seed = util::hexToBytes("1a927e2af5306a9bb2ea777f73e06ecc0ac9aaa72fb4ea3fecf659451394cccf");
-    Signer signer(seed);
-
-    Address sender("erd1l453hd0gt5gzdp7czpuall8ggt2dcv5zwmfdf3sd3lguxseux2fsmsgldz");
-    Address receiver("erd1cux02zersde0l7hhklzhywcxk4u9n4py5tdxyx7vrvhnza2r4gmq4vw35r");
-
-    std::string const dataStr = "foo";
-    auto data  = std::make_shared<bytes>(dataStr.begin(),dataStr.end());
-    Transaction transaction(0, "0", receiver, sender, DEFAULT_SENDER_NAME, DEFAULT_RECEIVER_NAME, 1000000000, 50000, data, DEFAULT_SIGNATURE, DEFAULT_CHAIN_ID, DEFAULT_VERSION, DEFAULT_OPTIONS);
-    std::string expectedSerializedTx = "{\"nonce\":0,\"value\":\"0\",\"receiver\":\"erd1cux02zersde0l7hhklzhywcxk4u9n4py5tdxyx7vrvhnza2r4gmq4vw35r\",\"sender\":\"erd1l453hd0gt5gzdp7czpuall8ggt2dcv5zwmfdf3sd3lguxseux2fsmsgldz\",\"gasPrice\":1000000000,\"gasLimit\":50000,\"data\":\"Zm9v\",\"chainID\":\"1\",\"version\":1}";
-    EXPECT_EQ(expectedSerializedTx,transaction.serialize());
-
-    std::string expectedSignature = "b5fddb8c16fa7f6123cb32edc854f1e760a3eb62c6dc420b5a4c0473c58befd45b621b31a448c5b59e21428f2bc128c80d0ee1caa4f2bf05a12be857ad451b00";
-    std::string actualSignature = signer.getSignature(expectedSerializedTx);
-    EXPECT_EQ(util::stringToHex(actualSignature),expectedSignature);
-}
+//TODO: Create CMake function to automatically run all tests
+//TODO: Design CMake to automatically ->link all libraries + include all directories<- for every newly added test file
+//TODO: Split tests file in headers + CPP
+//TODO: Put every API inside erd namespace
 

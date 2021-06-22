@@ -3,8 +3,6 @@
 
 #include <string>
 
-namespace ih
-{
 class IFile
 {
 public:
@@ -25,5 +23,5 @@ private:
     std::string const m_filePath;
 
 };
-}
+
 #endif
