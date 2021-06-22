@@ -15,15 +15,17 @@ Transaction createTransaction(ih::wrapper::TransactionInputWrapper const &txWrap
     return Transaction
             (txWrapper.getNonce(), txWrapper.getValue(),
              txWrapper.getReceiver(), senderAddress,
+             txWrapper.getReceiverName(), txWrapper.getSenderName(),
              txWrapper.getGasPrice(), txWrapper.getGasLimit(),
-             txWrapper.getData(), txWrapper.getChainId(),
-             txWrapper.getVersion());
+             txWrapper.getData(), txWrapper.getSignature(),
+             txWrapper.getChainId(), txWrapper.getVersion(),
+             txWrapper.getOptions());
 }
 
 void signTransaction(Transaction &transaction, bytes const& seed)
 {
     Signer signer(seed);
-    transaction.applySignature(signer);
+    transaction.sign(signer);
 }
 
 }
@@ -102,7 +104,7 @@ void handleCreateSignedTransactionWithPemFile(const std::map<uint32_t, std::stri
     Transaction transaction = internal::createTransaction(transactionInputWrapper, pemReader.getAddress());
     internal::signTransaction(transaction,pemReader.getSeed());
 
-    jsonFile.writeDataToFile(transaction.getSerializedTransaction());
+    jsonFile.writeDataToFile(transaction.serialize());
 }
 
 void handleRequest(ih::RequestedCmd const &requestedCmd)

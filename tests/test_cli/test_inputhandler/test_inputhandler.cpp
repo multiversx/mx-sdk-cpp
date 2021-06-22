@@ -328,6 +328,7 @@ TEST(JsonFileHandler, writeOutputFile)
     input[ARGS_TX_IDX_GAS_PRICE] = "1000000000";
     input[ARGS_TX_IDX_GAS_LIMIT] = "50000";
     input[ARGS_TX_IDX_DATA] = "test";
+    input[ARGS_TX_IDX_CHAIN_ID] = "T";
     input[ARGS_TX_IDX_PEM_INPUT_FILE] = "..//testData//keys.pem";
     input[ARGS_TX_IDX_JSON_OUT_FILE] = "..//testData//outputJson.json";
 
@@ -338,13 +339,23 @@ TEST(JsonFileHandler, writeOutputFile)
     ih::JsonFile jsonFile(transactionWrapper.getOutputFile());
 
     Transaction transaction(transactionWrapper.getNonce(), transactionWrapper.getValue(),
-                            Address(transactionWrapper.getReceiver()), pemHandler.getAddress(),
+                            transactionWrapper.getReceiver(), pemHandler.getAddress(),
+                            transactionWrapper.getReceiverName(), transactionWrapper.getSenderName(),
                             transactionWrapper.getGasPrice(), transactionWrapper.getGasLimit(),
-                            transactionWrapper.getData(), transactionWrapper.getChainId(),
-                            transactionWrapper.getVersion());
+                            transactionWrapper.getData(),
+                            transactionWrapper.getSignature(), transactionWrapper.getChainId(),
+                            transactionWrapper.getVersion(), transactionWrapper.getOptions());
+
     Signer signer(pemHandler.getSeed());
-    transaction.applySignature(signer);
-    jsonFile.writeDataToFile(transaction.getSerializedTransaction());
+    transaction.sign(signer);
+
+    std::string const txSerialized = "{\"nonce\":5,\"value\":\"10000000000000000000\",\"receiver\":\"erd10536tc3s886yqxtln74u6mztuwl5gy9k9gp8fttxda0klgxg979srtg5wt\",\"sender\":\"erd1sjsk3n2d0krq3pyxxtgf0q7j3t56sgusqaujj4n82l39t9h7jers6gslr4\",\"gasPrice\":1000000000,\"gasLimit\":50000,\"data\":\"dGVzdA==\",\"signature\":\"62af8fa927e4f1ebd64fb8d7cca8aac9d5d33fefa4b185d44bb16ecefc2a7214304b4654406fe76fa36207fbb91f245586f66500cc554a3eb798faab8c435706\",\"chainID\":\"T\",\"version\":1}";
+    EXPECT_EQ (transaction.serialize(), txSerialized);
+
+    transaction.deserialize(txSerialized);
+    EXPECT_EQ(transaction.serialize(),txSerialized);
+
+    jsonFile.writeDataToFile(transaction.serialize());
 }
 
 class PemFileReaderConstructorFixture : public ::testing::Test
@@ -437,9 +448,11 @@ TEST(Signer, getSignature2)
     Address sender("erd1l453hd0gt5gzdp7czpuall8ggt2dcv5zwmfdf3sd3lguxseux2fsmsgldz");
     Address receiver("erd1cux02zersde0l7hhklzhywcxk4u9n4py5tdxyx7vrvhnza2r4gmq4vw35r");
 
-    Transaction transaction(0,"0",receiver,sender,1000000000,50000,"foo","1",1);
+    std::string const dataStr = "foo";
+    auto data  = std::make_shared<bytes>(dataStr.begin(),dataStr.end());
+    Transaction transaction(0, "0", receiver, sender, DEFAULT_SENDER_NAME, DEFAULT_RECEIVER_NAME, 1000000000, 50000, data, DEFAULT_SIGNATURE, DEFAULT_CHAIN_ID, DEFAULT_VERSION, DEFAULT_OPTIONS);
     std::string expectedSerializedTx = "{\"nonce\":0,\"value\":\"0\",\"receiver\":\"erd1cux02zersde0l7hhklzhywcxk4u9n4py5tdxyx7vrvhnza2r4gmq4vw35r\",\"sender\":\"erd1l453hd0gt5gzdp7czpuall8ggt2dcv5zwmfdf3sd3lguxseux2fsmsgldz\",\"gasPrice\":1000000000,\"gasLimit\":50000,\"data\":\"Zm9v\",\"chainID\":\"1\",\"version\":1}";
-    EXPECT_EQ(expectedSerializedTx,transaction.getSerializedTransaction());
+    EXPECT_EQ(expectedSerializedTx,transaction.serialize());
 
     std::string expectedSignature = "b5fddb8c16fa7f6123cb32edc854f1e760a3eb62c6dc420b5a4c0473c58befd45b621b31a448c5b59e21428f2bc128c80d0ee1caa4f2bf05a12be857ad451b00";
     std::string actualSignature = signer.getSignature(expectedSerializedTx);

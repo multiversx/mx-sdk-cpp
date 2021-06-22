@@ -22,8 +22,11 @@ errorCode const ERROR_SODIUM_INIT = 9U;
 errorMessage const ERROR_MSG_NONCE = "Invalid nonce.";
 errorMessage const ERROR_MSG_VALUE = "Invalid value.";
 errorMessage const ERROR_MSG_RECEIVER = "Invalid receiver.";
+errorMessage const ERROR_MSG_SENDER = "Invalid sender.";
 errorMessage const ERROR_MSG_GAS_PRICE = "Invalid gas price.";
 errorMessage const ERROR_MSG_GAS_LIMIT = "Invalid gas limit.";
+errorMessage const ERROR_MSG_CHAIN_ID = "Invalid chain id.";
+errorMessage const ERROR_MSG_VERSION = "Invalid version.";
 errorMessage const ERROR_MSG_PEM_INPUT_FILE = "Invalid pem file.";
 errorMessage const ERROR_MSG_JSON_OUT_FILE = "Invalid json file.";
 errorMessage const ERROR_MSG_DATA = "Invalid data.";
@@ -36,6 +39,9 @@ errorMessage const ERROR_MSG_FILE_EMPTY = "File is empty.";
 errorMessage const ERROR_MSG_FILE_DOES_NOT_EXIST = "File does not exists.";
 errorMessage const ERROR_MSG_FILE_EXTENSION_INVALID = "File extension invalid.";
 errorMessage const ERROR_MSG_KEY_BYTES_SIZE = "Key bytes size invalid.";
+errorMessage const ERROR_MSG_JSON_SERIALIZED = "Invalid serialized json string.";
+errorMessage const ERROR_MSG_JSON_KEY_NOT_FOUND = "Json does not contain key: ";
+errorMessage const ERROR_MSG_JSON_SET = "Json can not insert key:  ";
 
 std::map<errorCode, errorMessage> const errors =
         {
