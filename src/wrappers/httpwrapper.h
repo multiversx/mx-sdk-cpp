@@ -13,6 +13,12 @@ namespace wrapper
 namespace http
 {
 
+enum ContentType
+{
+    textPlain,
+    applicationJson
+};
+
 struct Result
 {
     int status;
@@ -34,16 +40,37 @@ public:
         return wrappedResult(res);
     }
 
-    Result post(std::string const &path, std::string const &message, std::string const &contentType = CONTENT_TYPE_PLAIN_TEXT)
+    Result post(std::string const &path, std::string const &message, ContentType const &contentType = textPlain)
     {
-        auto const res = m_client.Post(path.c_str(), message, contentType.c_str());
+        auto const res = m_client.Post(path.c_str(), message, getContentType(contentType).c_str());
 
         return wrappedResult(res);
     }
 
 private:
+    std::string getContentType(ContentType const &contentType) const
+    {
+        switch (contentType)
+        {
+            case textPlain:
+            {
+                return CONTENT_TYPE_PLAIN_TEXT;
+                break;
+            }
+            case applicationJson:
+            {
+                return CONTENT_TYPE_JSON;
+                break;
+            }
+            default:
+            {
+                return CONTENT_TYPE_PLAIN_TEXT;
+                break;
+            }
+        }
+    }
 
-    Result wrappedResult(httplib::Result const &res)
+    Result wrappedResult(httplib::Result const &res) const
     {
         int status = STATUS_CODE_DEFAULT;
         bool err = false;

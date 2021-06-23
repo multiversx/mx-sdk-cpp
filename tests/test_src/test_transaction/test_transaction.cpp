@@ -406,7 +406,7 @@ INSTANTIATE_TEST_CASE_P (
 
         invalidSerializedTxData
         /* Serialized tx */   {"{invalid serialized json}",
-        /* Error msg     */   ERROR_MSG_JSON_SERIALIZED}
+        /* Error msg     */   ERROR_MSG_JSON_SERIALIZED + "{invalid serialized json}"}
                 ));
 
 TEST_P(TransactionDeserializeInvalidDataParametrized, deserialize_missingData)

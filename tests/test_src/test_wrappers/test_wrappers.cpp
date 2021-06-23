@@ -105,7 +105,7 @@ TEST_F(OrderedJsonFixture, deserialize)
     EXPECT_EQ(json.at<bool>("happy"), true);
     EXPECT_EQ(json.at<std::string>("name"), "Joe");
 
-    expectExceptionDeserialize<std::invalid_argument>(json, "invalid serialized json", ERROR_MSG_JSON_SERIALIZED);
+    expectExceptionDeserialize<std::invalid_argument>(json, "invalid serialized json", ERROR_MSG_JSON_SERIALIZED + "invalid serialized json");
 }
 
 TEST_F(OrderedJsonFixture, serialize_empty)

@@ -6,8 +6,6 @@
 #include "account/address.h"
 #include "transaction/transaction.h"
 
-#include <string>
-
 class ProxyProvider
 {
 public:
@@ -15,9 +13,9 @@ public:
 
     Account getAccount(Address const &address);
 
-    std::string send(Transaction const &transaction);
+    TransactionHash send(Transaction const &transaction);
 
-    bool transactionExecuted(std::string const &txHash);
+    TransactionStatus getTransactionStatus(std::string const &txHash);
 
 private:
     std::string m_url;
