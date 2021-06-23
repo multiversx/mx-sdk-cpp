@@ -187,7 +187,7 @@ TEST(ClientWrapper, get_validSubDomain_invalidRequest)
     EXPECT_FALSE(json["error"] == "");
 }
 
-TEST(ClientWrapper, get_validDomain_invalidSubDomain)
+TEST(ClientWrapper, get_invalidSubDomain)
 {
     wrapper::http::Client client("https://testnet-gateway.elrond.com");
     wrapper::http::Result res =  client.get("/address_INVALID_PATH/erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqplllst77y4l");
@@ -215,7 +215,7 @@ TEST(ClientWrapper, post_validSubDomain_testRequest)
     EXPECT_FALSE(json["error"] == "");
 }
 
-TEST(ClientWrapper, post_invalidDomain_testRequest)
+TEST(ClientWrapper, post_invalidSubDomain)
 {
     wrapper::http::Client client("https://testnet-gateway.elrond.com");
     wrapper::http::Result res =  client.post("/transaction/send_INVALID_PATH", "test");
