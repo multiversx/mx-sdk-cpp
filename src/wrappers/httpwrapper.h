@@ -5,7 +5,6 @@
 
 #define STATUS_CODE_DEFAULT -1
 #define STATUS_CODE_OK 200
-#define STATUS_MSG_OK "Ok"
 
 namespace wrapper
 {
@@ -37,11 +36,7 @@ public:
         if (res)
         {
             status = res->status;
-
-            if (status == STATUS_CODE_OK)
-            {
-                body = res->body;
-            }
+            body = res->body;
         }
         else
         {
@@ -82,7 +77,7 @@ private:
 
     std::string getStatusMessage(int const &status) const
     {
-        return (status == STATUS_CODE_OK) ? STATUS_MSG_OK : std::string(httplib::detail::status_message(status));
+        return std::string(httplib::detail::status_message(status));
     }
 
     httplib::Client m_client;
