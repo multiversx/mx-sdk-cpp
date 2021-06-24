@@ -8,9 +8,25 @@ struct TransactionHash
     std::string hash;
 };
 
-struct TransactionStatus
+class TransactionStatus
 {
-    std::string status;
+public:
+    explicit TransactionStatus(std::string status);
+
+    bool operator ==(TransactionStatus const& txStatus);
+
+    bool isPending() const;
+
+    bool isExecuted() const;
+
+    bool isSuccessful() const;
+
+    bool isFailed() const;
+
+    bool isInvalid() const;
+
+private:
+    std::string m_status;
 };
 
 #endif

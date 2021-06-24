@@ -81,5 +81,5 @@ TransactionStatus ProxyProvider::getTransactionStatus(std::string const &txHash)
 
     std::string const txStatus = data["status"];
 
-    return TransactionStatus{txStatus};
+    return TransactionStatus(txStatus);
 }

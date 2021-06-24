@@ -48,6 +48,6 @@ TEST(ProxyProvider, transactionStatus)
 {
     ProxyProvider proxy("https://testnet-api.elrond.com");
 
-    EXPECT_EQ(proxy.getTransactionStatus("5f0a94b2df847d1b74bd6f8c364602d07be77c3e66bf9b7bb1208715c8eebcb9").status, "success");
+    EXPECT_TRUE(proxy.getTransactionStatus("5f0a94b2df847d1b74bd6f8c364602d07be77c3e66bf9b7bb1208715c8eebcb9").isSuccessful());
 
 }
