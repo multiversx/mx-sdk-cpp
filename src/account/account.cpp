@@ -4,8 +4,8 @@
 
 Account::Account(Address address) :
         m_address(std::move(address)),
-        m_balance(),
-        m_nonce()
+        m_balance(DEFAULT_BALANCE),
+        m_nonce(DEFAULT_NONCE)
 {}
 
 Account::Account(Address address, std::string balance, uint64_t const &nonce) :

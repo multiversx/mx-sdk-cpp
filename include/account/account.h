@@ -4,6 +4,12 @@
 #include "address.h"
 #include <string>
 
+#ifndef DEFAULT_NONCE
+    #define DEFAULT_NONCE 0U
+#endif
+
+#define DEFAULT_BALANCE "0"
+
 class Account
 {
 public:
