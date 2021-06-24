@@ -1,4 +1,4 @@
-#include "proxy/data/data_transaction.h"
+#include "provider/data/data_transaction.h"
 
 TransactionStatus::TransactionStatus(std::string status) :
     m_status(std::move(status)){}

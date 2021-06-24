@@ -7,7 +7,6 @@
 #include "account/account.h"
 #include "account/address.h"
 #include "filehandler/pemreader.h"
-#include "proxy/proxyprovider.h"
-
+#include "provider/proxyprovider.h"
 
 #endif //ERD_SDK_H

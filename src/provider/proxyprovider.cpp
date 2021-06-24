@@ -1,4 +1,4 @@
-#include "proxy/proxyprovider.h"
+#include "provider/proxyprovider.h"
 #include "apiresponse.h"
 
 

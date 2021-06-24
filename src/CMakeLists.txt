@@ -10,9 +10,9 @@ file(GLOB src
         wrappers/jsonwrapper.h
         wrappers/httpwrapper.h
         wrappers/cryptosignwrapper.h wrappers/cryptosignwrapper.cpp
-        proxy/apiresponse.h
-        proxy/proxyprovider.cpp
-        proxy/data/data_transaction.cpp
+        provider/apiresponse.h
+        provider/proxyprovider.cpp
+        provider/data/data_transaction.cpp
         )
 
 include_directories(utils)

@@ -8,7 +8,7 @@ Account::Account(Address address) :
         m_nonce()
 {}
 
-Account::Account(Address address, std::string balance, uint64_t nonce) :
+Account::Account(Address address, std::string balance, uint64_t const &nonce) :
         m_address(std::move(address)),
         m_balance(std::move(balance)),
         m_nonce(nonce)

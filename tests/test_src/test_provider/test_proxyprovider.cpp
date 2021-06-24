@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 
-#include "proxy/proxyprovider.h"
+#include "provider/proxyprovider.h"
 #include "filehandler/pemreader.h"
 
 TEST(ProxyProvider, getAccount_validProxy)

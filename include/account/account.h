@@ -9,7 +9,7 @@ class Account
 public:
     explicit Account(Address address);
 
-    explicit Account(Address address, std::string balance, uint64_t nonce);
+    explicit Account(Address address, std::string balance, uint64_t const &nonce);
 
     const Address& getAddress() const;
 
