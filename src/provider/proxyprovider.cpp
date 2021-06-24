@@ -1,6 +1,6 @@
 #include "provider/proxyprovider.h"
 #include "apiresponse.h"
-
+#include "httpwrapper.h"
 
 namespace internal
 {

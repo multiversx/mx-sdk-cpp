@@ -1,8 +1,8 @@
 #ifndef ERD_PROXY_API_RESPONSE_H
 #define ERD_PROXY_API_RESPONSE_H
 
-#include "httpwrapper.h"
-#include "jsonwrapper.h"
+#include "json/json.hpp"
+#include "../utils/errors.h"
 
 class ErdGenericApiResponse
 {
