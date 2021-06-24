@@ -23,7 +23,8 @@ namespace internal
 
         if (res.status != STATUS_CODE_OK || !isRequestSuccessful(wrappedResponse))
         {
-            throw std::runtime_error("Request failed with message: " + res.statusMessage + ". Error: " + wrappedResponse.getError());
+            throw std::runtime_error(ERROR_MSG_HTTP_REQUEST_FAILED + res.statusMessage + ". " +
+                                     ERROR_MSG_REASON + wrappedResponse.getError());
         }
 
         return wrappedResponse.getData<nlohmann::json>();

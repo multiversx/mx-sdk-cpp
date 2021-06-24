@@ -43,6 +43,8 @@ errorMessage const ERROR_MSG_JSON_SERIALIZED = "Invalid serialized json string: 
 errorMessage const ERROR_MSG_JSON_SERIALIZE_EMPTY = "Empty json.";
 errorMessage const ERROR_MSG_JSON_KEY_NOT_FOUND = "Json does not contain key: ";
 errorMessage const ERROR_MSG_JSON_SET = "Json can not insert key:  ";
+errorMessage const ERROR_MSG_HTTP_REQUEST_FAILED = "Request failed with message: ";
+errorMessage const ERROR_MSG_REASON = "Error reason: ";
 
 std::map<errorCode, errorMessage> const errors =
         {
