@@ -28,3 +28,10 @@ bool Signer::verify(std::string const &signature, std::string const &message, by
 {
     return wrapper::crypto::verify(signature, message, publicKey);
 }
+
+bool Signer::verify(const std::string &signature, const std::string &message, const Address &address)
+{
+    bytes const publicKey = address.getPublicKey();
+
+    return wrapper::crypto::verify(signature, message, publicKey);
+}
