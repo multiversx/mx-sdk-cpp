@@ -16,6 +16,11 @@ include_directories(${LIBSODIUM_INCLUDE_PATH})
 
 find_library(LIBSODIUM_LIBRARY libsodium.so.23.3.0 ${LIBSODIUM_LIB_PATH} REQUIRED)
 
+find_package(OpenSSL REQUIRED)
+if(OPENSSL_FOUND)
+    set(HTTPLIB_IS_USING_OPENSSL TRUE)
+endif()
+
 add_subdirectory(src)
 add_subdirectory(tests)
 add_subdirectory(cli)
