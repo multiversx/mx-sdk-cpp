@@ -1,11 +1,8 @@
 #ifndef PEM_HANDLER_WRAPPER_H
 #define PEM_HANDLER_WRAPPER_H
 
-#include <string>
-#include <map>
 #include "iwrapper.h"
 #include "utils/params.h"
-#include "transaction/transaction.h"
 
 namespace ih
 {

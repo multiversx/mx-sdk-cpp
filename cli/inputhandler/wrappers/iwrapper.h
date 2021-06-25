@@ -1,7 +1,6 @@
 #ifndef I_WRAPPER_H
 #define I_WRAPPER_H
 
-#include <string>
 #include <map>
 
 namespace ih
