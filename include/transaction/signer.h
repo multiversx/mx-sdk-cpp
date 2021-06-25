@@ -10,6 +10,10 @@ public:
 
     std::string getSignature(std::string const &message) const;
 
+    bool verify(std::string const &signature, std::string const &message) const;
+
+    static bool verify(std::string const &signature, std::string const &message, bytes const &publicKey);
+
 private:
     bytes m_sk;
 };

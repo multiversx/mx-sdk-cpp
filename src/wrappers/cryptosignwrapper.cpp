@@ -41,6 +41,29 @@ bytes getSecretKey(bytes const &seed)
     return bytes(sk, sk + SECRET_KEY_LENGTH);
 }
 
+bytes getPublicKey(bytes const &secretKey)
+{
+    auto sk = reinterpret_cast<const unsigned char*>(secretKey.data());
+
+    unsigned char pk[PUBLIC_KEY_LENGTH];
+
+    crypto_sign_ed25519_sk_to_pk(pk, sk);
+
+    return bytes(pk, pk + PUBLIC_KEY_LENGTH);
+}
+
+bool verify(std::string const &signature, std::string const &message, bytes const &publicKey)
+{
+    auto sig = reinterpret_cast<const unsigned char*>(signature.data());
+    auto msg = reinterpret_cast<const unsigned char*>(message.data());
+    auto pk = reinterpret_cast<const unsigned char*>(publicKey.data());
+    auto msgLen = message.size();
+
+    int const res = crypto_sign_verify_detached(sig, msg, msgLen, pk);
+
+    return res == 0;
+}
+
 }
 }
 
