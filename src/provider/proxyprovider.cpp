@@ -84,3 +84,51 @@ TransactionStatus ProxyProvider::getTransactionStatus(std::string const &txHash)
 
     return TransactionStatus(txStatus);
 }
+
+std::string ProxyProvider::getESDTTokenBalance(Address const &address, std::string const &token) const
+{
+    wrapper::http::Client client(m_url);
+    wrapper::http::Result const result = client.get("/address/" + address.getBech32Address() + "/esdt/" + token);
+
+    auto data = internal::getDataIfValid(result);
+
+    if (!data.contains("tokenData"))
+        throw std::invalid_argument(ERROR_MSG_JSON_KEY_NOT_FOUND + "tokenData");
+    if (!data["tokenData"].contains("balance"))
+        throw std::invalid_argument(ERROR_MSG_JSON_KEY_NOT_FOUND + "balance");
+
+    std::string balance = data["tokenData"]["balance"];
+
+    return balance;
+}
+
+std::map<std::string, std::string> ProxyProvider::getAllESDTTokenBalances(Address const &address) const
+{
+    wrapper::http::Client client(m_url);
+    wrapper::http::Result const result = client.get("/address/" + address.getBech32Address() + "/esdt");
+
+    auto data = internal::getDataIfValid(result);
+
+    if (!data.contains("esdts"))
+        throw std::invalid_argument(ERROR_MSG_JSON_KEY_NOT_FOUND + "esdts");
+
+    auto esdts = data["esdts"];
+
+    std::map<std::string, std::string> ret;
+    std::string esdt;
+    std::string balance;
+
+    for (const auto& it : esdts.items())
+    {
+        esdt = it.key();
+
+        if (!it.value().contains("balance"))
+            throw std::invalid_argument(ERROR_MSG_JSON_KEY_NOT_FOUND + "balance for token " + esdt);
+
+        balance = it.value()["balance"];
+
+        ret[esdt] = balance;
+    }
+
+    return ret;
+}
