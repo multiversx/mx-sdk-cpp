@@ -3,7 +3,9 @@
 #include "provider/proxyprovider.h"
 #include "filehandler/pemreader.h"
 #include "utils/errors.h"
+#include "utils/cfg.h"
 
+#if HTTP_PRECONDITIONS
 
 TEST(ProxyProvider, getAccount)
 {
@@ -26,11 +28,13 @@ TEST(ProxyProvider, send_validTx)
     Address sender(pem.getAddress());
     Account senderAcc = proxy.getAccount(sender);
 
+    senderAcc.incrementNonce();
+
     Transaction transaction;
     transaction.m_sender = std::make_shared<Address>(sender);
     transaction.m_receiver = std::make_shared<Address>("erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqplllst77y4l");
     transaction.m_chainID = "T";
-    transaction.m_nonce = senderAcc.getNonce() + 1;
+    transaction.m_nonce = senderAcc.getNonce();
     transaction.m_value = "10000000000";
     transaction.m_gasPrice = 1000000000;
     transaction.m_gasLimit = 50000;
@@ -108,4 +112,4 @@ TEST(ProxyProvider, getTransactionStatus_invalidHash)
                      }
                  }, std::runtime_error );
 }
-
+#endif

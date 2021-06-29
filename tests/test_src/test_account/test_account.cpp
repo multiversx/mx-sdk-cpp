@@ -133,3 +133,21 @@ TEST(Account, constructor_customValues)
     EXPECT_EQ(account.getBalance(), "123456789");
     EXPECT_EQ(account.getNonce(), 123456789 );
 }
+
+TEST(Account, incrementNonce)
+{
+    std::string const bech32Addr = "erd1spyavw0956vq68xj8y4tenjpq2wd5a9p2c6j8gsz7ztyrnpxrruqzu66jx";
+
+    Address const address(bech32Addr);
+    Account account(address, "123456789", 1000);
+
+    EXPECT_TRUE (account.getAddress() == address);
+    EXPECT_EQ(account.getBalance(), "123456789");
+    EXPECT_EQ(account.getNonce(), 1000 );
+
+    account.incrementNonce();
+
+    EXPECT_TRUE (account.getAddress() == address);
+    EXPECT_EQ(account.getBalance(), "123456789");
+    EXPECT_EQ(account.getNonce(), 1001 );
+}

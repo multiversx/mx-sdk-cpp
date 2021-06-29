@@ -40,7 +40,7 @@ public:
         return wrappedResult(res);
     }
 
-    Result post(std::string const &path, std::string const &message, ContentType const &contentType = textPlain)
+    Result post(std::string const &path, std::string const &message, ContentType const &contentType = applicationJson)
     {
         auto const res = m_client.Post(path.c_str(), message, getContentType(contentType).c_str());
 
@@ -52,20 +52,17 @@ private:
     {
         switch (contentType)
         {
-            case textPlain:
-            {
-                return CONTENT_TYPE_PLAIN_TEXT;
-                break;
-            }
             case applicationJson:
             {
                 return CONTENT_TYPE_JSON;
-                break;
+            }
+            case textPlain:
+            {
+                return CONTENT_TYPE_PLAIN_TEXT;
             }
             default:
             {
-                return CONTENT_TYPE_PLAIN_TEXT;
-                break;
+                return CONTENT_TYPE_JSON;
             }
         }
     }

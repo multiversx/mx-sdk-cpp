@@ -62,9 +62,7 @@ INSTANTIATE_TEST_CASE_P (
         ValidData,
         TransactionStatusParametrized,
         ::testing::Values(
-                txStatus{"received", pending},
                 txStatus{"pending", pending},
-                txStatus{"partially-executed", pending},
 
                 txStatus{"executed", successful},
                 txStatus{"success", successful},

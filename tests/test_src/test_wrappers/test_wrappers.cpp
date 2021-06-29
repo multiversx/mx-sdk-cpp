@@ -1,5 +1,6 @@
 #include "gtest/gtest.h"
 
+#include "utils/cfg.h"
 #include "utils/hex.h"
 #include "account/address.h"
 #include "wrappers/jsonwrapper.h"
@@ -171,6 +172,7 @@ TEST(CryptoWrapper, verify)
     EXPECT_TRUE(wrapper::crypto::verify(signature, message, signerAddr.getPublicKey()));
 }
 
+#if HTTP_PRECONDITIONS
 TEST(ClientWrapper, get_validSubDomain_validRequest)
 {
     wrapper::http::Client client("https://testnet-gateway.elrond.com");
@@ -244,3 +246,4 @@ TEST(ClientWrapper, post_invalidSubDomain)
     EXPECT_EQ(res.status, 404);
     EXPECT_EQ(res.statusMessage, "Not Found");
 }
+#endif
