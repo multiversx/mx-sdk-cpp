@@ -4,7 +4,7 @@
 #define ON true
 #define OFF false
 
-// Switch flag for tests rely on some the following conditions:
+// Switch flag for tests which rely on some the following conditions:
 // 1. Testnet is up and running
 // 2. Used accounts to send transactions have enough funds
 // 3. There are no concurrent transactions using the same account on testnet
