@@ -101,7 +101,7 @@ public:
         }
         catch (...)
         {
-            throw std::invalid_argument(ERROR_MSG_JSON_SERIALIZED);
+            throw std::invalid_argument(ERROR_MSG_JSON_SERIALIZED + serialized);
         }
     }
 

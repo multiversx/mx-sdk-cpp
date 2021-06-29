@@ -5,11 +5,19 @@
 
 #define STATUS_CODE_DEFAULT -1
 #define STATUS_CODE_OK 200
+#define CONTENT_TYPE_PLAIN_TEXT "text/plain"
+#define CONTENT_TYPE_JSON "application/json"
 
 namespace wrapper
 {
 namespace http
 {
+
+enum ContentType
+{
+    textPlain,
+    applicationJson
+};
 
 struct Result
 {
@@ -32,17 +40,34 @@ public:
         return wrappedResult(res);
     }
 
-    Result post(std::string const &path, std::string const &message)
+    Result post(std::string const &path, std::string const &message, ContentType const &contentType = applicationJson)
     {
-        char const *contentType = "text/plain";
-        auto const res = m_client.Post(path.c_str(), message, contentType);
+        auto const res = m_client.Post(path.c_str(), message, getContentType(contentType).c_str());
 
         return wrappedResult(res);
     }
 
 private:
+    std::string getContentType(ContentType const &contentType) const
+    {
+        switch (contentType)
+        {
+            case applicationJson:
+            {
+                return CONTENT_TYPE_JSON;
+            }
+            case textPlain:
+            {
+                return CONTENT_TYPE_PLAIN_TEXT;
+            }
+            default:
+            {
+                return CONTENT_TYPE_JSON;
+            }
+        }
+    }
 
-    Result wrappedResult(httplib::Result const &res)
+    Result wrappedResult(httplib::Result const &res) const
     {
         int status = STATUS_CODE_DEFAULT;
         bool err = false;

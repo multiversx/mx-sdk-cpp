@@ -1,5 +1,6 @@
 #include "gtest/gtest.h"
 
+#include "utils/cfg.h"
 #include "utils/hex.h"
 #include "wrappers/jsonwrapper.h"
 #include "wrappers/httpwrapper.h"
@@ -105,7 +106,7 @@ TEST_F(OrderedJsonFixture, deserialize)
     EXPECT_EQ(json.at<bool>("happy"), true);
     EXPECT_EQ(json.at<std::string>("name"), "Joe");
 
-    expectExceptionDeserialize<std::invalid_argument>(json, "invalid serialized json", ERROR_MSG_JSON_SERIALIZED);
+    expectExceptionDeserialize<std::invalid_argument>(json, "invalid serialized json", ERROR_MSG_JSON_SERIALIZED + "invalid serialized json");
 }
 
 TEST_F(OrderedJsonFixture, serialize_empty)
@@ -151,6 +152,7 @@ TEST(CryptoWrapper, getSignature)
 
 }
 
+#if HTTP_PRECONDITIONS
 TEST(ClientWrapper, get_validSubDomain_validRequest)
 {
     wrapper::http::Client client("https://testnet-gateway.elrond.com");
@@ -224,3 +226,4 @@ TEST(ClientWrapper, post_invalidSubDomain)
     EXPECT_EQ(res.status, 404);
     EXPECT_EQ(res.statusMessage, "Not Found");
 }
+#endif

@@ -110,14 +110,44 @@ TEST(Address, comparsionOperator_bech32Address_pubKey)
     EXPECT_FALSE(adr1 == adr3);
 }
 
-TEST(Account, getAddress_getPublicKey_getBech32Address)
+TEST(Account, constructor_defaultValues)
 {
     std::string const bech32Addr = "erd1spyavw0956vq68xj8y4tenjpq2wd5a9p2c6j8gsz7ztyrnpxrruqzu66jx";
 
     Address const address(bech32Addr);
     Account const account(address);
 
-    EXPECT_EQ(account.getAddress().getPublicKey(), address.getPublicKey());
-    EXPECT_EQ(account.getAddress().getBech32Address(), address.getBech32Address());
+    EXPECT_TRUE (account.getAddress() == address);
+    EXPECT_EQ(account.getBalance(), DEFAULT_BALANCE);
+    EXPECT_EQ(account.getNonce(), DEFAULT_NONCE );
 }
 
+TEST(Account, constructor_customValues)
+{
+    std::string const bech32Addr = "erd1spyavw0956vq68xj8y4tenjpq2wd5a9p2c6j8gsz7ztyrnpxrruqzu66jx";
+
+    Address const address(bech32Addr);
+    Account const account(address, "123456789", 123456789);
+
+    EXPECT_TRUE (account.getAddress() == address);
+    EXPECT_EQ(account.getBalance(), "123456789");
+    EXPECT_EQ(account.getNonce(), 123456789 );
+}
+
+TEST(Account, incrementNonce)
+{
+    std::string const bech32Addr = "erd1spyavw0956vq68xj8y4tenjpq2wd5a9p2c6j8gsz7ztyrnpxrruqzu66jx";
+
+    Address const address(bech32Addr);
+    Account account(address, "123456789", 1000);
+
+    EXPECT_TRUE (account.getAddress() == address);
+    EXPECT_EQ(account.getBalance(), "123456789");
+    EXPECT_EQ(account.getNonce(), 1000 );
+
+    account.incrementNonce();
+
+    EXPECT_TRUE (account.getAddress() == address);
+    EXPECT_EQ(account.getBalance(), "123456789");
+    EXPECT_EQ(account.getNonce(), 1001 );
+}
