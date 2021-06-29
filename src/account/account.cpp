@@ -29,3 +29,8 @@ const uint64_t& Account::getNonce() const
     return m_nonce;
 }
 
+void Account::incrementNonce()
+{
+    ++m_nonce;
+}
+

@@ -10,7 +10,7 @@ bool TransactionStatus::operator ==(TransactionStatus const& txStatus)
 
 bool TransactionStatus::isPending() const
 {
-    return (m_status == "received") || (m_status == "pending") || (m_status == "partially-executed");
+    return m_status == "pending";
 }
 
 bool TransactionStatus::isExecuted() const

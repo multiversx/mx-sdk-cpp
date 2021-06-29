@@ -23,6 +23,8 @@ public:
 
     const uint64_t& getNonce() const;
 
+    void incrementNonce();
+
 private:
     uint64_t m_nonce;
     std::string m_balance;

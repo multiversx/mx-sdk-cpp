@@ -21,6 +21,6 @@ private:
     std::string m_url;
 };
 
-#endif //ERD_API_H
+#endif //ERD_PROXY_PROVIDER_H
 
 
