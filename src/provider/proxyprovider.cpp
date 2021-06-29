@@ -76,12 +76,10 @@ std::string ProxyProvider::getESDTTokenBalance(Address const &address, std::stri
     wrapper::http::Client client(m_url);
     wrapper::http::Result const result = client.get("/address/" + address.getBech32Address() + "/esdt/" + token);
 
-    auto data = internal::getDataIfValid(result);
+    auto data = internal::getPayLoad(result);
 
-    if (!data.contains("tokenData"))
-        throw std::invalid_argument(ERROR_MSG_JSON_KEY_NOT_FOUND + "tokenData");
-    if (!data["tokenData"].contains("balance"))
-        throw std::invalid_argument(ERROR_MSG_JSON_KEY_NOT_FOUND + "balance");
+    utility::requireAttribute(data, "tokenData");
+    utility::requireAttribute(data["tokenData"], "balance");
 
     std::string balance = data["tokenData"]["balance"];
 
@@ -93,10 +91,9 @@ std::map<std::string, std::string> ProxyProvider::getAllESDTTokenBalances(Addres
     wrapper::http::Client client(m_url);
     wrapper::http::Result const result = client.get("/address/" + address.getBech32Address() + "/esdt");
 
-    auto data = internal::getDataIfValid(result);
+    auto data = internal::getPayLoad(result);
 
-    if (!data.contains("esdts"))
-        throw std::invalid_argument(ERROR_MSG_JSON_KEY_NOT_FOUND + "esdts");
+    utility::requireAttribute(data, "esdts");
 
     auto esdts = data["esdts"];
 
@@ -106,13 +103,10 @@ std::map<std::string, std::string> ProxyProvider::getAllESDTTokenBalances(Addres
 
     for (const auto& it : esdts.items())
     {
+        utility::requireAttribute(it.value(), "balance");
+
         esdt = it.key();
-
-        if (!it.value().contains("balance"))
-            throw std::invalid_argument(ERROR_MSG_JSON_KEY_NOT_FOUND + "balance for token " + esdt);
-
         balance = it.value()["balance"];
-
         ret[esdt] = balance;
     }
 
