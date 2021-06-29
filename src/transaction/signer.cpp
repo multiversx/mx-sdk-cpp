@@ -16,3 +16,22 @@ std::string Signer::getSignature(std::string const &message) const
 {
     return wrapper::crypto::getSignature(m_sk, message);
 }
+
+bool Signer::verify(std::string const &signature, std::string const &message) const
+{
+    bytes const publicKey = wrapper::crypto::getPublicKey(m_sk);
+
+    return wrapper::crypto::verify(signature, message, publicKey);
+}
+
+bool Signer::verify(std::string const &signature, std::string const &message, bytes const &publicKey)
+{
+    return wrapper::crypto::verify(signature, message, publicKey);
+}
+
+bool Signer::verify(const std::string &signature, const std::string &message, const Address &address)
+{
+    bytes const publicKey = address.getPublicKey();
+
+    return wrapper::crypto::verify(signature, message, publicKey);
+}

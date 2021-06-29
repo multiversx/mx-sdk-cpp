@@ -2,6 +2,7 @@
 
 #include "utils/cfg.h"
 #include "utils/hex.h"
+#include "account/address.h"
 #include "wrappers/jsonwrapper.h"
 #include "wrappers/httpwrapper.h"
 #include "wrappers/cryptosignwrapper.h"
@@ -124,6 +125,11 @@ TEST_F(OrderedJsonFixture, serialize_empty)
     EXPECT_EQ(json.serialize(), "{\"pi\":3.141,\"happy\":true,\"name\":\"Joe\"}");
 }
 
+// Most tests for crypto library are adapted from one of the following sources:
+// ERDJS: https://github.com/ElrondNetwork/elrond-sdk-erdjs/blob/bb926b029150d7c79f2b37308f4334f98a4cabf7/src/testutils/wallets.ts#L110
+//        https://github.com/ElrondNetwork/elrond-sdk-erdjs/blob/main/src/walletcore/users.spec.ts#L120
+// ERDPY: https://github.com/ElrondNetwork/elrond-sdk-erdpy/blob/main/erdpy/tests/test_wallet.py
+// ERDGO: https://github.com/ElrondNetwork/elrond-go/blob/master/examples/construction_test.go
 TEST(CryptoWrapper, getSecretKey)
 {
     bytes const seed = util::hexToBytes("e253a571ca153dc2aee845819f74bcc9773b0586edead15a94cb7235a5027436");
@@ -149,7 +155,25 @@ TEST(CryptoWrapper, getSignature)
 
     EXPECT_EQ(signature.size(), SIGNATURE_LENGTH);
     EXPECT_EQ(util::stringToHex(signature), expectedSignature);
+}
 
+TEST(CryptoWrapper, getPublicKey)
+{
+    bytes const seed = util::hexToBytes("413f42575f7f26fad3317a778771212fdb80245850981e48b58a4f25e344e8f9");
+    bytes const secretKey =  wrapper::crypto::getSecretKey(seed);
+    bytes const expectedPublicKey = util::hexToBytes("0139472eff6886771a982f3083da5d421f24c29181e63888228dc81ca60d69e1");
+
+    EXPECT_EQ(wrapper::crypto::getPublicKey(secretKey), expectedPublicKey);
+}
+
+TEST(CryptoWrapper, verify)
+{
+    std::string const message = "{\"nonce\":0,\"value\":\"0\",\"receiver\":\"erd1cux02zersde0l7hhklzhywcxk4u9n4py5tdxyx7vrvhnza2r4gmq4vw35r\",\"sender\":\"erd1l453hd0gt5gzdp7czpuall8ggt2dcv5zwmfdf3sd3lguxseux2fsmsgldz\",\"gasPrice\":1000000000,\"gasLimit\":50000,\"data\":\"Zm9v\",\"chainID\":\"1\",\"version\":1}";
+    std::string const signature = util::hexToString("b5fddb8c16fa7f6123cb32edc854f1e760a3eb62c6dc420b5a4c0473c58befd45b621b31a448c5b59e21428f2bc128c80d0ee1caa4f2bf05a12be857ad451b00");
+
+    Address signerAddr("erd1l453hd0gt5gzdp7czpuall8ggt2dcv5zwmfdf3sd3lguxseux2fsmsgldz");
+
+    EXPECT_TRUE(wrapper::crypto::verify(signature, message, signerAddr.getPublicKey()));
 }
 
 #if HTTP_PRECONDITIONS
