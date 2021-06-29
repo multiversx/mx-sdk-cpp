@@ -6,6 +6,11 @@
 #include "transaction/transaction.h"
 #include "wrappers/cryptosignwrapper.h"
 
+// Most tests for signing and transaction construction are adapted from one of the following sources:
+// ERD-JS: https://github.com/ElrondNetwork/elrond-sdk-erdjs/blob/bb926b029150d7c79f2b37308f4334f98a4cabf7/src/testutils/wallets.ts#L110
+//         https://github.com/ElrondNetwork/elrond-sdk-erdjs/blob/main/src/walletcore/users.spec.ts#L120
+// ERD-PY: https://github.com/ElrondNetwork/elrond-sdk-erdpy/blob/main/erdpy/tests/test_wallet.py
+// ERD-GO: https://github.com/ElrondNetwork/elrond-go/blob/master/examples/construction_test.go
 
 class SignerConstructorFixture : public ::testing::Test
 {

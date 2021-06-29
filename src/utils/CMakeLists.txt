@@ -5,6 +5,7 @@ file(GLOB utils
         params.h
         errors.h
         strchr.h
+        cfg.h
         )
 
 add_library(utils ${utils})

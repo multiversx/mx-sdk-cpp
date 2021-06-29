@@ -1,5 +1,6 @@
 #include "gtest/gtest.h"
 
+#include "utils/cfg.h"
 #include "utils/hex.h"
 #include "account/address.h"
 #include "wrappers/jsonwrapper.h"
@@ -124,6 +125,11 @@ TEST_F(OrderedJsonFixture, serialize_empty)
     EXPECT_EQ(json.serialize(), "{\"pi\":3.141,\"happy\":true,\"name\":\"Joe\"}");
 }
 
+// Most tests for crypto library are adapted from one of the following sources:
+// ERDJS: https://github.com/ElrondNetwork/elrond-sdk-erdjs/blob/bb926b029150d7c79f2b37308f4334f98a4cabf7/src/testutils/wallets.ts#L110
+//        https://github.com/ElrondNetwork/elrond-sdk-erdjs/blob/main/src/walletcore/users.spec.ts#L120
+// ERDPY: https://github.com/ElrondNetwork/elrond-sdk-erdpy/blob/main/erdpy/tests/test_wallet.py
+// ERDGO: https://github.com/ElrondNetwork/elrond-go/blob/master/examples/construction_test.go
 TEST(CryptoWrapper, getSecretKey)
 {
     bytes const seed = util::hexToBytes("e253a571ca153dc2aee845819f74bcc9773b0586edead15a94cb7235a5027436");
@@ -149,7 +155,6 @@ TEST(CryptoWrapper, getSignature)
 
     EXPECT_EQ(signature.size(), SIGNATURE_LENGTH);
     EXPECT_EQ(util::stringToHex(signature), expectedSignature);
-
 }
 
 TEST(CryptoWrapper, getPublicKey)
@@ -171,6 +176,7 @@ TEST(CryptoWrapper, verify)
     EXPECT_TRUE(wrapper::crypto::verify(signature, message, signerAddr.getPublicKey()));
 }
 
+#if HTTP_PRECONDITIONS
 TEST(ClientWrapper, get_validSubDomain_validRequest)
 {
     wrapper::http::Client client("https://testnet-gateway.elrond.com");
@@ -244,3 +250,4 @@ TEST(ClientWrapper, post_invalidSubDomain)
     EXPECT_EQ(res.status, 404);
     EXPECT_EQ(res.statusMessage, "Not Found");
 }
+#endif
