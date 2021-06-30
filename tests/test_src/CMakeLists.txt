@@ -1,0 +1,6 @@
+add_subdirectory(test_utils)
+add_subdirectory(test_account)
+add_subdirectory(test_filehandler)
+add_subdirectory(test_wrappers)
+add_subdirectory(test_transaction)
+add_subdirectory(test_provider)
