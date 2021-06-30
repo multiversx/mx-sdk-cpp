@@ -112,4 +112,36 @@ TEST(ProxyProvider, getTransactionStatus_invalidHash)
                      }
                  }, std::runtime_error );
 }
+
+TEST(ProxyProvider, getESDTokenBalance)
+{
+    ProxyProvider proxy("https://testnet-gateway.elrond.com");
+    Address const address("erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqplllst77y4l");
+    auto const balance = proxy.getESDTTokenBalance(address, "this esdt does not exist");
+
+    EXPECT_TRUE(balance == DEFAULT_BALANCE);
+}
+
+TEST(ProxyProvider, getAllESDTokenBalances_noTokens)
+{
+    ProxyProvider proxy("https://testnet-gateway.elrond.com");
+    Address const address("erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqplllst77y4l");
+    auto const esdts = proxy.getAllESDTTokenBalances(address);
+
+    EXPECT_TRUE(esdts.empty());
+}
+
+TEST(ProxyProvider, getAllESDTokenBalances_multipleTokens)
+{
+    ProxyProvider proxy("https://testnet-gateway.elrond.com");
+    Address const address("erd1nqtv8gdsf55xj9eg0wc8ar6ml46kpld2c86aq670mxgcf49sduzqaeyngx");
+    auto const esdts = proxy.getAllESDTTokenBalances(address);
+
+    EXPECT_TRUE(esdts.find("00040-4c4d18") != esdts.end());
+    EXPECT_FALSE(esdts.at("00040-4c4d18").empty());
+
+    EXPECT_TRUE(esdts.find("0009O-8742a4") != esdts.end());
+    EXPECT_FALSE(esdts.at("0009O-8742a4").empty());
+}
+
 #endif

@@ -70,3 +70,45 @@ TransactionStatus ProxyProvider::getTransactionStatus(std::string const &txHash)
 
     return TransactionStatus(txStatus);
 }
+
+std::string ProxyProvider::getESDTTokenBalance(Address const &address, std::string const &token) const
+{
+    wrapper::http::Client client(m_url);
+    wrapper::http::Result const result = client.get("/address/" + address.getBech32Address() + "/esdt/" + token);
+
+    auto data = internal::getPayLoad(result);
+
+    utility::requireAttribute(data, "tokenData");
+    utility::requireAttribute(data["tokenData"], "balance");
+
+    std::string balance = data["tokenData"]["balance"];
+
+    return balance;
+}
+
+std::map<std::string, std::string> ProxyProvider::getAllESDTTokenBalances(Address const &address) const
+{
+    wrapper::http::Client client(m_url);
+    wrapper::http::Result const result = client.get("/address/" + address.getBech32Address() + "/esdt");
+
+    auto data = internal::getPayLoad(result);
+
+    utility::requireAttribute(data, "esdts");
+
+    auto esdts = data["esdts"];
+
+    std::map<std::string, std::string> ret;
+    std::string esdt;
+    std::string balance;
+
+    for (const auto& it : esdts.items())
+    {
+        utility::requireAttribute(it.value(), "balance");
+
+        esdt = it.key();
+        balance = it.value()["balance"];
+        ret[esdt] = balance;
+    }
+
+    return ret;
+}
