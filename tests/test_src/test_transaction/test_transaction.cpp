@@ -2,6 +2,7 @@
 
 #include "utils/hex.h"
 #include "utils/errors.h"
+#include "transaction/esdt.h"
 #include "transaction/signer.h"
 #include "transaction/transaction.h"
 #include "wrappers/cryptosignwrapper.h"
@@ -494,4 +495,13 @@ TEST_F(TransactionSerializeFixture, serialize_missingFields)
     tx.m_sender = std::make_shared<Address>(sender);
     tx.m_receiver = nullptr;
     expectSerializeException<std::invalid_argument>(tx, ERROR_MSG_RECEIVER);
+}
+
+TEST(PrepareEsdtTransfer, noFunction)
+{
+    Transaction tx;
+    tx.m_value = "12";
+    prepareTransactionForEsdtTransfer(tx,"ALC-6258d2");
+
+    std::cerr<< std::string(tx.m_data->begin(),tx.m_data->end());
 }
