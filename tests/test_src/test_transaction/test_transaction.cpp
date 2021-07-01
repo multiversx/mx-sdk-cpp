@@ -497,11 +497,119 @@ TEST_F(TransactionSerializeFixture, serialize_missingFields)
     expectSerializeException<std::invalid_argument>(tx, ERROR_MSG_RECEIVER);
 }
 
-TEST(PrepareEsdtTransfer, noFunction)
-{
-    Transaction tx;
-    tx.m_value = "12";
-    prepareTransactionForEsdtTransfer(tx,"ALC-6258d2");
 
-    std::cerr<< std::string(tx.m_data->begin(),tx.m_data->end());
+
+
+
+
+
+struct esdtTransferData
+{
+    std::string token;
+    std::string function;
+    std::vector<std::string> params;
+
+    std::string initValue;
+    uint64_t initGasLimit;
+    std::string initData;
+
+    std::string valueAfterPrep;
+    uint64_t gasLimitAfterPrep;
+    std::string expectedDataAfterPreparation;
+};
+
+class PrepareEsdtTransferData : public ::testing::TestWithParam<esdtTransferData>
+{};
+
+INSTANTIATE_TEST_CASE_P (
+        NoSCFunction,
+        PrepareEsdtTransferData,
+        ::testing::Values(
+                esdtTransferData{
+                /* Token         */ "ALC-6258d2",
+                /* Function      */ NO_FUNCTION,
+                /* Params        */ NO_PARAMETERS,
+                /* Init val      */ "12",
+                /* Init gas      */ 750000,
+                /* Init data     */ "foo",
+                /* Value after   */ DEFAULT_VALUE,
+                /* Gas after     */ ESDT_GAS_LIMIT_NO_FUNCTION,
+                /* Expected data */ "ESDTTransfer@414c432d363235386432@c"},
+
+                esdtTransferData{
+                /* Token         */ "ALC-6258d2",
+                /* Function      */  NO_FUNCTION,
+                /* Params        */  NO_PARAMETERS,
+                /* Init val      */  "-12",
+                /* Init gas      */  250000,
+                /* Init data     */  "foo2",
+                /* Value after   */  DEFAULT_VALUE,
+                /* Gas after     */  ESDT_GAS_LIMIT_NO_FUNCTION,
+                /* Expected data */  "ESDTTransfer@414c432d363235386432@c"},
+
+                esdtTransferData{
+                /* Token         */ "ABC-1q2w3e",
+                /* Function      */ NO_FUNCTION,
+                /* Params        */ NO_PARAMETERS,
+                /* Init val      */ "999999999999999999999999999999999999999999999",
+                /* Init gas      */ 750000,
+                /* Init data     */ "foo3",
+                /* Value after   */ DEFAULT_VALUE,
+                /* Gas after     */ ESDT_GAS_LIMIT_NO_FUNCTION,
+                /* Expected data */ "ESDTTransfer@4142432d317132773365@2cd76fe086b93ce2f768a00b229fffffffffff"}));
+
+INSTANTIATE_TEST_CASE_P (
+        SCFunction,
+        PrepareEsdtTransferData,
+        ::testing::Values(
+                esdtTransferData{
+                /* Token         */ "ALC-6258d2",
+                /* Function      */ "func",
+                /* Params        */ NO_PARAMETERS,
+                /* Init val      */ "12",
+                /* Init gas      */ 750000,
+                /* Init data     */ "foo",
+                /* Value after   */ DEFAULT_VALUE,
+                /* Gas after     */ 750000,
+                /* Expected data */ "ESDTTransfer@414c432d363235386432@c@66756e63"},
+
+                esdtTransferData{
+                /* Token         */ "ALC-6258d2",
+                /* Function      */ "func",
+                /* Params        */ std::vector<std::string>{"p1"},
+                /* Init val      */ "-12",
+                /* Init gas      */ 250000,
+                /* Init data     */ "foo2",
+                /* Value after   */ DEFAULT_VALUE,
+                /* Gas after     */ 250000,
+                /* Expected data */ "ESDTTransfer@414c432d363235386432@c@66756e63@7031"},
+
+                esdtTransferData{
+                /* Token         */ "ALC-6258d2",
+                /* Function      */  "func",
+                /* Params        */  std::vector<std::string>{"p1", "p2", "p3"},
+                /* Init val      */  "-12",
+                /* Init gas      */  250000,
+                /* Init data     */  "foo2",
+                /* Value after   */  DEFAULT_VALUE,
+                /* Gas after     */  250000,
+                /* Expected data */  "ESDTTransfer@414c432d363235386432@c@66756e63@7031@7032@7033"}));
+
+
+TEST_P(PrepareEsdtTransferData, noFunction)
+{
+    esdtTransferData const currParam = GetParam();
+
+    Transaction tx;
+    tx.m_value = currParam.initValue;
+    tx.m_gasLimit = currParam.initGasLimit;
+    tx.m_data = std::make_shared<bytes>(currParam.initData.begin(), currParam.initData.end());
+
+    prepareTransactionForEsdtTransfer(tx,currParam.token, currParam.function, currParam.params);
+
+    std::string const txDataAfterPrep(tx.m_data->begin(),tx.m_data->end());
+
+    EXPECT_EQ(tx.m_value, currParam.valueAfterPrep);
+    EXPECT_EQ(tx.m_gasLimit, currParam.gasLimitAfterPrep);
+    EXPECT_EQ(txDataAfterPrep, currParam.expectedDataAfterPreparation);
 }

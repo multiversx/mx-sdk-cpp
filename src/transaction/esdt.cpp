@@ -8,6 +8,7 @@ namespace internal
     inline std::string bigIntToHex(std::string const &val)
     {
         mpz_class a(val);
+        a = abs(a);
         return a.get_str(16);
     }
 }
@@ -23,7 +24,7 @@ void prepareTransactionForEsdtTransfer(Transaction &transaction,
 
     if (!function.empty())
     {
-        data += "@" + function;
+        data += "@" + util::stringToHex(function);
     }
     else
     {
@@ -34,7 +35,7 @@ void prepareTransactionForEsdtTransfer(Transaction &transaction,
     {
         for (auto const &param : params)
         {
-            data += "@" + param;
+            data += "@" + util::stringToHex(param);
         }
     }
 
