@@ -2,14 +2,31 @@
 
 #include "transaction/esdt.h"
 #include "hex.h"
+#include "errors.h"
 
 namespace internal
 {
     inline std::string bigIntToHex(std::string const &val)
     {
-        mpz_class a(val);
-        a = abs(a);
-        return a.get_str(16);
+        std::string ret;
+
+        try
+        {
+            mpz_class number(val);
+            number = abs(number);
+            ret = number.get_str(16);
+        }
+        catch (...)
+        {
+            throw std::invalid_argument(ERROR_MSG_VALUE);
+        }
+
+        if (ret.size() % 2 != 0)
+        {
+            ret.insert(ret.begin(), '0');
+        }
+
+        return ret;
     }
 }
 
