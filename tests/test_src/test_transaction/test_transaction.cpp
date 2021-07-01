@@ -522,35 +522,35 @@ INSTANTIATE_TEST_CASE_P (
         ::testing::Values(
                 esdtTransferData{
                 /* Token         */ "ALC-6258d2",
-                /* Function      */ NO_FUNCTION,
-                /* Params        */ NO_PARAMETERS,
+                /* Function      */ ESDT_TRANSFER_NO_FUNCTION,
+                /* Params        */ ESDT_TRANSFER_NO_PARAMETERS,
                 /* Init val      */ "12",
                 /* Init gas      */ 750000,
                 /* Init data     */ "foo",
                 /* Value after   */ DEFAULT_VALUE,
-                /* Gas after     */ ESDT_GAS_LIMIT_NO_FUNCTION,
+                /* Gas after     */ ESDT_TRANSFER_GAS_LIMIT_NO_FUNCTION,
                 /* Expected data */ "ESDTTransfer@414c432d363235386432@0c"},
 
                 esdtTransferData{
                 /* Token         */ "ALC-6258d2",
-                /* Function      */  NO_FUNCTION,
-                /* Params        */  NO_PARAMETERS,
+                /* Function      */  ESDT_TRANSFER_NO_FUNCTION,
+                /* Params        */  ESDT_TRANSFER_NO_PARAMETERS,
                 /* Init val      */  "-12",
                 /* Init gas      */  250000,
                 /* Init data     */  "foo2",
                 /* Value after   */  DEFAULT_VALUE,
-                /* Gas after     */  ESDT_GAS_LIMIT_NO_FUNCTION,
+                /* Gas after     */  ESDT_TRANSFER_GAS_LIMIT_NO_FUNCTION,
                 /* Expected data */  "ESDTTransfer@414c432d363235386432@0c"},
 
                 esdtTransferData{
                 /* Token         */ "ABC-1q2w3e",
-                /* Function      */ NO_FUNCTION,
-                /* Params        */ NO_PARAMETERS,
+                /* Function      */ ESDT_TRANSFER_NO_FUNCTION,
+                /* Params        */ ESDT_TRANSFER_NO_PARAMETERS,
                 /* Init val      */ "999999999999999999999999999999999999999999999",
                 /* Init gas      */ 750000,
                 /* Init data     */ "foo3",
                 /* Value after   */ DEFAULT_VALUE,
-                /* Gas after     */ ESDT_GAS_LIMIT_NO_FUNCTION,
+                /* Gas after     */ ESDT_TRANSFER_GAS_LIMIT_NO_FUNCTION,
                 /* Expected data */ "ESDTTransfer@4142432d317132773365@2cd76fe086b93ce2f768a00b229fffffffffff"}));
 
 INSTANTIATE_TEST_CASE_P (
@@ -560,7 +560,7 @@ INSTANTIATE_TEST_CASE_P (
                 esdtTransferData{
                 /* Token         */ "ALC-6258d2",
                 /* Function      */ "func",
-                /* Params        */ NO_PARAMETERS,
+                /* Params        */ ESDT_TRANSFER_NO_PARAMETERS,
                 /* Init val      */ "10",
                 /* Init gas      */ 750000,
                 /* Init data     */ "foo",
@@ -596,49 +596,49 @@ INSTANTIATE_TEST_CASE_P (
         ::testing::Values(
                 esdtTransferData{
                 /* Token         */ "ALC-6258d2",
-                /* Function      */ NO_FUNCTION,
-                /* Params        */ NO_PARAMETERS,
+                /* Function      */ ESDT_TRANSFER_NO_FUNCTION,
+                /* Params        */ ESDT_TRANSFER_NO_PARAMETERS,
                 /* Init val      */ "12f",
                 /* Init gas      */ 750000,
                 /* Init data     */ "foo",
                 /* Value after   */ DEFAULT_VALUE,
-                /* Gas after     */ ESDT_GAS_LIMIT_NO_FUNCTION,
+                /* Gas after     */ ESDT_TRANSFER_GAS_LIMIT_NO_FUNCTION,
                 /* Expected data */ std::string(),
                 /* Valid value   */ false},
 
                 esdtTransferData{
                 /* Token         */ "ALC-6258d2",
-                /* Function      */ NO_FUNCTION,
-                /* Params        */ NO_PARAMETERS,
+                /* Function      */ ESDT_TRANSFER_NO_FUNCTION,
+                /* Params        */ ESDT_TRANSFER_NO_PARAMETERS,
                 /* Init val      */ "boo",
                 /* Init gas      */ 750000,
                 /* Init data     */ "foo",
                 /* Value after   */ DEFAULT_VALUE,
-                /* Gas after     */ ESDT_GAS_LIMIT_NO_FUNCTION,
+                /* Gas after     */ ESDT_TRANSFER_GAS_LIMIT_NO_FUNCTION,
                 /* Expected data */ std::string(),
                 /* Valid value   */ false},
 
                 esdtTransferData{
                 /* Token         */ "ALC-6258d2",
-                /* Function      */ NO_FUNCTION,
-                /* Params        */ NO_PARAMETERS,
+                /* Function      */ ESDT_TRANSFER_NO_FUNCTION,
+                /* Params        */ ESDT_TRANSFER_NO_PARAMETERS,
                 /* Init val      */ "12.3",
                 /* Init gas      */ 750000,
                 /* Init data     */ "foo",
                 /* Value after   */ DEFAULT_VALUE,
-                /* Gas after     */ ESDT_GAS_LIMIT_NO_FUNCTION,
+                /* Gas after     */ ESDT_TRANSFER_GAS_LIMIT_NO_FUNCTION,
                 /* Expected data */ std::string(),
                 /* Valid value   */ false},
 
                 esdtTransferData{
                 /* Token         */ "ALC-6258d2",
-                /* Function      */ NO_FUNCTION,
-                /* Params        */ NO_PARAMETERS,
+                /* Function      */ ESDT_TRANSFER_NO_FUNCTION,
+                /* Params        */ ESDT_TRANSFER_NO_PARAMETERS,
                 /* Init val      */ "12,3",
                 /* Init gas      */ 750000,
                 /* Init data     */ "foo",
                 /* Value after   */ DEFAULT_VALUE,
-                /* Gas after     */ ESDT_GAS_LIMIT_NO_FUNCTION,
+                /* Gas after     */ ESDT_TRANSFER_GAS_LIMIT_NO_FUNCTION,
                 /* Expected data */ std::string(),
                 /* Valid value   */ false}));
 
