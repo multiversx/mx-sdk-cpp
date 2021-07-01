@@ -3,10 +3,10 @@
 
 #include "transaction.h"
 
+#define ESDT_TRANSFER_PREFIX std::string("ESDTTransfer")
+#define ESDT_TRANSFER_GAS_LIMIT_NO_FUNCTION 500000
 #define ESDT_TRANSFER_NO_FUNCTION std::string()
 #define ESDT_TRANSFER_NO_PARAMETERS std::vector<std::string>()
-#define ESDT_TRANSFER_GAS_LIMIT_NO_FUNCTION 500000
-#define ESDT_TRANSFER_PREFIX std::string("ESDTTransfer")
 
 #define ESDT_ISSUANCE_PREFIX std::string("issue")
 #define ESDT_ISSUANCE_VALUE "50000000000000000" //(0.05 EGLD)
