@@ -666,3 +666,56 @@ TEST_P(PrepareEsdtTransferData, noFunction)
     EXPECT_EQ(tx.m_gasLimit, currParam.gasLimitAfterPrep);
     EXPECT_EQ(txDataAfterPrep, currParam.expectedDataAfterPreparation);
 }
+
+TEST(ESDTProperties, comparisonOperators)
+{
+    ESDTProperties esdt1, esdt2;
+
+    EXPECT_TRUE(esdt1 == esdt2);
+    EXPECT_TRUE(esdt1 == ESDT_ISSUANCE_DEFAULT_PROPERTIES);
+    EXPECT_TRUE(esdt2 == ESDT_ISSUANCE_DEFAULT_PROPERTIES);
+    EXPECT_FALSE(esdt1 != esdt2);
+
+    esdt1.canChangeOwner = true;
+    esdt2.canUpgrade = true;
+
+    EXPECT_FALSE(esdt1 == esdt2);
+    EXPECT_TRUE(esdt1 != ESDT_ISSUANCE_DEFAULT_PROPERTIES);
+    EXPECT_TRUE(esdt1 != ESDT_ISSUANCE_DEFAULT_PROPERTIES);
+
+    esdt1.canChangeOwner = false;
+    esdt2.canUpgrade = false;
+
+    EXPECT_TRUE(esdt1 == esdt2);
+    EXPECT_TRUE(esdt1 == ESDT_ISSUANCE_DEFAULT_PROPERTIES);
+    EXPECT_TRUE(esdt2 == ESDT_ISSUANCE_DEFAULT_PROPERTIES);
+    EXPECT_FALSE(esdt1 != esdt2);
+}
+
+TEST(ESDTProperties, prepareTransactionForESDTIssuance_defaultProperties)
+{
+    Transaction tx;
+    prepareTransactionForESDTIssuance(tx, "AliceTokens", "ALC", "4091000000", "6");
+
+    std::string const txDataAfterIssuance(tx.m_data->begin(),tx.m_data->end());
+
+    EXPECT_EQ(tx.m_value, ESDT_ISSUANCE_VALUE);
+    EXPECT_EQ(tx.m_gasLimit, ESDT_ISSUANCE_GAS_LIMIT);
+    EXPECT_EQ(txDataAfterIssuance, "issue@416c696365546f6b656e73@414c43@f3d7b4c0@06");
+}
+
+TEST(ESDTProperties, prepareTransactionForESDTIssuance_customProperties)
+{
+    Transaction tx;
+    ESDTProperties esdtProperties;
+    esdtProperties.canMint = true;
+    esdtProperties.canBurn = true;
+
+    prepareTransactionForESDTIssuance(tx, "AliceTokens", "ALC", "4091000000", "6", esdtProperties);
+
+    std::string const txDataAfterIssuance(tx.m_data->begin(),tx.m_data->end());
+
+    EXPECT_EQ(tx.m_value, ESDT_ISSUANCE_VALUE);
+    EXPECT_EQ(tx.m_gasLimit, ESDT_ISSUANCE_GAS_LIMIT);
+    EXPECT_EQ(txDataAfterIssuance, "issue@416c696365546f6b656e73@414c43@f3d7b4c0@06@63616e467265657a65@66616c7365@63616e57697065@66616c7365@63616e5061757365@66616c7365@63616e4d696e74@74727565@63616e4275726e@74727565@63616e4368616e67654f776e6572@66616c7365@63616e55706772616465@66616c7365@63616e4164645370656369616c526f6c6573@66616c7365");
+}

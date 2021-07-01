@@ -18,7 +18,7 @@ namespace internal
         }
         catch (...)
         {
-            throw std::invalid_argument(ERROR_MSG_VALUE);
+            throw std::invalid_argument(ERROR_MSG_VALUE + val);
         }
 
         if (ret.size() % 2 != 0)
@@ -97,8 +97,8 @@ void prepareTransactionForESDTIssuance(Transaction &transaction,
     std::string data = ESDT_ISSUANCE_PREFIX +
                         "@" + util::stringToHex(token) +
                         "@" + util::stringToHex(ticker) +
-                        "@" + util::stringToHex(initialSupply) +
-                        "@" + util::stringToHex(noOfDecimals);
+                        "@" + internal::bigIntToHex(initialSupply) +
+                        "@" + internal::bigIntToHex(noOfDecimals);
 
     if (esdtProperties != ESDT_ISSUANCE_DEFAULT_PROPERTIES)
     {
