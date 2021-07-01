@@ -497,12 +497,6 @@ TEST_F(TransactionSerializeFixture, serialize_missingFields)
     expectSerializeException<std::invalid_argument>(tx, ERROR_MSG_RECEIVER);
 }
 
-
-
-
-
-
-
 struct esdtTransferData
 {
     std::string token;
