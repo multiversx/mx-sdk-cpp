@@ -599,7 +599,7 @@ TEST_P(PrepareEsdtTransferData, noFunction)
     tx.m_gasLimit = currParam.initGasLimit;
     tx.m_data = std::make_shared<bytes>(currParam.initData.begin(), currParam.initData.end());
 
-    prepareTransactionForEsdtTransfer(tx,currParam.token, currParam.function, currParam.params);
+    prepareTransactionForESDTTransfer(tx, currParam.token, currParam.function, currParam.params);
 
     std::string const txDataAfterPrep(tx.m_data->begin(),tx.m_data->end());
 

@@ -9,7 +9,7 @@
 #define ESDT_GAS_LIMIT_NO_FUNCTION 500000
 #define ESDT_TRANSFER_PREFIX std::string("ESDTTransfer")
 
-void prepareTransactionForEsdtTransfer(Transaction &transaction,
+void prepareTransactionForESDTTransfer(Transaction &transaction,
                                        std::string const &token,
                                        std::string const &function = NO_FUNCTION,
                                        std::vector<std::string> const &params = NO_PARAMETERS);

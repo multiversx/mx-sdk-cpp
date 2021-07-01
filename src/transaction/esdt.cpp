@@ -13,7 +13,7 @@ namespace internal
     }
 }
 
-void prepareTransactionForEsdtTransfer(Transaction &transaction,
+void prepareTransactionForESDTTransfer(Transaction &transaction,
                                        std::string const &token,
                                        std::string const &function,
                                        std::vector<std::string> const &params)
