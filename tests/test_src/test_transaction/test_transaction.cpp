@@ -497,6 +497,20 @@ TEST_F(TransactionSerializeFixture, serialize_missingFields)
     expectSerializeException<std::invalid_argument>(tx, ERROR_MSG_RECEIVER);
 }
 
+TEST(SCArguments, add)
+{
+    SCArguments args;
+
+    BigUInt bigUInt("10");
+    Address address("erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th");
+
+    args.add(bigUInt);
+    args.add(address);
+    args.add("foo");
+
+    std::cerr<<args.asOnData();
+}
+
 struct esdtTransferData
 {
     std::string token;

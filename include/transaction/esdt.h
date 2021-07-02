@@ -2,6 +2,7 @@
 #define ERD_ESDT_H
 
 #include "transaction.h"
+#include "scarguments.h"
 
 #define NO_FUNCTION std::string()
 #define NO_PARAMETERS std::vector<std::string>()

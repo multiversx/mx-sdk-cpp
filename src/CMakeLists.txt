@@ -3,7 +3,9 @@ add_subdirectory(utils)
 file(GLOB src
         transaction/transaction.cpp
         transaction/signer.cpp
+        transaction/scarguments.cpp
         transaction/esdt.cpp
+        internal/biguint.cpp
         account/account.cpp
         account/address.cpp
         filehandler/ifile.cpp

@@ -9,8 +9,8 @@ project(ERDCPP)
 
 set(LIBSODIUM_INCLUDE_PATH "/usr/local/include")
 set(LIBSODIUM_LIB_PATH "/usr/local/lib")
-set(GMP_INCLUDE_PATH "/usr/lib/include")
-set(GMP_LIB_PATH "/usr/lib")
+set(GMP_INCLUDE_PATH "/usr/local/lib/include")
+set(GMP_LIB_PATH "/usr/local/lib")
 
 include_directories(${PROJECT_SOURCE_DIR}/include)
 include_directories(${PROJECT_SOURCE_DIR}/external)
