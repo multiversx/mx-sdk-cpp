@@ -1,5 +1,6 @@
 #include "gtest/gtest.h"
 
+#include "transaction/esdt.h"
 #include "provider/proxyprovider.h"
 #include "filehandler/pemreader.h"
 #include "utils/errors.h"
@@ -27,8 +28,6 @@ TEST(ProxyProvider, send_validTx)
     PemFileReader pem("..//..//testData//keysValid1.pem");
     Address sender(pem.getAddress());
     Account senderAcc = proxy.getAccount(sender);
-
-    senderAcc.incrementNonce();
 
     Transaction transaction;
     transaction.m_sender = std::make_shared<Address>(sender);
@@ -61,7 +60,7 @@ TEST(ProxyProvider, send_invalidTx_noSignature)
     transaction.m_sender = std::make_shared<Address>(sender);
     transaction.m_receiver = std::make_shared<Address>("erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqplllst77y4l");
     transaction.m_chainID = "T";
-    transaction.m_nonce = senderAcc.getNonce() + 1;
+    transaction.m_nonce = senderAcc.getNonce();
     transaction.m_value = "10000000000";
     transaction.m_gasPrice = 1000000000;
     transaction.m_gasLimit = 50000;
@@ -143,5 +142,134 @@ TEST(ProxyProvider, getAllESDTokenBalances_multipleTokens)
     EXPECT_TRUE(esdts.find("0009O-8742a4") != esdts.end());
     EXPECT_FALSE(esdts.at("0009O-8742a4").empty());
 }
+
+TEST(ProxyProvider, send_issueESDTTransaction_noESDTProperties)
+{
+    ProxyProvider proxy("https://testnet-gateway.elrond.com");
+
+    PemFileReader pem("..//..//testData//keysValid1.pem");
+    Address sender(pem.getAddress());
+    Account senderAcc = proxy.getAccount(sender);
+
+    Transaction transaction;
+    transaction.m_sender = std::make_shared<Address>(sender);
+    transaction.m_receiver = std::make_shared<Address>("erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u");
+    transaction.m_chainID = "T";
+    transaction.m_nonce = senderAcc.getNonce();
+    transaction.m_gasPrice = 1000000000;
+
+    prepareTransactionForESDTIssuance(transaction, "JonDoe", "JDO", "444000", "3");
+
+    Signer signer(pem.getSeed());
+    transaction.sign(signer);
+
+    std::string const txHash = proxy.send(transaction).hash;
+    EXPECT_FALSE(txHash.empty());
+
+    TransactionStatus const txStatus = proxy.getTransactionStatus(txHash);
+    EXPECT_TRUE(txStatus.isPending() || txStatus.isExecuted());
+}
+
+TEST(ProxyProvider, send_issueESDTTransaction_withESDTProperties)
+{
+    ProxyProvider proxy("https://testnet-gateway.elrond.com");
+
+    PemFileReader pem("..//..//testData//keysValid1.pem");
+    Address sender(pem.getAddress());
+    Account senderAcc = proxy.getAccount(sender);
+
+    Transaction transaction;
+    transaction.m_sender = std::make_shared<Address>(sender);
+    transaction.m_receiver = std::make_shared<Address>("erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u");
+    transaction.m_chainID = "T";
+    transaction.m_nonce = senderAcc.getNonce();
+    transaction.m_gasPrice = 1000000000;
+
+    ESDTProperties esdtProperties;
+    esdtProperties.canMint = true;
+    esdtProperties.canBurn = true;
+    esdtProperties.canFreeze = true;
+    prepareTransactionForESDTIssuance(transaction, "JonDoe", "JDO", "444000", "3", esdtProperties);
+
+    Signer signer(pem.getSeed());
+    transaction.sign(signer);
+
+    std::string const txHash = proxy.send(transaction).hash;
+    EXPECT_FALSE(txHash.empty());
+
+    TransactionStatus const txStatus = proxy.getTransactionStatus(txHash);
+    EXPECT_TRUE(txStatus.isPending() || txStatus.isExecuted());
+}
+
+class ProxyProviderTxFixture
+{
+public:
+    ProxyProvider m_proxy;
+    PemFileReader m_pem;
+    Address m_senderAddr;
+    Account m_senderAcc;
+};
+
+TEST(ProxyProvider, send_ESDT_noFunction)
+{
+    ProxyProvider proxy("https://testnet-gateway.elrond.com");
+
+    PemFileReader pem("..//..//testData//keysValid1.pem");
+    Address sender(pem.getAddress());
+    Account senderAcc = proxy.getAccount(sender);
+
+    Transaction transaction;
+    transaction.m_value = "1";
+    transaction.m_sender = std::make_shared<Address>(sender);
+    transaction.m_receiver = std::make_shared<Address>("erd1cux02zersde0l7hhklzhywcxk4u9n4py5tdxyx7vrvhnza2r4gmq4vw35r");
+    transaction.m_chainID = "T";
+    transaction.m_nonce = senderAcc.getNonce();
+    transaction.m_gasPrice = 1000000000;
+
+    prepareTransactionForESDTTransfer(transaction, "JDO-8a7f9b");
+
+    Signer signer(pem.getSeed());
+    transaction.sign(signer);
+
+    std::string const txHash = proxy.send(transaction).hash;
+    EXPECT_FALSE(txHash.empty());
+
+    TransactionStatus const txStatus = proxy.getTransactionStatus(txHash);
+    EXPECT_TRUE(txStatus.isPending() || txStatus.isExecuted());
+}
+
+TEST(ProxyProvider, send_ESDT_function_noParams_unWrapEgld)
+{
+    ProxyProvider proxy("https://devnet-gateway.elrond.com");
+
+    PemFileReader pem("..//..//testData//keysValid1.pem");
+    Address sender(pem.getAddress());
+    Account senderAcc = proxy.getAccount(sender);
+
+    Transaction transaction;
+    transaction.m_value = "1000000000000000000";
+    transaction.m_sender = std::make_shared<Address>(sender);
+    transaction.m_receiver = std::make_shared<Address>("erd1qqqqqqqqqqqqqpgqhpy2hy6p0pvw6z5l3w3ykrf9aj5r5s3n0n4s6vk5dw");
+    transaction.m_chainID = "D";
+    transaction.m_nonce = senderAcc.getNonce();
+    transaction.m_gasPrice = 1000000000;
+    transaction.m_gasLimit = ESDT_TRANSFER_GAS_LIMIT_NO_FUNCTION * 20;
+
+    std::string function = "unwrapEgld";
+
+    //std::vector<std::string> params {"0de0b6b3a7640000", util::stringToHex("WEGLD-b9cba1")};
+    prepareTransactionForESDTTransfer(transaction, "WEGLD-b9cba1", function);
+
+    Signer signer(pem.getSeed());
+    transaction.sign(signer);
+
+    std::string const txHash = proxy.send(transaction).hash;
+    EXPECT_FALSE(txHash.empty());
+std::cerr<<txHash;
+    TransactionStatus const txStatus = proxy.getTransactionStatus(txHash);
+    EXPECT_TRUE(txStatus.isPending() || txStatus.isExecuted());
+
+}
+
 
 #endif
