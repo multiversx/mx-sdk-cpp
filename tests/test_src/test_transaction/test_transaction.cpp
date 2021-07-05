@@ -515,7 +515,9 @@ struct esdtTransferData
 {
     std::string token;
     std::string function;
-    std::vector<std::string> params;
+    SCArguments params;
+
+    std::vector<std::string> strParams;
 
     std::string initValue;
     uint64_t initGasLimit;
@@ -523,7 +525,7 @@ struct esdtTransferData
 
     std::string valueAfterPrep;
     uint64_t gasLimitAfterPrep;
-    std::string expectedDataAfterPreparation;
+    std::string dataAfterPrep;
     bool validValue = true;
 };
 
@@ -538,6 +540,7 @@ INSTANTIATE_TEST_CASE_P (
                 /* Token         */ "ALC-6258d2",
                 /* Function      */ NO_FUNCTION,
                 /* Params        */ NO_PARAMETERS,
+                /* Str Params    */ std::vector<std::string>(),
                 /* Init val      */ "12",
                 /* Init gas      */ 750000,
                 /* Init data     */ "foo",
@@ -547,19 +550,21 @@ INSTANTIATE_TEST_CASE_P (
 
                 esdtTransferData{
                 /* Token         */ "ALC-6258d2",
-                /* Function      */  NO_FUNCTION,
-                /* Params        */  NO_PARAMETERS,
-                /* Init val      */  "-12",
-                /* Init gas      */  250000,
-                /* Init data     */  "foo2",
-                /* Value after   */  DEFAULT_VALUE,
-                /* Gas after     */  ESDT_GAS_LIMIT_NO_FUNCTION,
-                /* Expected data */  "ESDTTransfer@414c432d363235386432@0c"},
+                /* Function      */ NO_FUNCTION,
+                /* Params        */ NO_PARAMETERS,
+                /* Str Params    */ std::vector<std::string>(),
+                /* Init val      */ "-12",
+                /* Init gas      */ 250000,
+                /* Init data     */ "foo2",
+                /* Value after   */ DEFAULT_VALUE,
+                /* Gas after     */ ESDT_GAS_LIMIT_NO_FUNCTION,
+                /* Expected data */ "ESDTTransfer@414c432d363235386432@0c"},
 
                 esdtTransferData{
                 /* Token         */ "ABC-1q2w3e",
                 /* Function      */ NO_FUNCTION,
                 /* Params        */ NO_PARAMETERS,
+                /* Str Params    */ std::vector<std::string>(),
                 /* Init val      */ "999999999999999999999999999999999999999999999",
                 /* Init gas      */ 750000,
                 /* Init data     */ "foo3",
@@ -575,6 +580,7 @@ INSTANTIATE_TEST_CASE_P (
                 /* Token         */ "ALC-6258d2",
                 /* Function      */ "func",
                 /* Params        */ NO_PARAMETERS,
+                /* Str Params    */ std::vector<std::string>(),
                 /* Init val      */ "10",
                 /* Init gas      */ 750000,
                 /* Init data     */ "foo",
@@ -585,7 +591,8 @@ INSTANTIATE_TEST_CASE_P (
                 esdtTransferData{
                 /* Token         */ "ALC-6258d2",
                 /* Function      */ "func",
-                /* Params        */ std::vector<std::string>{"p1"},
+                /* Params        */ SCArguments(),
+                /* Str Params    */ std::vector<std::string>{"p1"},
                 /* Init val      */ "48",
                 /* Init gas      */ 250000,
                 /* Init data     */ "foo2",
@@ -596,7 +603,8 @@ INSTANTIATE_TEST_CASE_P (
                 esdtTransferData{
                 /* Token         */ "ALC-6258d2",
                 /* Function      */  "func",
-                /* Params        */  std::vector<std::string>{"p1", "p2", "p3"},
+                /* Params        */ SCArguments(),
+                /* Str Params    */  std::vector<std::string>{"p1", "p2", "p3"},
                 /* Init val      */  "1000000",
                 /* Init gas      */  250000,
                 /* Init data     */  "foo2",
@@ -612,6 +620,7 @@ INSTANTIATE_TEST_CASE_P (
                 /* Token         */ "ALC-6258d2",
                 /* Function      */ NO_FUNCTION,
                 /* Params        */ NO_PARAMETERS,
+                /* Str Params    */ std::vector<std::string>(),
                 /* Init val      */ "12f",
                 /* Init gas      */ 750000,
                 /* Init data     */ "foo",
@@ -624,6 +633,7 @@ INSTANTIATE_TEST_CASE_P (
                 /* Token         */ "ALC-6258d2",
                 /* Function      */ NO_FUNCTION,
                 /* Params        */ NO_PARAMETERS,
+                /* Str Params    */ std::vector<std::string>(),
                 /* Init val      */ "boo",
                 /* Init gas      */ 750000,
                 /* Init data     */ "foo",
@@ -636,6 +646,7 @@ INSTANTIATE_TEST_CASE_P (
                 /* Token         */ "ALC-6258d2",
                 /* Function      */ NO_FUNCTION,
                 /* Params        */ NO_PARAMETERS,
+                /* Str Params    */ std::vector<std::string>(),
                 /* Init val      */ "12.3",
                 /* Init gas      */ 750000,
                 /* Init data     */ "foo",
@@ -648,6 +659,7 @@ INSTANTIATE_TEST_CASE_P (
                 /* Token         */ "ALC-6258d2",
                 /* Function      */ NO_FUNCTION,
                 /* Params        */ NO_PARAMETERS,
+                /* Str Params    */ std::vector<std::string>(),
                 /* Init val      */ "12,3",
                 /* Init gas      */ 750000,
                 /* Init data     */ "foo",
@@ -658,7 +670,7 @@ INSTANTIATE_TEST_CASE_P (
 
 TEST_P(PrepareEsdtTransferData, noFunction)
 {
-    esdtTransferData const currParam = GetParam();
+    esdtTransferData currParam = GetParam();
 
     Transaction tx;
     tx.m_value = currParam.initValue;
@@ -672,11 +684,18 @@ TEST_P(PrepareEsdtTransferData, noFunction)
         return;
     }
 
+    if (!currParam.strParams.empty())
+    {
+        for (auto const &param : currParam.strParams)
+        {
+            currParam.params.add(param);
+        }
+    }
     prepareTransactionForESDTTransfer(tx, currParam.token, currParam.function, currParam.params);
 
     std::string const txDataAfterPrep(tx.m_data->begin(),tx.m_data->end());
 
     EXPECT_EQ(tx.m_value, currParam.valueAfterPrep);
     EXPECT_EQ(tx.m_gasLimit, currParam.gasLimitAfterPrep);
-    EXPECT_EQ(txDataAfterPrep, currParam.expectedDataAfterPreparation);
+    EXPECT_EQ(txDataAfterPrep, currParam.dataAfterPrep);
 }

@@ -33,7 +33,7 @@ namespace internal
 void prepareTransactionForESDTTransfer(Transaction &transaction,
                                        std::string const &token,
                                        std::string const &function,
-                                       std::vector<std::string> const &params)
+                                       SCArguments const &args)
 {
     std::string data = ESDT_TRANSFER_PREFIX +
                        "@" + util::stringToHex(token) +
@@ -48,12 +48,9 @@ void prepareTransactionForESDTTransfer(Transaction &transaction,
         transaction.m_gasLimit = ESDT_GAS_LIMIT_NO_FUNCTION;
     }
 
-    if (!params.empty())
+    if (!args.empty())
     {
-        for (auto const &param : params)
-        {
-            data += "@" + util::stringToHex(param);
-        }
+        data += args.asOnData();
     }
 
     transaction.m_value = DEFAULT_VALUE;
