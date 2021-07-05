@@ -17,8 +17,8 @@ include_directories(${LIBSODIUM_INCLUDE_PATH})
 include_directories(${GMP_INCLUDE_PATH})
 
 find_library(LIBSODIUM_LIBRARY libsodium.so.23.3.0 ${LIBSODIUM_LIB_PATH} REQUIRED)
-find_library(GMP_LIBRARY libgmp.so.10.4.0 ${LIBSODIUM_LIB_PATH} REQUIRED)
-find_library(GMPXX_LIBRARY libgmpxx.so.4.6.0 ${LIBSODIUM_LIB_PATH} REQUIRED)
+find_library(GMP_LIBRARY libgmp.so.10.4.1 ${GMP_LIB_PATH} REQUIRED)
+find_library(GMPXX_LIBRARY libgmpxx.so.4.6.0 ${GMP_LIB_PATH} REQUIRED)
 
 find_package(OpenSSL REQUIRED)
 if(OPENSSL_FOUND)
