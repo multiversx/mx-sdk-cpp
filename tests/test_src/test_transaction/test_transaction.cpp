@@ -497,18 +497,23 @@ TEST_F(TransactionSerializeFixture, serialize_missingFields)
     expectSerializeException<std::invalid_argument>(tx, ERROR_MSG_RECEIVER);
 }
 
-TEST(SCArguments, add)
+TEST(SCArguments, add_emtpy_asOnData)
 {
     SCArguments args;
 
-    BigUInt bigUInt("10");
-    Address address("erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th");
+    EXPECT_TRUE(args.empty());
+    EXPECT_TRUE(args.asOnData().empty());
+
+    BigUInt const bigUInt("10");
+    Address const address("erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th");
+    std::string const str("foo");
 
     args.add(bigUInt);
     args.add(address);
-    args.add("foo");
+    args.add(str);
 
-    std::cerr<<args.asOnData();
+    EXPECT_FALSE(args.empty());
+    EXPECT_EQ(args.asOnData(), "@0a@0139472eff6886771a982f3083da5d421f24c29181e63888228dc81ca60d69e1@666f6f");
 }
 
 struct esdtTransferData
@@ -516,7 +521,6 @@ struct esdtTransferData
     std::string token;
     std::string function;
     SCArguments params;
-
     std::vector<std::string> strParams;
 
     std::string initValue;

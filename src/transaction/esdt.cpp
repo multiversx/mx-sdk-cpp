@@ -1,34 +1,5 @@
-#include <gmpxx.h>
-
-#include "transaction/esdt.h"
 #include "hex.h"
-#include "errors.h"
-
-namespace internal
-{
-    inline std::string bigIntToHex(std::string const &val)
-    {
-        std::string ret;
-
-        try
-        {
-            mpz_class number(val);
-            number = abs(number);
-            ret = number.get_str(16);
-        }
-        catch (...)
-        {
-            throw std::invalid_argument(ERROR_MSG_VALUE);
-        }
-
-        if (ret.size() % 2 != 0)
-        {
-            ret.insert(ret.begin(), '0');
-        }
-
-        return ret;
-    }
-}
+#include "transaction/esdt.h"
 
 void prepareTransactionForESDTTransfer(Transaction &transaction,
                                        std::string const &token,
@@ -37,7 +8,7 @@ void prepareTransactionForESDTTransfer(Transaction &transaction,
 {
     std::string data = ESDT_TRANSFER_PREFIX +
                        "@" + util::stringToHex(token) +
-                       "@" + internal::bigIntToHex(transaction.m_value);
+                       "@" + BigUInt(transaction.m_value).getHexValue();
 
     if (!function.empty())
     {
