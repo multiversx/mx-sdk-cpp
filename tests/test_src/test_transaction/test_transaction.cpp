@@ -729,7 +729,7 @@ TEST(ESDTProperties, comparisonOperators)
     EXPECT_FALSE(esdt1 != esdt2);
 }
 
-TEST(ESDTProperties, prepareTransactionForESDTIssuance_defaultProperties)
+TEST(prepareTransactionForESDTIssuance, defaultESDTProperties)
 {
     Transaction tx;
     prepareTransactionForESDTIssuance(tx, "AliceTokens", "ALC", "4091000000", "6");
@@ -741,7 +741,7 @@ TEST(ESDTProperties, prepareTransactionForESDTIssuance_defaultProperties)
     EXPECT_EQ(txDataAfterIssuance, "issue@416c696365546f6b656e73@414c43@f3d7b4c0@06");
 }
 
-TEST(ESDTProperties, prepareTransactionForESDTIssuance_customProperties)
+TEST(prepareTransactionForESDTIssuance, customESDTProperties)
 {
     Transaction tx;
     ESDTProperties esdtProperties;
