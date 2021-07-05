@@ -1,67 +1,26 @@
-#include <gmpxx.h>
-
-#include "transaction/esdt.h"
 #include "hex.h"
-#include "errors.h"
+#include "transaction/esdt.h"
 
 namespace internal
 {
-    inline std::string bigIntToHex(std::string const &val)
-    {
-        std::string ret;
 
-        try
-        {
-            mpz_class number(val);
-            number = abs(number);
-            ret = number.get_str(16);
-        }
-        catch (...)
-        {
-            throw std::invalid_argument(ERROR_MSG_VALUE + val);
-        }
+std::string ESDTPropertyField(std::string const &property, bool const &val)
+{
+    std::string const value = val ? "true" : "false";
 
-        if (ret.size() % 2 != 0)
-        {
-            ret.insert(ret.begin(), '0');
-        }
-
-        return ret;
-    }
-
-    std::string ESDTPropertyField(std::string const &property, bool const &val)
-    {
-        std::string const value = val ? "true" : "false";
-
-        return "@" + util::stringToHex(property) + "@" + util::stringToHex(value);
-    }
+    return "@" + util::stringToHex(property) + "@" + util::stringToHex(value);
 }
 
-bool operator==(ESDTProperties const &lhs, ESDTProperties const &rhs)
-{
-    return (lhs.canFreeze          == rhs.canFreeze) &&
-           (lhs.canWipe            == rhs.canWipe) &&
-           (lhs.canPause           == rhs.canPause) &&
-           (lhs.canMint            == rhs.canMint) &&
-           (lhs.canBurn            == rhs.canBurn) &&
-           (lhs.canChangeOwner     == rhs.canChangeOwner) &&
-           (lhs.canUpgrade         == rhs.canUpgrade) &&
-           (lhs.canAddSpecialRoles == rhs.canAddSpecialRoles);
-}
-
-bool operator!=(ESDTProperties const &lhs, ESDTProperties const &rhs)
-{
-    return !(lhs == rhs);
 }
 
 void prepareTransactionForESDTTransfer(Transaction &transaction,
                                        std::string const &token,
                                        std::string const &function,
-                                       std::vector<std::string> const &params)
+                                       SCArguments const &args)
 {
     std::string data = ESDT_TRANSFER_PREFIX +
                        "@" + util::stringToHex(token) +
-                       "@" + internal::bigIntToHex(transaction.m_value);
+                       "@" + BigUInt(transaction.m_value).getHexValue();
 
     if (!function.empty())
     {
@@ -72,12 +31,9 @@ void prepareTransactionForESDTTransfer(Transaction &transaction,
         transaction.m_gasLimit = ESDT_TRANSFER_GAS_LIMIT_NO_FUNCTION;
     }
 
-    if (!params.empty())
+    if (!args.empty())
     {
-        for (auto const &param : params)
-        {
-            data += "@" + util::stringToHex(param);
-        }
+        data += args.asOnData();
     }
 
     transaction.m_value = DEFAULT_VALUE;
@@ -85,20 +41,20 @@ void prepareTransactionForESDTTransfer(Transaction &transaction,
 }
 
 void prepareTransactionForESDTIssuance(Transaction &transaction,
-                                       std::string const &token,
-                                       std::string const &ticker,
-                                       std::string const &initialSupply,
-                                       std::string const &noOfDecimals,
-                                       ESDTProperties const &esdtProperties)
+                                      std::string const &token,
+                                      std::string const &ticker,
+                                      std::string const &initialSupply,
+                                      std::string const &noOfDecimals,
+                                      ESDTProperties const &esdtProperties)
 {
     transaction.m_value = ESDT_ISSUANCE_VALUE;
     transaction.m_gasLimit = ESDT_ISSUANCE_GAS_LIMIT;
 
     std::string data = ESDT_ISSUANCE_PREFIX +
-                        "@" + util::stringToHex(token) +
-                        "@" + util::stringToHex(ticker) +
-                        "@" + internal::bigIntToHex(initialSupply) +
-                        "@" + internal::bigIntToHex(noOfDecimals);
+                       "@" + util::stringToHex(token) +
+                       "@" + util::stringToHex(ticker) +
+                       "@" + BigUInt(initialSupply).getHexValue() +
+                       "@" + BigUInt(noOfDecimals).getHexValue();
 
     if (esdtProperties != ESDT_ISSUANCE_DEFAULT_PROPERTIES)
     {
@@ -114,3 +70,4 @@ void prepareTransactionForESDTIssuance(Transaction &transaction,
 
     transaction.m_data = std::make_shared<bytes>(data.begin(), data.end());
 }
+

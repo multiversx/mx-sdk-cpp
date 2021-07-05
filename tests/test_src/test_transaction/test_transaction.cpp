@@ -497,11 +497,31 @@ TEST_F(TransactionSerializeFixture, serialize_missingFields)
     expectSerializeException<std::invalid_argument>(tx, ERROR_MSG_RECEIVER);
 }
 
+TEST(SCArguments, add_emtpy_asOnData)
+{
+    SCArguments args;
+
+    EXPECT_TRUE(args.empty());
+    EXPECT_TRUE(args.asOnData().empty());
+
+    BigUInt const bigUInt("10");
+    Address const address("erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th");
+    std::string const str("foo");
+
+    args.add(bigUInt);
+    args.add(address);
+    args.add(str);
+
+    EXPECT_FALSE(args.empty());
+    EXPECT_EQ(args.asOnData(), "@0a@0139472eff6886771a982f3083da5d421f24c29181e63888228dc81ca60d69e1@666f6f");
+}
+
 struct esdtTransferData
 {
     std::string token;
     std::string function;
-    std::vector<std::string> params;
+    SCArguments params;
+    std::vector<std::string> strParams;
 
     std::string initValue;
     uint64_t initGasLimit;
@@ -509,7 +529,7 @@ struct esdtTransferData
 
     std::string valueAfterPrep;
     uint64_t gasLimitAfterPrep;
-    std::string expectedDataAfterPreparation;
+    std::string dataAfterPrep;
     bool validValue = true;
 };
 
@@ -523,7 +543,8 @@ INSTANTIATE_TEST_CASE_P (
                 esdtTransferData{
                 /* Token         */ "ALC-6258d2",
                 /* Function      */ ESDT_TRANSFER_NO_FUNCTION,
-                /* Params        */ ESDT_TRANSFER_NO_PARAMETERS,
+                /* Params        */ ESDT_TRANSFER_NO_ARGUMENTS,
+                /* Str Params    */ std::vector<std::string>(),
                 /* Init val      */ "12",
                 /* Init gas      */ 750000,
                 /* Init data     */ "foo",
@@ -533,19 +554,21 @@ INSTANTIATE_TEST_CASE_P (
 
                 esdtTransferData{
                 /* Token         */ "ALC-6258d2",
-                /* Function      */  ESDT_TRANSFER_NO_FUNCTION,
-                /* Params        */  ESDT_TRANSFER_NO_PARAMETERS,
-                /* Init val      */  "-12",
-                /* Init gas      */  250000,
-                /* Init data     */  "foo2",
-                /* Value after   */  DEFAULT_VALUE,
-                /* Gas after     */  ESDT_TRANSFER_GAS_LIMIT_NO_FUNCTION,
-                /* Expected data */  "ESDTTransfer@414c432d363235386432@0c"},
+                /* Function      */ ESDT_TRANSFER_NO_FUNCTION,
+                /* Params        */ ESDT_TRANSFER_NO_ARGUMENTS,
+                /* Str Params    */ std::vector<std::string>(),
+                /* Init val      */ "-12",
+                /* Init gas      */ 250000,
+                /* Init data     */ "foo2",
+                /* Value after   */ DEFAULT_VALUE,
+                /* Gas after     */ ESDT_TRANSFER_GAS_LIMIT_NO_FUNCTION,
+                /* Expected data */ "ESDTTransfer@414c432d363235386432@0c"},
 
                 esdtTransferData{
                 /* Token         */ "ABC-1q2w3e",
                 /* Function      */ ESDT_TRANSFER_NO_FUNCTION,
-                /* Params        */ ESDT_TRANSFER_NO_PARAMETERS,
+                /* Params        */ ESDT_TRANSFER_NO_ARGUMENTS,
+                /* Str Params    */ std::vector<std::string>(),
                 /* Init val      */ "999999999999999999999999999999999999999999999",
                 /* Init gas      */ 750000,
                 /* Init data     */ "foo3",
@@ -560,7 +583,8 @@ INSTANTIATE_TEST_CASE_P (
                 esdtTransferData{
                 /* Token         */ "ALC-6258d2",
                 /* Function      */ "func",
-                /* Params        */ ESDT_TRANSFER_NO_PARAMETERS,
+                /* Params        */ ESDT_TRANSFER_NO_ARGUMENTS,
+                /* Str Params    */ std::vector<std::string>(),
                 /* Init val      */ "10",
                 /* Init gas      */ 750000,
                 /* Init data     */ "foo",
@@ -571,7 +595,8 @@ INSTANTIATE_TEST_CASE_P (
                 esdtTransferData{
                 /* Token         */ "ALC-6258d2",
                 /* Function      */ "func",
-                /* Params        */ std::vector<std::string>{"p1"},
+                /* Params        */ SCArguments(),
+                /* Str Params    */ std::vector<std::string>{"p1"},
                 /* Init val      */ "48",
                 /* Init gas      */ 250000,
                 /* Init data     */ "foo2",
@@ -582,7 +607,8 @@ INSTANTIATE_TEST_CASE_P (
                 esdtTransferData{
                 /* Token         */ "ALC-6258d2",
                 /* Function      */  "func",
-                /* Params        */  std::vector<std::string>{"p1", "p2", "p3"},
+                /* Params        */ SCArguments(),
+                /* Str Params    */  std::vector<std::string>{"p1", "p2", "p3"},
                 /* Init val      */  "1000000",
                 /* Init gas      */  250000,
                 /* Init data     */  "foo2",
@@ -597,7 +623,8 @@ INSTANTIATE_TEST_CASE_P (
                 esdtTransferData{
                 /* Token         */ "ALC-6258d2",
                 /* Function      */ ESDT_TRANSFER_NO_FUNCTION,
-                /* Params        */ ESDT_TRANSFER_NO_PARAMETERS,
+                /* Params        */ ESDT_TRANSFER_NO_ARGUMENTS,
+                /* Str Params    */ std::vector<std::string>(),
                 /* Init val      */ "12f",
                 /* Init gas      */ 750000,
                 /* Init data     */ "foo",
@@ -609,7 +636,8 @@ INSTANTIATE_TEST_CASE_P (
                 esdtTransferData{
                 /* Token         */ "ALC-6258d2",
                 /* Function      */ ESDT_TRANSFER_NO_FUNCTION,
-                /* Params        */ ESDT_TRANSFER_NO_PARAMETERS,
+                /* Params        */ ESDT_TRANSFER_NO_ARGUMENTS,
+                /* Str Params    */ std::vector<std::string>(),
                 /* Init val      */ "boo",
                 /* Init gas      */ 750000,
                 /* Init data     */ "foo",
@@ -621,7 +649,8 @@ INSTANTIATE_TEST_CASE_P (
                 esdtTransferData{
                 /* Token         */ "ALC-6258d2",
                 /* Function      */ ESDT_TRANSFER_NO_FUNCTION,
-                /* Params        */ ESDT_TRANSFER_NO_PARAMETERS,
+                /* Params        */ ESDT_TRANSFER_NO_ARGUMENTS,
+                /* Str Params    */ std::vector<std::string>(),
                 /* Init val      */ "12.3",
                 /* Init gas      */ 750000,
                 /* Init data     */ "foo",
@@ -633,7 +662,8 @@ INSTANTIATE_TEST_CASE_P (
                 esdtTransferData{
                 /* Token         */ "ALC-6258d2",
                 /* Function      */ ESDT_TRANSFER_NO_FUNCTION,
-                /* Params        */ ESDT_TRANSFER_NO_PARAMETERS,
+                /* Params        */ ESDT_TRANSFER_NO_ARGUMENTS,
+                /* Str Params    */ std::vector<std::string>(),
                 /* Init val      */ "12,3",
                 /* Init gas      */ 750000,
                 /* Init data     */ "foo",
@@ -644,7 +674,7 @@ INSTANTIATE_TEST_CASE_P (
 
 TEST_P(PrepareEsdtTransferData, noFunction)
 {
-    esdtTransferData const currParam = GetParam();
+    esdtTransferData currParam = GetParam();
 
     Transaction tx;
     tx.m_value = currParam.initValue;
@@ -658,13 +688,20 @@ TEST_P(PrepareEsdtTransferData, noFunction)
         return;
     }
 
+    if (!currParam.strParams.empty())
+    {
+        for (auto const &param : currParam.strParams)
+        {
+            currParam.params.add(param);
+        }
+    }
     prepareTransactionForESDTTransfer(tx, currParam.token, currParam.function, currParam.params);
 
     std::string const txDataAfterPrep(tx.m_data->begin(),tx.m_data->end());
 
     EXPECT_EQ(tx.m_value, currParam.valueAfterPrep);
     EXPECT_EQ(tx.m_gasLimit, currParam.gasLimitAfterPrep);
-    EXPECT_EQ(txDataAfterPrep, currParam.expectedDataAfterPreparation);
+    EXPECT_EQ(txDataAfterPrep, currParam.dataAfterPrep);
 }
 
 TEST(ESDTProperties, comparisonOperators)

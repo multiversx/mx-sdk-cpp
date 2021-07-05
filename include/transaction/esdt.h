@@ -2,11 +2,12 @@
 #define ERD_ESDT_H
 
 #include "transaction.h"
+#include "scarguments.h"
 
 #define ESDT_TRANSFER_PREFIX std::string("ESDTTransfer")
 #define ESDT_TRANSFER_GAS_LIMIT_NO_FUNCTION 500000
 #define ESDT_TRANSFER_NO_FUNCTION std::string()
-#define ESDT_TRANSFER_NO_PARAMETERS std::vector<std::string>()
+#define ESDT_TRANSFER_NO_ARGUMENTS SCArguments()
 
 #define ESDT_ISSUANCE_PREFIX std::string("issue")
 #define ESDT_ISSUANCE_VALUE "50000000000000000" //(0.05 EGLD)
@@ -32,7 +33,7 @@ bool operator!=(ESDTProperties const &lhs, ESDTProperties const &rhs);
 void prepareTransactionForESDTTransfer(Transaction &transaction,
                                        std::string const &token,
                                        std::string const &function = ESDT_TRANSFER_NO_FUNCTION,
-                                       std::vector<std::string> const &params = ESDT_TRANSFER_NO_PARAMETERS);
+                                       SCArguments const &params = ESDT_TRANSFER_NO_ARGUMENTS);
 
 void prepareTransactionForESDTIssuance(Transaction &transaction,
                                        std::string const &token,
@@ -40,5 +41,6 @@ void prepareTransactionForESDTIssuance(Transaction &transaction,
                                        std::string const &initialSupply,
                                        std::string const &noOfDecimals,
                                        ESDTProperties const &esdtProperties = ESDT_ISSUANCE_DEFAULT_PROPERTIES);
+
 
 #endif //ERD_ESDT_H
