@@ -729,6 +729,14 @@ TEST(ESDTProperties, comparisonOperators)
     EXPECT_FALSE(esdt1 != esdt2);
 }
 
+TEST(prepareTransactionForESDTIssuance, invalidSupply_invalidNoOfDecimals)
+{
+    Transaction tx;
+
+    EXPECT_THROW(prepareTransactionForESDTIssuance(tx, "AliceTokens", "ALC", "ffff", "6"), std::invalid_argument);
+    EXPECT_THROW(prepareTransactionForESDTIssuance(tx, "AliceTokens", "ALC", "10000", "ff"), std::invalid_argument);
+}
+
 TEST(prepareTransactionForESDTIssuance, defaultESDTProperties)
 {
     Transaction tx;
