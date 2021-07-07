@@ -32,58 +32,13 @@ void signTransaction(Transaction &transaction, bytes const& seed)
 
 namespace cli
 {
-typedef std::map<std::string, std::vector<std::string>> commandGroupMap;
 
-static commandGroupMap const cmdGroupMap =
-        {
-                {"transaction", {"new"}},
-                {"pem",         {"load"}},
-                {"help",        {}}
-        };
-
-void showSubGroupAvailableCmds(std::string const &cmdGroup)
+void init()
 {
-    std::vector<std::string> cmd = cmdGroupMap.at(cmdGroup);
-
-    if (cmd.empty()) std::cerr << "-";
-
-    else
-    {
-        for (std::string const &subCmd : cmd)
-        {
-            std::cerr << subCmd << " ";
-        }
-    }
-}
-
-void showInfo()
-{
-    std::cerr << "----\nInfo\n----\n\nCommand groups: Avaiable arguments\n";
-
-    for (const auto & it : cmdGroupMap)
-    {
-        std::cerr << it.first << ": ";
-        showSubGroupAvailableCmds(it.first);
-        std::cerr << "\n";
-    }
-}
-
-void reportError(errorCode const err)
-{
-    std::cerr << "Error. ";
-
-    if (errors.find(err) != errors.end()) std::cerr << errors.at(err) << "\n";
-}
-
-bool init()
-{
-    bool ret = true;
     if (sodium_init() < 0)
     {
-        ret = false;
-        reportError(ERROR_SODIUM_INIT);
+        throw std::runtime_error(ERROR_MSG_SODIUM_INIT);
     }
-    return ret;
 }
 
 void handleLoadPemFile(cxxopts::ParseResult const &result)
@@ -113,7 +68,7 @@ void handleRequest(ih::ParseResult const &parsedRes)
     {
         case ih::help:
         {
-            showInfo();
+            std::cerr<< parsedRes.help;
             break;
         }
         case ih::loadPemFile:
@@ -128,7 +83,6 @@ void handleRequest(ih::ParseResult const &parsedRes)
         }
         default:
         {
-            showInfo();
             break;
         }
     }

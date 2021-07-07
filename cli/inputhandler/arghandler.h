@@ -25,6 +25,7 @@ enum RequestType
 struct ParseResult
 {
     RequestType requestType;
+    std::string help;
     cxxopts::ParseResult result;
 };
 

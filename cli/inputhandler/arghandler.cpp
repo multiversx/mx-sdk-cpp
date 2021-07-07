@@ -72,24 +72,25 @@ bool ArgHandler::canParse(int const &argc, char *const argv[], cxxopts::Options 
 ParseResult ArgHandler::parse(int const &argc, char *const argv[])
 {
     RequestType reqType = invalid;
+    std::string helpMsg;
 
     m_cmd = parseCmd(argc, argv);
     m_subCmd = parseSubCmd(argc, argv);
 
     if (isCmd("help") && argc == 2)
     {
-        std::cerr << m_optionsTx.help();
-        std::cerr << m_optionsPem.help();
+        helpMsg = m_optionsTx.help() + "\n" + m_optionsPem.help();
+
         reqType = help;
     }
     else if (isCmd("pem") && isSubCmd("help") && argc == 3)
     {
-        std::cerr << m_optionsPem.help();
+        helpMsg = m_optionsPem.help();
         reqType = help;
     }
-    else if (isCmd("pem") && isSubCmd("help") && argc == 3)
+    else if (isCmd("transaction") && isSubCmd("help") && argc == 3)
     {
-        std::cerr << m_optionsTx.help();
+        helpMsg = m_optionsTx.help();
         reqType = help;
     }
     else if (isCmd("pem") && isSubCmd("load") &&
@@ -103,7 +104,7 @@ ParseResult ArgHandler::parse(int const &argc, char *const argv[])
         reqType = createSignedTransactionWithPemFile;
     }
 
-    return ParseResult {reqType, m_result};
+    return ParseResult {reqType, helpMsg, m_result};
 }
 
 

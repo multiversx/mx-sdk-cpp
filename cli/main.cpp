@@ -3,13 +3,10 @@
 
 int main(int argc, char *argv[])
 {
-    if (!cli::init())
-    {
-        return 0;
-    }
-
     try
     {
+        cli::init();
+
         ih::ArgHandler argHandler;
         auto result = argHandler.parse(argc, argv);
 
