@@ -1,32 +1,35 @@
 #include "arghandler.h"
 #include "utils/params.h"
 
+#include <algorithm>
 #include <cstdint>
 #include <limits>
+#include <iostream>
+
 
 
 namespace internal
 {
 // Generic template function to check for user input value.
-// Expects input to be an unsigned long int.
 template<typename T>
-bool isUserInputValid(std::string const &arg)
+bool isUserInputValid(T &arg)
 {
-    if ((arg.empty()) || (arg.size() > std::numeric_limits<uint64_t>::digits)) return false;
-
-    std::string::const_iterator it = arg.begin();
-    while (it != arg.end() && isdigit(*it)) ++it;
-    return it == arg.end();
+    return true;
 }
 
 // Specialization template function to check for user input value.
 // Expects input to be a non-empty string.
 template<>
-bool isUserInputValid<std::string>(std::string const &arg)
+bool isUserInputValid(std::string const &arg)
 {
     return (!arg.empty());
 }
 }
+
+
+
+
+
 
 namespace ih
 {
@@ -54,105 +57,112 @@ const errorCode &RequestedCmd::getErrorCode() const
 }
 
 
-ArgHandler::ArgHandler(int const &argc, char *const argv[]) : m_errCode(ERROR_NONE)
+ArgHandler::ArgHandler() :
+    m_errCode(ERROR_NONE),
+    m_optionsTx("transaction", "Manage transactions"),
+    m_optionsPem("pem", "Manage pem files")
 {
-    if (argc > 1)
-    {
-        for (int ct = 1; ct < argc; ++ct)
-        {
-            m_arguments.emplace_back(argv[ct]);
-        }
-    }
+    initOptions();
 }
 
-bool ArgHandler::isSubCmd(uint32_t const subCmdIdx, std::string const &subCmd) const
+bool ArgHandler::isCmd(std::string const& arg)
 {
-    if (argCount() <= subCmdIdx) return false;
-    return (m_arguments[subCmdIdx] == subCmd);
+    return arg == m_cmd;
 }
 
-bool ArgHandler::isCmdGroup(std::string const &arg) const
+bool ArgHandler::isSubCmd(std::string const& arg)
 {
-    if (argCount() == 0) return false;
-    return (m_arguments[0] == arg);
+    return arg == m_subCmd;
 }
 
-template<typename T>
-bool ArgHandler::checkAndSetUserInput(uint32_t const &argIdx, std::string const &arg,
-                                      std::map<uint32_t, std::string> &userInputs, uint32_t userInputIdx,
-                                      errorCode errCode)
+bool ArgHandler::canParse(int const &argc, char *const argv[], cxxopts::Options &options)
 {
-    // If user didn't provide enough arguments OR
-    // size(user arg) <= size(required arg)
-    if (argCount() <= argIdx) return false;
-    if (m_arguments[argIdx].size() <= arg.size())
-    {
-        m_errCode |= errCode;
-        return false;
-    }
-
     bool ret = false;
+    cxxopts::ParseResult result;
 
-    std::string const userArg = m_arguments[argIdx];
-    std::string const userCmd = userArg.substr(0, arg.size());
-    bool const isCmdValid = (userCmd == arg);
-
-    if (isCmdValid)
+    try
     {
-        std::string const userInput = userArg.substr(arg.size(), userArg.size());
-        if (internal::isUserInputValid<T>(userInput))
+        result = options.parse(argc, argv);
+    }
+    catch (const cxxopts::OptionException& e)
+    {
+        throw;
+    }
+
+    auto arguments = result.arguments();
+
+    for (auto const &arg : arguments)
+    {
+        if (arg.value().empty())
         {
-            userInputs[userInputIdx] = userInput;
-            ret = true;
-        }
-        else
-        {
-            m_errCode |= errCode;
+            throw std::invalid_argument("Empty " + arg.key());
         }
     }
 
-    return ret;
+    if (result.unmatched().size() != 2) throw std::invalid_argument("Invalid number of arguments");
+
+    m_result = result;
+
+    return ret = true;
 }
 
-RequestedCmd ArgHandler::getRequestedCmd()
+ParseResult ArgHandler::parse(int const &argc, char *const argv[])
 {
-    m_errCode = ERROR_NONE;
     RequestType reqType = invalid;
-    std::map<uint32_t, std::string> userInputs;
 
-    // TODO: No magic numbers/strings
-    if ((argCount() == 1) && isCmdGroup("help"))
+    if(argc > 1)
     {
-        reqType = help;
+        m_cmd = std::string(argv[1]);
+        if (argc > 2)
+        {
+            m_subCmd = std::string(argv[2]);
+        }
     }
-    else if ((argCount() == 3) && isCmdGroup("pem") && isSubCmd(1U, "load") &&
-             (checkAndSetUserInput<std::string>(2U, "--file=", userInputs, ARGS_TX_IDX_PEM_INPUT_FILE, ERROR_PEM_INPUT_FILE)))
+
+    if (isCmd("pem") && isSubCmd("load") &&
+        canParse(argc,argv,m_optionsPem))
     {
         reqType = loadPemFile;
     }
-    else if (((argCount() == 9) || (argCount() == 10)) && isCmdGroup("transaction") && isSubCmd(1U, "new") &&
-             checkAndSetUserInput<uint64_t>(2U, "--nonce=", userInputs, ARGS_TX_IDX_NONCE, ERROR_NONCE) &&
-             checkAndSetUserInput<std::string>(3U, "--value=", userInputs, ARGS_TX_IDX_VALUE, ERROR_VALUE) &&
-             checkAndSetUserInput<std::string>(4U, "--receiver=", userInputs, ARGS_TX_IDX_RECEIVER, ERROR_RECEIVER) &&
-             checkAndSetUserInput<uint64_t>(5U, "--gas-price=", userInputs, ARGS_TX_IDX_GAS_PRICE, ERROR_GAS_PRICE) &&
-             checkAndSetUserInput<uint64_t>(6U, "--gas-limit=", userInputs, ARGS_TX_IDX_GAS_LIMIT, ERROR_GAS_LIMIT) &&
-             checkAndSetUserInput<std::string>(7U, "--pem=", userInputs, ARGS_TX_IDX_PEM_INPUT_FILE, ERROR_PEM_INPUT_FILE) &&
-             checkAndSetUserInput<std::string>(8U, "--outfile=", userInputs, ARGS_TX_IDX_JSON_OUT_FILE, ERROR_JSON_OUT_FILE))
+    else if (isCmd("transaction") && isSubCmd("new") &&
+             canParse(argc, argv, m_optionsTx))
     {
         reqType = createSignedTransactionWithPemFile;
-
-        if ((argCount() == 10) && (!checkAndSetUserInput<std::string>(9U, "--data=", userInputs, ARGS_TX_IDX_DATA, ERROR_DATA)))
-        {
-            reqType = invalid;
-        }
     }
 
-    return RequestedCmd(userInputs, reqType, m_errCode);
+    return ParseResult {reqType, cxxopts::ParseResult()};
 }
 
-unsigned long ArgHandler::argCount() const
+
+void ArgHandler::initOptionsTx()
 {
-    return m_arguments.size();
+    m_optionsTx.add_options("new") // transaction new group
+            ("nonce", "Transaction nonce", cxxopts::value<uint64_t>())
+            ("value", "Transaction value", cxxopts::value<std::string>())
+            ("receiver", "Receiver's address", cxxopts::value<std::string>())
+            ("receiver-username", "Receiver's username (default: )", cxxopts::value<std::string>()->default_value(""))
+            ("sender-username", "Sender's username (default: )", cxxopts::value<std::string>()->default_value(""))
+            ("gas-price", "Transaction gas price", cxxopts::value<uint64_t>())
+            ("gas-limit", "Transaction gas limit", cxxopts::value<uint64_t>())
+            ("data", "Transaction data/payload (default: )", cxxopts::value<std::string>()->default_value(""))
+            ("chainID", "Chain identifier (default: T)", cxxopts::value<std::string>()->default_value("T"))
+            ("version", "Transaction version (default: 1)", cxxopts::value<std::string>()->default_value("1"))
+            ("options", "Transaction options (default: )", cxxopts::value<std::string>()->default_value(""))
+            ("pem", "Pem keyfile", cxxopts::value<std::string>())
+            ("outfile", "Json file where the output will be stored", cxxopts::value<std::string>());
+}
+
+void ArgHandler::initOptionsPem()
+{
+    m_optionsPem.add_options("load") // pem load group
+            ("f,file", "Load a pem file to check if valid", cxxopts::value<std::string>());
+}
+
+
+void ArgHandler::initOptions()
+{
+    initOptionsTx();
+    initOptionsPem();
 }
 
 }

@@ -6,6 +6,11 @@
 #include <map>
 
 #include "utils/errors.h"
+//#include "options.h"
+#include "cliparser/cxxopts.hpp"
+
+
+
 
 namespace ih
 {
@@ -35,31 +40,42 @@ private:
     errorCode const m_errCode;
 };
 
+struct ParseResult
+{
+    RequestType requestType;
+    cxxopts::ParseResult result;
+};
+
 class ArgHandler
 {
 public:
 
-    explicit ArgHandler(int const &argc, char *const argv[]);
+    explicit ArgHandler();
 
-    RequestedCmd getRequestedCmd();
+    ParseResult parse(int const &argc, char *const argv[]);
 
 private:
 
-    unsigned long argCount() const;
+    void initOptions();
 
-    bool isCmdGroup(std::string const &arg) const;
+    void initOptionsTx();
 
-    bool isSubCmd(uint32_t subCmdIdx, std::string const &subCmd) const;
+    void initOptionsPem();
 
-    template<typename T>
-    bool checkAndSetUserInput(uint32_t const &argIdx, std::string const &arg,
-                              std::map<uint32_t, std::string> &userInputs, uint32_t userInputIdx,
-                              errorCode errCode);
+    bool canParse(int const &argc, char *const argv[], cxxopts::Options &options);
 
+    bool isCmd(std::string const& arg);
+
+    bool isSubCmd(std::string const& arg);
+
+    std::string m_cmd;
+    std::string m_subCmd;
     std::vector<std::string> m_arguments;
     errorCode m_errCode;
+    cxxopts::Options m_optionsTx;
+    cxxopts::Options m_optionsPem;
+    cxxopts::ParseResult m_result;
 };
 }
-
 
 #endif // !ARGHANDLER_H

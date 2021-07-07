@@ -31,7 +31,7 @@ PemFileReader::PemFileReader(std::string const &filePath) :
 
 void PemFileReader::checkFile() const
 {
-    if (!IFile::fileExists()) throw std::invalid_argument(ERROR_MSG_FILE_DOES_NOT_EXIST);
+    if (!IFile::fileExists()) throw std::invalid_argument(ERROR_MSG_FILE_DOES_NOT_EXIST + getFilePath());
     if (!IFile::isFileExtension("pem")) throw std::invalid_argument(ERROR_MSG_FILE_EXTENSION_INVALID);
 }
 

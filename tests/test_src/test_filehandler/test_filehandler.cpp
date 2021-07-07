@@ -17,7 +17,8 @@ public:
                          }
                          catch(const T &e)
                          {
-                             EXPECT_EQ( errMsg, e.what() );
+                             std::string const err = e.what();
+                             EXPECT_TRUE(err.find(errMsg) != std::string::npos );
                              throw;
                          }
                      }, T );

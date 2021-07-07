@@ -17,7 +17,7 @@ public:
 
     const std::string &getPemFilePath() const
     {
-        return getInputData().at(ARGS_TX_IDX_PEM_INPUT_FILE);
+        return getInputData().at(ARGS_PEM_INPUT_FILE);
     }
 };
 }

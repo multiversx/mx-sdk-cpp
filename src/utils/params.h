@@ -18,6 +18,9 @@ constexpr auto TX_VERSION = "version";
 constexpr auto TX_SIGNATURE = "signature";
 constexpr auto TX_OPTIONS = "options";
 
+
+constexpr auto ARGS_PEM_INPUT_FILE = 12;
+
 constexpr auto ARGS_TX_IDX_NONCE = 0U;
 constexpr auto ARGS_TX_IDX_VALUE = 1U;
 constexpr auto ARGS_TX_IDX_RECEIVER = 2U;

@@ -12,9 +12,9 @@ TEST(ArgHandler, getRequestedCmd_getRequestType_noArgument_expectInvalid)
     char *argv[argc];
     argv[0] = (char *) "ERDProject.exe";
 
-    ih::ArgHandler argHandler(argc, argv);
+    ih::ArgHandler argHandler;
 
-    EXPECT_EQ(argHandler.getRequestedCmd().getRequestType(), ih::invalid);
+    EXPECT_EQ(argHandler.parse(argc, argv).requestType, ih::invalid);
 }
 
 TEST(ArgHandler, getRequestedCmd_getRequestType_randomArgs_expectInvalid)
@@ -25,9 +25,9 @@ TEST(ArgHandler, getRequestedCmd_getRequestType_randomArgs_expectInvalid)
     argv[1] = (char *) "dsa";
     argv[2] = (char *) "";
 
-    ih::ArgHandler argHandler(argc, argv);
+    ih::ArgHandler argHandler;
 
-    EXPECT_EQ(argHandler.getRequestedCmd().getRequestType(), ih::invalid);
+    EXPECT_EQ(argHandler.parse(argc, argv).requestType, ih::invalid);
 }
 
 TEST(ArgHandler, getRequestedCmd_getRequestType_help_expectHelp)
@@ -37,9 +37,9 @@ TEST(ArgHandler, getRequestedCmd_getRequestType_help_expectHelp)
     argv[0] = (char *) "ERDProject.exe";
     argv[1] = (char *) "help";
 
-    ih::ArgHandler argHandler(argc, argv);
+    ih::ArgHandler argHandler;
 
-    EXPECT_EQ(argHandler.getRequestedCmd().getRequestType(), ih::help);
+    EXPECT_EQ(argHandler.parse(argc, argv).requestType, ih::help);
 }
 
 TEST(ArgHandler, getRequestedCmd_getRequestType_pem_load_someFile_expectLoadPemFile)
@@ -51,9 +51,9 @@ TEST(ArgHandler, getRequestedCmd_getRequestType_pem_load_someFile_expectLoadPemF
     argv[2] = (char *) "load";
     argv[3] = (char *) "--file=someFile";
 
-    ih::ArgHandler argHandler(argc, argv);
+    ih::ArgHandler argHandler;
 
-    EXPECT_EQ(argHandler.getRequestedCmd().getRequestType(), ih::loadPemFile);
+    EXPECT_EQ(argHandler.parse(argc, argv).requestType, ih::loadPemFile);
 }
 
 TEST(ArgHandler, getRequestedCmd_getRequestType_pem_load_withoutFile_expectInvalid)
@@ -64,9 +64,9 @@ TEST(ArgHandler, getRequestedCmd_getRequestType_pem_load_withoutFile_expectInval
     argv[1] = (char *) "pem";
     argv[2] = (char *) "help";
 
-    ih::ArgHandler argHandler(argc, argv);
+    ih::ArgHandler argHandler;
 
-    EXPECT_EQ(argHandler.getRequestedCmd().getRequestType(), ih::invalid);
+    EXPECT_EQ(argHandler.parse(argc, argv).requestType, ih::invalid);
 }
 
 TEST(ArgHandler, getRequestedCmd_getRequestType_pem_withoutSubArgument_expectInvalid)
@@ -76,9 +76,9 @@ TEST(ArgHandler, getRequestedCmd_getRequestType_pem_withoutSubArgument_expectInv
     argv[0] = (char *) "ERDProject.exe";
     argv[1] = (char *) "pem";
 
-    ih::ArgHandler argHandler(argc, argv);
+    ih::ArgHandler argHandler;
 
-    EXPECT_EQ(argHandler.getRequestedCmd().getRequestType(), ih::invalid);
+    EXPECT_EQ(argHandler.parse(argc, argv).requestType, ih::invalid);
 }
 
 TEST(ArgHandler, getRequestedCmd_getRequestType_transaction_new_noData_expectCreateTransaction)
@@ -89,16 +89,19 @@ TEST(ArgHandler, getRequestedCmd_getRequestType_transaction_new_noData_expectCre
     argv[1] = (char *) "transaction";
     argv[2] = (char *) "new";
     argv[3] = (char *) "--nonce=3";
-    argv[4] = (char *) "--value=\"31\"";
-    argv[5] = (char *) "--receiver=\"da\"";
-    argv[6] = (char *) "--gas-price=31";
-    argv[7] = (char *) "--gas-limit=31";
-    argv[8] = (char *) "--pem=\"dd\"";
-    argv[9] = (char *) "--outfile=\"dd\"";
+    argv[4] = (char *) "--value=31";
+    argv[5] = (char *) "--receiver=foo";
+    argv[6] = (char *) "--gas-price=4";
+    argv[7] = (char *) "--gas-limit=44";
+    argv[8] = (char *) "--pem=file1";
+    argv[9] = (char *) "--outfile=file2";
 
-    ih::ArgHandler argHandler(argc, argv);
+    ih::ArgHandler argHandler;
 
-    EXPECT_EQ(argHandler.getRequestedCmd().getRequestType(), ih::createSignedTransactionWithPemFile);
+
+
+
+    EXPECT_EQ(argHandler.parse(argc, argv).requestType, ih::createSignedTransactionWithPemFile);
 }
 
 TEST(ArgHandler, getRequestedCmd_getRequestType_transaction_new_withData_expectCreateTransaction)
@@ -117,9 +120,9 @@ TEST(ArgHandler, getRequestedCmd_getRequestType_transaction_new_withData_expectC
     argv[9] = (char *) "--outfile=\"dd\"";
     argv[10] = (char *) "--data=\"dd\"";
 
-    ih::ArgHandler argHandler(argc, argv);
+    ih::ArgHandler argHandler;
 
-    EXPECT_EQ(argHandler.getRequestedCmd().getRequestType(), ih::createSignedTransactionWithPemFile);
+    EXPECT_EQ(argHandler.parse(argc, argv).requestType, ih::createSignedTransactionWithPemFile);
 }
 
 
@@ -139,9 +142,9 @@ TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidNonce_expec
     argv[9] = (char *) "--outfile=\"dd\"";
     argv[10] = (char *) "--data=\"dd\"";
 
-    ih::ArgHandler argHandler(argc, argv);
+    ih::ArgHandler argHandler;
 
-    EXPECT_EQ(argHandler.getRequestedCmd().getErrorCode(), ERROR_NONCE);
+    EXPECT_THROW(argHandler.parse(argc, argv),cxxopts::OptionException);
 }
 
 TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidValue_expectErrorValue)
@@ -160,9 +163,9 @@ TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidValue_expec
     argv[9] = (char *) "--outfile=\"dd\"";
     argv[10] = (char *) "--data=\"dd\"";
 
-    ih::ArgHandler argHandler(argc, argv);
+    ih::ArgHandler argHandler;
 
-    EXPECT_EQ(argHandler.getRequestedCmd().getErrorCode(), ERROR_VALUE);
+    EXPECT_THROW(argHandler.parse(argc, argv),cxxopts::OptionException);
 }
 
 TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidReceiver_expectErrorReceiver)
@@ -182,9 +185,9 @@ TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidReceiver_ex
     argv[9] = (char *) "--outfile=\"dd\"";
     argv[10] = (char *) "--data=\"dd\"";
 
-    ih::ArgHandler argHandler(argc, argv);
+    ih::ArgHandler argHandler;
 
-    EXPECT_EQ(argHandler.getRequestedCmd().getErrorCode(), ERROR_RECEIVER);
+    EXPECT_THROW(argHandler.parse(argc, argv),cxxopts::OptionException);
 }
 
 TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidGasPrice_expectErrorGasPrice)
@@ -204,9 +207,9 @@ TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidGasPrice_ex
     argv[9] = (char *) "--outfile=\"dd\"";
     argv[10] = (char *) "--data=\"dd\"";
 
-    ih::ArgHandler argHandler(argc, argv);
+    ih::ArgHandler argHandler;
 
-    EXPECT_EQ(argHandler.getRequestedCmd().getErrorCode(), ERROR_GAS_PRICE);
+    EXPECT_THROW(argHandler.parse(argc, argv),cxxopts::OptionException);
 }
 
 TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidGasLimit_expectErrorGasLimit)
@@ -226,9 +229,9 @@ TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidGasLimit_ex
     argv[9] = (char *) "--outfile=\"dd\"";
     argv[10] = (char *) "--data=\"dd\"";
 
-    ih::ArgHandler argHandler(argc, argv);
+    ih::ArgHandler argHandler;
 
-    EXPECT_EQ(argHandler.getRequestedCmd().getErrorCode(), ERROR_GAS_LIMIT);
+    EXPECT_THROW(argHandler.parse(argc, argv),cxxopts::OptionException);
 }
 
 TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidPem_expectErrorPem)
@@ -248,9 +251,9 @@ TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidPem_expectE
     argv[9] = (char *) "--outfile=\"dd\"";
     argv[10] = (char *) "--data=\"dd\"";
 
-    ih::ArgHandler argHandler(argc, argv);
+    ih::ArgHandler argHandler;
 
-    EXPECT_EQ(argHandler.getRequestedCmd().getErrorCode(), ERROR_PEM_INPUT_FILE);
+    EXPECT_THROW(argHandler.parse(argc, argv),cxxopts::OptionException);
 }
 
 TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidJson_expectErrorJson)
@@ -270,9 +273,9 @@ TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidJson_expect
     argv[9] = (char *) "--outfile=";
     argv[10] = (char *) "--data=\"dd\"";
 
-    ih::ArgHandler argHandler(argc, argv);
+    ih::ArgHandler argHandler;
 
-    EXPECT_EQ(argHandler.getRequestedCmd().getErrorCode(), ERROR_JSON_OUT_FILE);
+    EXPECT_THROW(argHandler.parse(argc, argv),cxxopts::OptionException);
 }
 
 TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidData_expectErrorData)
@@ -292,9 +295,9 @@ TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidData_expect
     argv[9] = (char *) "--outfile=otherFile";
     argv[10] = (char *) "--data=";
 
-    ih::ArgHandler argHandler(argc, argv);
+    ih::ArgHandler argHandler;
 
-    EXPECT_EQ(argHandler.getRequestedCmd().getErrorCode(), ERROR_DATA);
+    EXPECT_THROW(argHandler.parse(argc, argv),cxxopts::OptionException);
 }
 
 TEST(JsonFileHandler, writeOutputFile)
@@ -308,7 +311,7 @@ TEST(JsonFileHandler, writeOutputFile)
     input[ARGS_TX_IDX_GAS_LIMIT] = "50000";
     input[ARGS_TX_IDX_DATA] = "test";
     input[ARGS_TX_IDX_CHAIN_ID] = "T";
-    input[ARGS_TX_IDX_PEM_INPUT_FILE] = "..//..//testData//keysValid1.pem";
+    input[ARGS_PEM_INPUT_FILE] = "..//..//testData//keysValid1.pem";
     input[ARGS_TX_IDX_JSON_OUT_FILE] = "..//..//testData//outputJson.json";
 
     ih::wrapper::PemHandlerInputWrapper const pemWrapper(input);
