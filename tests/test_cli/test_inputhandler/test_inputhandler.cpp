@@ -1,10 +1,7 @@
 #include "gtest/gtest.h"
 #include "inputhandler/ext.h"
-#include "filehandler/pemreader.h"
 #include "utils/ext.h"
-#include "wrappers/cryptosignwrapper.h"
-#include <sodium.h>
-#include <fstream>
+
 
 template <typename T>
 void EXPECT_PARSE_ERROR_MISSING_ARG(int const &argc, char *const argv[], errorMessage const &errMsg, std::string arg)
@@ -86,7 +83,7 @@ TEST(ArgHandler, getRequestedCmd_getRequestType_pem_load_withoutFile_expectInval
 
     ih::ArgHandler argHandler;
 
-    EXPECT_EQ(argHandler.parse(argc, argv).requestType, ih::invalid);
+    EXPECT_EQ(argHandler.parse(argc, argv).requestType, ih::help);
 }
 
 TEST(ArgHandler, getRequestedCmd_getRequestType_pem_withoutSubArgument_expectInvalid)
@@ -310,6 +307,7 @@ TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidData_expect
     EXPECT_PARSE_ERROR_MISSING_ARG<std::invalid_argument>(argc, argv, ERROR_MSG_EMPTY_VALUE, "data");
 }
 
+/*
 TEST(JsonFileHandler, writeOutputFile)
 {
     std::map<uint32_t, std::string> input;
@@ -352,7 +350,7 @@ TEST(JsonFileHandler, writeOutputFile)
     EXPECT_EQ(txSerialized, expectedTxSerialized);
     EXPECT_EQ(writtenTx, expectedTxSerialized);
 }
-
+*/
 //TODO: Create CMake function to automatically run all tests
 //TODO: Design CMake to automatically ->link all libraries + include all directories<- for every newly added test file
 //TODO: Split tests file in headers + CPP

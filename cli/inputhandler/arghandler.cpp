@@ -76,7 +76,23 @@ ParseResult ArgHandler::parse(int const &argc, char *const argv[])
     m_cmd = parseCmd(argc, argv);
     m_subCmd = parseSubCmd(argc, argv);
 
-    if (isCmd("pem") && isSubCmd("load") &&
+    if (isCmd("help") && argc == 2)
+    {
+        std::cerr << m_optionsTx.help();
+        std::cerr << m_optionsPem.help();
+        reqType = help;
+    }
+    else if (isCmd("pem") && isSubCmd("help") && argc == 3)
+    {
+        std::cerr << m_optionsPem.help();
+        reqType = help;
+    }
+    else if (isCmd("pem") && isSubCmd("help") && argc == 3)
+    {
+        std::cerr << m_optionsTx.help();
+        reqType = help;
+    }
+    else if (isCmd("pem") && isSubCmd("load") &&
         canParse(argc, argv,m_optionsPem))
     {
         reqType = loadPemFile;
@@ -97,14 +113,14 @@ void ArgHandler::initOptionsTx()
             ("nonce", "Transaction nonce", cxxopts::value<uint64_t>())
             ("value", "Transaction value", cxxopts::value<std::string>())
             ("receiver", "Receiver's address", cxxopts::value<std::string>())
-            ("receiver-username", "Receiver's username (default: )", cxxopts::value<std::string>()->default_value(""))
-            ("sender-username", "Sender's username (default: )", cxxopts::value<std::string>()->default_value(""))
+            ("receiver-username", "Receiver's username", cxxopts::value<std::string>()->default_value(""))
+            ("sender-username", "Sender's username", cxxopts::value<std::string>()->default_value(""))
             ("gas-price", "Transaction gas price", cxxopts::value<uint64_t>())
             ("gas-limit", "Transaction gas limit", cxxopts::value<uint64_t>())
-            ("data", "Transaction data/payload (default: )", cxxopts::value<std::string>()->default_value(""))
-            ("chainID", "Chain identifier (default: T)", cxxopts::value<std::string>()->default_value("T"))
-            ("version", "Transaction version (default: 1)", cxxopts::value<std::string>()->default_value("1"))
-            ("options", "Transaction options (default: )", cxxopts::value<std::string>()->default_value(""))
+            ("data", "Transaction data/payload", cxxopts::value<std::string>()->default_value(""))
+            ("chainID", "Chain identifier", cxxopts::value<std::string>()->default_value("T"))
+            ("version", "Transaction version", cxxopts::value<uint64_t>()->default_value("1"))
+            ("options", "Transaction options", cxxopts::value<uint32_t>()->default_value("0"))
             ("pem", "Pem keyfile", cxxopts::value<std::string>())
             ("outfile", "Json file where the output will be stored", cxxopts::value<std::string>());
 }

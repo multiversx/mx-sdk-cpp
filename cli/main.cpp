@@ -8,20 +8,12 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    ih::ArgHandler argHandler(argc, argv);
-
-    ih::RequestedCmd const requestedCmd = argHandler.getRequestedCmd();
-    errorCode const errCode = requestedCmd.getErrorCode();
-
-    if (errCode != ERROR_NONE)
-    {
-        cli::reportError(errCode);
-        return 0;
-    }
-
     try
     {
-        cli::handleRequest(requestedCmd);
+        ih::ArgHandler argHandler;
+        auto result = argHandler.parse(argc, argv);
+
+        cli::handleRequest(result);
     }
     catch (std::exception const &exception)
     {

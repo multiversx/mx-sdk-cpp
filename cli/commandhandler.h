@@ -86,17 +86,17 @@ bool init()
     return ret;
 }
 
-void handleLoadPemFile(const std::map<uint32_t, std::string> &userInputs)
+void handleLoadPemFile(cxxopts::ParseResult const &result)
 {
-    ih::wrapper::PemHandlerInputWrapper const pemInputWrapper(userInputs);
+    ih::wrapper::PemHandlerInputWrapper const pemInputWrapper(result);
     PemFileReader pemReader(pemInputWrapper.getPemFilePath());
     std::cerr << "File loaded successfully! Bech32 address: " << pemReader.getAddress().getBech32Address() << "\n";
 }
 
-void handleCreateSignedTransactionWithPemFile(const std::map<uint32_t, std::string> &userInputs)
+void handleCreateSignedTransactionWithPemFile(cxxopts::ParseResult const &result)
 {
-    ih::wrapper::TransactionInputWrapper const transactionInputWrapper(userInputs);
-    ih::wrapper::PemHandlerInputWrapper const pemInputWrapper(userInputs);
+    ih::wrapper::TransactionInputWrapper const transactionInputWrapper(result);
+    ih::wrapper::PemHandlerInputWrapper const pemInputWrapper(result);
 
     ih::JsonFile jsonFile(transactionInputWrapper.getOutputFile());
     PemFileReader pemReader(pemInputWrapper.getPemFilePath());
@@ -107,9 +107,9 @@ void handleCreateSignedTransactionWithPemFile(const std::map<uint32_t, std::stri
     jsonFile.writeDataToFile(transaction.serialize());
 }
 
-void handleRequest(ih::RequestedCmd const &requestedCmd)
+void handleRequest(ih::ParseResult const &parsedRes)
 {
-    switch (requestedCmd.getRequestType())
+    switch (parsedRes.requestType)
     {
         case ih::help:
         {
@@ -118,12 +118,12 @@ void handleRequest(ih::RequestedCmd const &requestedCmd)
         }
         case ih::loadPemFile:
         {
-            handleLoadPemFile(requestedCmd.getUserInputs());
+            handleLoadPemFile(parsedRes.result);
             break;
         }
         case ih::createSignedTransactionWithPemFile:
         {
-            handleCreateSignedTransactionWithPemFile(requestedCmd.getUserInputs());
+            handleCreateSignedTransactionWithPemFile(parsedRes.result);
             break;
         }
         default:
