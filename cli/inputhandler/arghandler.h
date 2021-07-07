@@ -22,24 +22,6 @@ enum RequestType
     createSignedTransactionWithPemFile
 };
 
-class RequestedCmd
-{
-public:
-    RequestedCmd(std::map<uint32_t, std::string> const &userInputs,
-                 RequestType const &reqType, errorCode const &errCode);
-
-    const std::map<uint32_t, std::string> &getUserInputs() const;
-
-    const RequestType &getRequestType() const;
-
-    const errorCode &getErrorCode() const;
-
-private:
-    std::map<uint32_t, std::string> const m_userInputs;
-    RequestType const m_requestType;
-    errorCode const m_errCode;
-};
-
 struct ParseResult
 {
     RequestType requestType;
@@ -64,14 +46,18 @@ private:
 
     bool canParse(int const &argc, char *const argv[], cxxopts::Options &options);
 
+    void checkEmptyValues(std::vector<cxxopts::KeyValue>const &arguments);
+
+    std::string parseCmd(int const &argc, char *const argv[]);
+
+    std::string parseSubCmd(int const &argc, char *const argv[]);
+
     bool isCmd(std::string const& arg);
 
     bool isSubCmd(std::string const& arg);
 
     std::string m_cmd;
     std::string m_subCmd;
-    std::vector<std::string> m_arguments;
-    errorCode m_errCode;
     cxxopts::Options m_optionsTx;
     cxxopts::Options m_optionsPem;
     cxxopts::ParseResult m_result;

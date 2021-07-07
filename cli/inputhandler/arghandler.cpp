@@ -1,68 +1,26 @@
 #include "arghandler.h"
 #include "utils/params.h"
 
-#include <algorithm>
 #include <cstdint>
-#include <limits>
-#include <iostream>
-
-
-
-namespace internal
-{
-// Generic template function to check for user input value.
-template<typename T>
-bool isUserInputValid(T &arg)
-{
-    return true;
-}
-
-// Specialization template function to check for user input value.
-// Expects input to be a non-empty string.
-template<>
-bool isUserInputValid(std::string const &arg)
-{
-    return (!arg.empty());
-}
-}
-
-
-
-
-
 
 namespace ih
 {
 
-RequestedCmd::RequestedCmd(std::map<uint32_t, std::string> const &userInputs,
-                           RequestType const &reqType, errorCode const &errCode) :
-        m_userInputs(userInputs),
-        m_requestType(reqType),
-        m_errCode(errCode)
-{}
-
-const std::map<uint32_t, std::string> &RequestedCmd::getUserInputs() const
-{
-    return m_userInputs;
-}
-
-const RequestType &RequestedCmd::getRequestType() const
-{
-    return m_requestType;
-}
-
-const errorCode &RequestedCmd::getErrorCode() const
-{
-    return m_errCode;
-}
-
-
 ArgHandler::ArgHandler() :
-    m_errCode(ERROR_NONE),
     m_optionsTx("transaction", "Manage transactions"),
     m_optionsPem("pem", "Manage pem files")
 {
     initOptions();
+}
+
+std::string ArgHandler::parseCmd(int const &argc, char *const argv[])
+{
+    return (argc > 1) ? (std::string(argv[1])) : (std::string());
+}
+
+std::string ArgHandler::parseSubCmd(int const &argc, char *const argv[])
+{
+    return (argc > 2) ? (std::string(argv[2])) : (std::string());
 }
 
 bool ArgHandler::isCmd(std::string const& arg)
@@ -75,9 +33,19 @@ bool ArgHandler::isSubCmd(std::string const& arg)
     return arg == m_subCmd;
 }
 
+void ArgHandler::checkEmptyValues(std::vector<cxxopts::KeyValue> const &arguments)
+{
+    for (auto const &arg : arguments)
+    {
+        if (arg.value().empty())
+        {
+            throw std::invalid_argument(ERROR_MSG_EMPTY_VALUE + arg.key());
+        }
+    }
+}
+
 bool ArgHandler::canParse(int const &argc, char *const argv[], cxxopts::Options &options)
 {
-    bool ret = false;
     cxxopts::ParseResult result;
 
     try
@@ -89,38 +57,27 @@ bool ArgHandler::canParse(int const &argc, char *const argv[], cxxopts::Options 
         throw;
     }
 
-    auto arguments = result.arguments();
-
-    for (auto const &arg : arguments)
+    if (result.unmatched().size() != 2)
     {
-        if (arg.value().empty())
-        {
-            throw std::invalid_argument("Empty " + arg.key());
-        }
+        throw std::invalid_argument("Invalid arguments");
     }
 
-    if (result.unmatched().size() != 2) throw std::invalid_argument("Invalid number of arguments");
+    checkEmptyValues(result.arguments());
 
     m_result = result;
 
-    return ret = true;
+    return true;
 }
 
 ParseResult ArgHandler::parse(int const &argc, char *const argv[])
 {
     RequestType reqType = invalid;
 
-    if(argc > 1)
-    {
-        m_cmd = std::string(argv[1]);
-        if (argc > 2)
-        {
-            m_subCmd = std::string(argv[2]);
-        }
-    }
+    m_cmd = parseCmd(argc, argv);
+    m_subCmd = parseSubCmd(argc, argv);
 
     if (isCmd("pem") && isSubCmd("load") &&
-        canParse(argc,argv,m_optionsPem))
+        canParse(argc, argv,m_optionsPem))
     {
         reqType = loadPemFile;
     }
@@ -130,7 +87,7 @@ ParseResult ArgHandler::parse(int const &argc, char *const argv[])
         reqType = createSignedTransactionWithPemFile;
     }
 
-    return ParseResult {reqType, cxxopts::ParseResult()};
+    return ParseResult {reqType, m_result};
 }
 
 

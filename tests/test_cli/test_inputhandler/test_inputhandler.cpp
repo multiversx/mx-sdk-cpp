@@ -6,6 +6,26 @@
 #include <sodium.h>
 #include <fstream>
 
+template <typename T>
+void EXPECT_PARSE_ERROR_MISSING_ARG(int const &argc, char *const argv[], errorMessage const &errMsg, std::string arg)
+{
+    EXPECT_THROW({
+                     try
+                     {
+                         ih::ArgHandler handler;
+
+                         handler.parse(argc, argv);
+                     }
+                     catch(const T &e)
+                     {
+                         std::string const err = e.what();
+                         EXPECT_TRUE(err.find(errMsg) != std::string::npos );
+                         EXPECT_TRUE(err.find(arg) != std::string::npos );
+                         throw;
+                     }
+                 }, T );
+}
+
 TEST(ArgHandler, getRequestedCmd_getRequestType_noArgument_expectInvalid)
 {
     int const argc = 1;
@@ -163,9 +183,7 @@ TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidValue_expec
     argv[9] = (char *) "--outfile=\"dd\"";
     argv[10] = (char *) "--data=\"dd\"";
 
-    ih::ArgHandler argHandler;
-
-    EXPECT_THROW(argHandler.parse(argc, argv),cxxopts::OptionException);
+    EXPECT_PARSE_ERROR_MISSING_ARG<std::invalid_argument>(argc, argv, ERROR_MSG_EMPTY_VALUE, "value");
 }
 
 TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidReceiver_expectErrorReceiver)
@@ -185,9 +203,7 @@ TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidReceiver_ex
     argv[9] = (char *) "--outfile=\"dd\"";
     argv[10] = (char *) "--data=\"dd\"";
 
-    ih::ArgHandler argHandler;
-
-    EXPECT_THROW(argHandler.parse(argc, argv),cxxopts::OptionException);
+    EXPECT_PARSE_ERROR_MISSING_ARG<std::invalid_argument>(argc, argv, ERROR_MSG_EMPTY_VALUE, "receiver");
 }
 
 TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidGasPrice_expectErrorGasPrice)
@@ -251,9 +267,7 @@ TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidPem_expectE
     argv[9] = (char *) "--outfile=\"dd\"";
     argv[10] = (char *) "--data=\"dd\"";
 
-    ih::ArgHandler argHandler;
-
-    EXPECT_THROW(argHandler.parse(argc, argv),cxxopts::OptionException);
+    EXPECT_PARSE_ERROR_MISSING_ARG<std::invalid_argument>(argc, argv, ERROR_MSG_EMPTY_VALUE, "pem");
 }
 
 TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidJson_expectErrorJson)
@@ -273,9 +287,7 @@ TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidJson_expect
     argv[9] = (char *) "--outfile=";
     argv[10] = (char *) "--data=\"dd\"";
 
-    ih::ArgHandler argHandler;
-
-    EXPECT_THROW(argHandler.parse(argc, argv),cxxopts::OptionException);
+    EXPECT_PARSE_ERROR_MISSING_ARG<std::invalid_argument>(argc, argv, ERROR_MSG_EMPTY_VALUE, "outfile");
 }
 
 TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidData_expectErrorData)
@@ -295,9 +307,7 @@ TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidData_expect
     argv[9] = (char *) "--outfile=otherFile";
     argv[10] = (char *) "--data=";
 
-    ih::ArgHandler argHandler;
-
-    EXPECT_THROW(argHandler.parse(argc, argv),cxxopts::OptionException);
+    EXPECT_PARSE_ERROR_MISSING_ARG<std::invalid_argument>(argc, argv, ERROR_MSG_EMPTY_VALUE, "data");
 }
 
 TEST(JsonFileHandler, writeOutputFile)

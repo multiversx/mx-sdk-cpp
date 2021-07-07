@@ -19,6 +19,7 @@ errorCode const ERROR_JSON_OUT_FILE = 7U;
 errorCode const ERROR_DATA = 8U;
 errorCode const ERROR_SODIUM_INIT = 9U;
 
+errorMessage const ERROR_MSG_EMPTY_VALUE = "Empty value: ";
 errorMessage const ERROR_MSG_NONCE = "Invalid nonce.";
 errorMessage const ERROR_MSG_VALUE = "Invalid value.";
 errorMessage const ERROR_MSG_RECEIVER = "Invalid receiver.";
