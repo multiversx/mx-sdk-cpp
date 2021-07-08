@@ -1,7 +1,8 @@
+#include <filehandler/pemreader.h>
+#include <fstream>
 #include "gtest/gtest.h"
 #include "inputhandler/ext.h"
 #include "utils/ext.h"
-
 
 template <typename T>
 void EXPECT_PARSE_ERROR_MISSING_ARG(int const &argc, char *const argv[], errorMessage const &errMsg, std::string arg)
@@ -23,7 +24,7 @@ void EXPECT_PARSE_ERROR_MISSING_ARG(int const &argc, char *const argv[], errorMe
                  }, T );
 }
 
-TEST(ArgHandler, getRequestedCmd_getRequestType_noArgument_expectInvalid)
+TEST(ArgHandler, parse_requestType_noArgument_expectInvalid)
 {
     int const argc = 1;
     char *argv[argc];
@@ -34,7 +35,7 @@ TEST(ArgHandler, getRequestedCmd_getRequestType_noArgument_expectInvalid)
     EXPECT_EQ(argHandler.parse(argc, argv).requestType, ih::invalid);
 }
 
-TEST(ArgHandler, getRequestedCmd_getRequestType_randomArgs_expectInvalid)
+TEST(ArgHandler, parse_requestType_randomArgs_expectInvalid)
 {
     int const argc = 3;
     char *argv[argc];
@@ -47,7 +48,7 @@ TEST(ArgHandler, getRequestedCmd_getRequestType_randomArgs_expectInvalid)
     EXPECT_EQ(argHandler.parse(argc, argv).requestType, ih::invalid);
 }
 
-TEST(ArgHandler, getRequestedCmd_getRequestType_help_expectHelp)
+TEST(ArgHandler, parse_requestType_help_expectHelp)
 {
     int const argc = 2;
     char *argv[argc];
@@ -59,7 +60,7 @@ TEST(ArgHandler, getRequestedCmd_getRequestType_help_expectHelp)
     EXPECT_EQ(argHandler.parse(argc, argv).requestType, ih::help);
 }
 
-TEST(ArgHandler, getRequestedCmd_getRequestType_pem_load_someFile_expectLoadPemFile)
+TEST(ArgHandler, parse_requestType_pem_load_someFile_expectLoadPemFile)
 {
     int const argc = 4;
     char *argv[argc];
@@ -73,7 +74,7 @@ TEST(ArgHandler, getRequestedCmd_getRequestType_pem_load_someFile_expectLoadPemF
     EXPECT_EQ(argHandler.parse(argc, argv).requestType, ih::loadPemFile);
 }
 
-TEST(ArgHandler, getRequestedCmd_getRequestType_pem_load_withoutFile_expectInvalid)
+TEST(ArgHandler, parse_requestType_pem_load_withoutFile_expectInvalid)
 {
     int const argc = 3;
     char *argv[argc];
@@ -86,7 +87,7 @@ TEST(ArgHandler, getRequestedCmd_getRequestType_pem_load_withoutFile_expectInval
     EXPECT_EQ(argHandler.parse(argc, argv).requestType, ih::help);
 }
 
-TEST(ArgHandler, getRequestedCmd_getRequestType_pem_withoutSubArgument_expectInvalid)
+TEST(ArgHandler, parse_requestType_pem_withoutSubArgument_expectInvalid)
 {
     int const argc = 2;
     char *argv[argc];
@@ -98,7 +99,7 @@ TEST(ArgHandler, getRequestedCmd_getRequestType_pem_withoutSubArgument_expectInv
     EXPECT_EQ(argHandler.parse(argc, argv).requestType, ih::invalid);
 }
 
-TEST(ArgHandler, getRequestedCmd_getRequestType_transaction_new_noData_expectCreateTransaction)
+TEST(ArgHandler, parse_requestType_transaction_new_noData_expectCreateTransaction)
 {
     int const argc = 10;
     char *argv[argc];
@@ -115,13 +116,10 @@ TEST(ArgHandler, getRequestedCmd_getRequestType_transaction_new_noData_expectCre
 
     ih::ArgHandler argHandler;
 
-
-
-
     EXPECT_EQ(argHandler.parse(argc, argv).requestType, ih::createSignedTransactionWithPemFile);
 }
 
-TEST(ArgHandler, getRequestedCmd_getRequestType_transaction_new_withData_expectCreateTransaction)
+TEST(ArgHandler, parse_requestType_transaction_new_withData_expectCreateTransaction)
 {
     int const argc = 11;
     char *argv[argc];
@@ -143,7 +141,7 @@ TEST(ArgHandler, getRequestedCmd_getRequestType_transaction_new_withData_expectC
 }
 
 
-TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidNonce_expectErrorNonce)
+TEST(ArgHandler, parse_transaction_new_invalidNonce_expectErrorNonce)
 {
     int const argc = 11;
     char *argv[argc];
@@ -164,7 +162,7 @@ TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidNonce_expec
     EXPECT_THROW(argHandler.parse(argc, argv),cxxopts::OptionException);
 }
 
-TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidValue_expectErrorValue)
+TEST(ArgHandler, parse_transaction_new_invalidValue_expectErrorValue)
 {
     int const argc = 11;
     char *argv[argc];
@@ -183,7 +181,7 @@ TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidValue_expec
     EXPECT_PARSE_ERROR_MISSING_ARG<std::invalid_argument>(argc, argv, ERROR_MSG_EMPTY_VALUE, "value");
 }
 
-TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidReceiver_expectErrorReceiver)
+TEST(ArgHandler, parse_transaction_new_invalidReceiver_expectErrorReceiver)
 {
     int const argc = 11;
     char *argv[argc];
@@ -203,7 +201,7 @@ TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidReceiver_ex
     EXPECT_PARSE_ERROR_MISSING_ARG<std::invalid_argument>(argc, argv, ERROR_MSG_EMPTY_VALUE, "receiver");
 }
 
-TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidGasPrice_expectErrorGasPrice)
+TEST(ArgHandler, parse_transaction_new_invalidGasPrice_expectErrorGasPrice)
 {
     int const argc = 11;
     char *argv[argc];
@@ -225,7 +223,7 @@ TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidGasPrice_ex
     EXPECT_THROW(argHandler.parse(argc, argv),cxxopts::OptionException);
 }
 
-TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidGasLimit_expectErrorGasLimit)
+TEST(ArgHandler, parse_transaction_new_invalidGasLimit_expectErrorGasLimit)
 {
     int const argc = 11;
     char *argv[argc];
@@ -247,7 +245,7 @@ TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidGasLimit_ex
     EXPECT_THROW(argHandler.parse(argc, argv),cxxopts::OptionException);
 }
 
-TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidPem_expectErrorPem)
+TEST(ArgHandler, parse_transaction_new_invalidPem_expectErrorPem)
 {
     int const argc = 11;
     char *argv[argc];
@@ -267,7 +265,7 @@ TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidPem_expectE
     EXPECT_PARSE_ERROR_MISSING_ARG<std::invalid_argument>(argc, argv, ERROR_MSG_EMPTY_VALUE, "pem");
 }
 
-TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidJson_expectErrorJson)
+TEST(ArgHandler, parse_transaction_new_invalidJson_expectErrorJson)
 {
     int const argc = 11;
     char *argv[argc];
@@ -287,7 +285,7 @@ TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidJson_expect
     EXPECT_PARSE_ERROR_MISSING_ARG<std::invalid_argument>(argc, argv, ERROR_MSG_EMPTY_VALUE, "outfile");
 }
 
-TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidData_expectErrorData)
+TEST(ArgHandler, parse_transaction_new_invalidData_expectErrorData)
 {
     int const argc = 11;
     char *argv[argc];
@@ -307,23 +305,33 @@ TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidData_expect
     EXPECT_PARSE_ERROR_MISSING_ARG<std::invalid_argument>(argc, argv, ERROR_MSG_EMPTY_VALUE, "data");
 }
 
-/*
+
 TEST(JsonFileHandler, writeOutputFile)
 {
-    std::map<uint32_t, std::string> input;
+    int const argc = 14;
+    char *argv[argc];
 
-    input[ARGS_TX_IDX_NONCE] = "5";
-    input[ARGS_TX_IDX_VALUE] = "10000000000000000000";
-    input[ARGS_TX_IDX_RECEIVER] = "erd10536tc3s886yqxtln74u6mztuwl5gy9k9gp8fttxda0klgxg979srtg5wt";
-    input[ARGS_TX_IDX_GAS_PRICE] = "1000000000";
-    input[ARGS_TX_IDX_GAS_LIMIT] = "50000";
-    input[ARGS_TX_IDX_DATA] = "test";
-    input[ARGS_TX_IDX_CHAIN_ID] = "T";
-    input[ARGS_PEM_INPUT_FILE] = "..//..//testData//keysValid1.pem";
-    input[ARGS_TX_IDX_JSON_OUT_FILE] = "..//..//testData//outputJson.json";
+    argv[0] = (char *) "erdcpp";
+    argv[1] = (char *) "transaction";
+    argv[2] = (char *) "new";
+    argv[3] = (char *) "--nonce=5";
+    argv[4] = (char *) "--value=10000000000000000000";
+    argv[5] = (char *) "--receiver=erd10536tc3s886yqxtln74u6mztuwl5gy9k9gp8fttxda0klgxg979srtg5wt";
+    argv[6] = (char *) "--gas-price=1000000000";
+    argv[7] = (char *) "--gas-limit=50000";
+    argv[8] = (char *) "--pem=someFile";
+    argv[9] = (char *) "--outfile=otherFile";
+    argv[10] = (char *) "--data=test";
+    argv[11] = (char *) "--chainID=T";
+    argv[12] = (char *) "--pem=..//..//testData//keysValid1.pem";
+    argv[13] = (char *) "--outfile=..//..//testData//outputJson.json";
 
-    ih::wrapper::PemHandlerInputWrapper const pemWrapper(input);
-    ih::wrapper::TransactionInputWrapper const transactionWrapper(input);
+    ih::ArgHandler argHandler;
+
+    auto res = argHandler.parse(argc, argv);
+
+    ih::wrapper::PemHandlerInputWrapper const pemWrapper(res.result);
+    ih::wrapper::TransactionInputWrapper const transactionWrapper(res.result);
 
     PemFileReader pemHandler(pemWrapper.getPemFilePath());
     ih::JsonFile jsonFile(transactionWrapper.getOutputFile());
@@ -350,7 +358,7 @@ TEST(JsonFileHandler, writeOutputFile)
     EXPECT_EQ(txSerialized, expectedTxSerialized);
     EXPECT_EQ(writtenTx, expectedTxSerialized);
 }
-*/
+
 //TODO: Create CMake function to automatically run all tests
 //TODO: Design CMake to automatically ->link all libraries + include all directories<- for every newly added test file
 //TODO: Split tests file in headers + CPP

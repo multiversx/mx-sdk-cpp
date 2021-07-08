@@ -1,16 +1,9 @@
 #ifndef ARGHANDLER_H
 #define ARGHANDLER_H
 
-#include <string>
-#include <vector>
-#include <map>
-
 #include "utils/errors.h"
-//#include "options.h"
+#include "options.h"
 #include "cliparser/cxxopts.hpp"
-
-
-
 
 namespace ih
 {
@@ -22,7 +15,7 @@ enum RequestType
     createSignedTransactionWithPemFile
 };
 
-struct ParseResult
+struct ArgParsedResult
 {
     RequestType requestType;
     std::string help;
@@ -35,23 +28,11 @@ public:
 
     explicit ArgHandler();
 
-    ParseResult parse(int const &argc, char *const argv[]);
+    ArgParsedResult parse(int const &argc, char *const argv[]);
 
 private:
 
-    void initOptions();
-
-    void initOptionsTx();
-
-    void initOptionsPem();
-
-    bool canParse(int const &argc, char *const argv[], cxxopts::Options &options);
-
-    void checkEmptyValues(std::vector<cxxopts::KeyValue>const &arguments);
-
-    std::string parseCmd(int const &argc, char *const argv[]);
-
-    std::string parseSubCmd(int const &argc, char *const argv[]);
+    bool canParse(int const &argc, char *const argv[], cxxopts::Options options);
 
     bool isCmd(std::string const& arg);
 
@@ -59,8 +40,7 @@ private:
 
     std::string m_cmd;
     std::string m_subCmd;
-    cxxopts::Options m_optionsTx;
-    cxxopts::Options m_optionsPem;
+    CLIOptions m_options;
     cxxopts::ParseResult m_result;
 };
 }

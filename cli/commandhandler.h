@@ -62,7 +62,7 @@ void handleCreateSignedTransactionWithPemFile(cxxopts::ParseResult const &result
     jsonFile.writeDataToFile(transaction.serialize());
 }
 
-void handleRequest(ih::ParseResult const &parsedRes)
+void handleRequest(ih::ArgParsedResult const &parsedRes)
 {
     switch (parsedRes.requestType)
     {

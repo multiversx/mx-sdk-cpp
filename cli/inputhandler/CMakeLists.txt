@@ -1,5 +1,5 @@
 file(GLOB inputhandlers
-	options.h
+	options.h options.cpp
 	arghandler.h arghandler.cpp
 	jsonfile.h jsonfile.cpp
 	wrappers/iwrapper.h

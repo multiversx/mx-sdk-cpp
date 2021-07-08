@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
     }
     catch (std::exception const &exception)
     {
-        std::cerr<< exception.what();
+        std::cerr<< exception.what() << "\n";
     }
 
     return 0;
