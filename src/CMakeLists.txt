@@ -3,6 +3,9 @@ add_subdirectory(utils)
 file(GLOB src
         transaction/transaction.cpp
         transaction/signer.cpp
+        transaction/scarguments.cpp
+        transaction/esdt.cpp
+        internal/biguint.cpp
         account/account.cpp
         account/address.cpp
         filehandler/ifile.cpp
@@ -23,6 +26,8 @@ add_library(src ${src})
 target_link_libraries(src PUBLIC utils)
 target_link_libraries(src PUBLIC external)
 target_link_libraries(src LINK_PUBLIC ${LIBSODIUM_LIBRARY})
+target_link_libraries(src LINK_PUBLIC ${GMP_LIBRARY})
+target_link_libraries(src LINK_PUBLIC ${GMPXX_LIBRARY})
 
 target_link_libraries(src PUBLIC
         $<$<BOOL:${HTTPLIB_IS_USING_OPENSSL}>:OpenSSL::SSL>
