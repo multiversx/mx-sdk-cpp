@@ -3,7 +3,6 @@
 
 #include "utils/errors.h"
 #include "options.h"
-#include "cliparser/cxxopts.hpp"
 
 namespace ih
 {
