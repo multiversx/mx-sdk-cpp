@@ -45,16 +45,15 @@ void handleLoadPemFile(cxxopts::ParseResult const &result)
 {
     ih::wrapper::PemHandlerInputWrapper const pemInputWrapper(result);
     PemFileReader pemReader(pemInputWrapper.getPemFilePath());
-    std::cerr << "File loaded successfully! Bech32 address: " << pemReader.getAddress().getBech32Address() << "\n";
+    std::cerr << "File loaded successfully!\nBech32 address: " << pemReader.getAddress().getBech32Address() << "\n";
 }
 
 void handleCreateSignedTransactionWithPemFile(cxxopts::ParseResult const &result)
 {
     ih::wrapper::TransactionInputWrapper const transactionInputWrapper(result);
-    ih::wrapper::PemHandlerInputWrapper const pemInputWrapper(result);
 
     ih::JsonFile jsonFile(transactionInputWrapper.getOutputFile());
-    PemFileReader pemReader(pemInputWrapper.getPemFilePath());
+    PemFileReader pemReader(transactionInputWrapper.getInputFile());
 
     Transaction transaction = internal::createTransaction(transactionInputWrapper, pemReader.getAddress());
     internal::signTransaction(transaction,pemReader.getSeed());

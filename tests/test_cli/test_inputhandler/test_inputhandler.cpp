@@ -379,13 +379,10 @@ TEST(JsonFileHandler, writeOutputFile)
     argv[13] = (char *) "--outfile=..//..//testData//outputJson.json";
 
     ih::ArgHandler argHandler;
+    auto const res = argHandler.parse(argc, argv);
 
-    auto res = argHandler.parse(argc, argv);
-
-    ih::wrapper::PemHandlerInputWrapper const pemWrapper(res.result);
     ih::wrapper::TransactionInputWrapper const transactionWrapper(res.result);
-
-    PemFileReader pemHandler(pemWrapper.getPemFilePath());
+    PemFileReader pemHandler(transactionWrapper.getInputFile());
     ih::JsonFile jsonFile(transactionWrapper.getOutputFile());
 
     Transaction transaction(transactionWrapper.getNonce(), transactionWrapper.getValue(),

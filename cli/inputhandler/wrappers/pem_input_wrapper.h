@@ -17,7 +17,7 @@ public:
 
     const std::string &getPemFilePath() const
     {
-        return getInputData()["pem"].as<std::string>();
+        return getInputData()["file"].as<std::string>();
     }
 };
 }

@@ -95,7 +95,7 @@ public:
 
     std::string getChainId() const
     {
-        return (getInputData()["chainID"].count()) ? (getInputData()["chainID"].as<std::string>()) : (DEFAULT_CHAIN_ID);
+        return getInputData()["chainID"].as<std::string>();
     }
 
     uint64_t getVersion() const
