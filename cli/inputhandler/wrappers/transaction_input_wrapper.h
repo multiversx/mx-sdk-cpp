@@ -117,8 +117,6 @@ public:
     {
         return internal::getUserInputIfExists<uint32_t>(getInputData(), "options");
     }
-
-private:
 };
 }
 }

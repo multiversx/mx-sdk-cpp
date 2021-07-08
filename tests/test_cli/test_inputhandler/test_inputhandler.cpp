@@ -24,18 +24,21 @@ void EXPECT_PARSE_ERROR_MISSING_ARG(int const &argc, char *const argv[], errorMe
                  }, T );
 }
 
-TEST(ArgHandler, parse_requestType_noArgument_expectInvalid)
+TEST(ArgHandler, parse_noArgument_expectInvalid)
 {
     int const argc = 1;
     char *argv[argc];
     argv[0] = (char *) "ERDProject.exe";
 
     ih::ArgHandler argHandler;
+    auto const res = argHandler.parse(argc, argv);
 
-    EXPECT_EQ(argHandler.parse(argc, argv).requestType, ih::invalid);
+    EXPECT_EQ(res.requestType, ih::invalid);
+    EXPECT_TRUE(res.result.arguments().empty());
+    EXPECT_TRUE(res.help.empty());
 }
 
-TEST(ArgHandler, parse_requestType_randomArgs_expectInvalid)
+TEST(ArgHandler, parse_randomArgs_expectInvalid)
 {
     int const argc = 3;
     char *argv[argc];
@@ -44,11 +47,14 @@ TEST(ArgHandler, parse_requestType_randomArgs_expectInvalid)
     argv[2] = (char *) "";
 
     ih::ArgHandler argHandler;
+    auto const res = argHandler.parse(argc, argv);
 
-    EXPECT_EQ(argHandler.parse(argc, argv).requestType, ih::invalid);
+    EXPECT_EQ(res.requestType, ih::invalid);
+    EXPECT_TRUE(res.result.arguments().empty());
+    EXPECT_TRUE(res.help.empty());
 }
 
-TEST(ArgHandler, parse_requestType_help_expectHelp)
+TEST(ArgHandler, parse_help_expectHelp)
 {
     int const argc = 2;
     char *argv[argc];
@@ -56,11 +62,49 @@ TEST(ArgHandler, parse_requestType_help_expectHelp)
     argv[1] = (char *) "help";
 
     ih::ArgHandler argHandler;
+    CLIOptions options;
 
-    EXPECT_EQ(argHandler.parse(argc, argv).requestType, ih::help);
+    auto const res = argHandler.parse(argc, argv);
+
+    EXPECT_EQ(res.requestType, ih::help);
+    EXPECT_EQ(res.help, options.help());
 }
 
-TEST(ArgHandler, parse_requestType_pem_load_someFile_expectLoadPemFile)
+TEST(ArgHandler, parse_pem_help_expectHelp)
+{
+    int const argc = 3;
+    char *argv[argc];
+    argv[0] = (char *) "ERDProject.exe";
+    argv[1] = (char *) "pem";
+    argv[2] = (char *) "help";
+
+    ih::ArgHandler argHandler;
+    CLIOptions options;
+
+    auto const res = argHandler.parse(argc, argv);
+
+    EXPECT_EQ(res.requestType, ih::help);
+    EXPECT_EQ(res.help, options.helpPem());
+}
+
+TEST(ArgHandler, parse_transaction_help_expectHelp)
+{
+    int const argc = 3;
+    char *argv[argc];
+    argv[0] = (char *) "ERDProject.exe";
+    argv[1] = (char *) "transaction";
+    argv[2] = (char *) "help";
+
+    ih::ArgHandler argHandler;
+    CLIOptions options;
+
+    auto const res = argHandler.parse(argc, argv);
+
+    EXPECT_EQ(res.requestType, ih::help);
+    EXPECT_EQ(res.help, options.helpTx());
+}
+
+TEST(ArgHandler, parse_pem_load_file_expectLoadPemFile)
 {
     int const argc = 4;
     char *argv[argc];
@@ -70,24 +114,13 @@ TEST(ArgHandler, parse_requestType_pem_load_someFile_expectLoadPemFile)
     argv[3] = (char *) "--file=someFile";
 
     ih::ArgHandler argHandler;
+    auto const res = argHandler.parse(argc, argv);
 
-    EXPECT_EQ(argHandler.parse(argc, argv).requestType, ih::loadPemFile);
+    EXPECT_EQ(res.requestType, ih::loadPemFile);
+    EXPECT_EQ(res.result["file"].as<std::string>(), "someFile");
 }
 
-TEST(ArgHandler, parse_requestType_pem_load_withoutFile_expectInvalid)
-{
-    int const argc = 3;
-    char *argv[argc];
-    argv[0] = (char *) "ERDProject.exe";
-    argv[1] = (char *) "pem";
-    argv[2] = (char *) "help";
-
-    ih::ArgHandler argHandler;
-
-    EXPECT_EQ(argHandler.parse(argc, argv).requestType, ih::help);
-}
-
-TEST(ArgHandler, parse_requestType_pem_withoutSubArgument_expectInvalid)
+TEST(ArgHandler, parse_pem_withoutSubArgument_expectInvalid)
 {
     int const argc = 2;
     char *argv[argc];
@@ -99,7 +132,7 @@ TEST(ArgHandler, parse_requestType_pem_withoutSubArgument_expectInvalid)
     EXPECT_EQ(argHandler.parse(argc, argv).requestType, ih::invalid);
 }
 
-TEST(ArgHandler, parse_requestType_transaction_new_noData_expectCreateTransaction)
+TEST(ArgHandler, parse_transaction_new_noData_expectCreateTransaction)
 {
     int const argc = 10;
     char *argv[argc];
@@ -108,18 +141,26 @@ TEST(ArgHandler, parse_requestType_transaction_new_noData_expectCreateTransactio
     argv[2] = (char *) "new";
     argv[3] = (char *) "--nonce=3";
     argv[4] = (char *) "--value=31";
-    argv[5] = (char *) "--receiver=foo";
+    argv[5] = (char *) "--receiver=erd1";
     argv[6] = (char *) "--gas-price=4";
     argv[7] = (char *) "--gas-limit=44";
     argv[8] = (char *) "--pem=file1";
     argv[9] = (char *) "--outfile=file2";
 
     ih::ArgHandler argHandler;
+    auto const res = argHandler.parse(argc, argv);
 
-    EXPECT_EQ(argHandler.parse(argc, argv).requestType, ih::createSignedTransactionWithPemFile);
+    EXPECT_EQ(res.requestType, ih::createSignedTransactionWithPemFile);
+    EXPECT_EQ(res.result["nonce"].as<uint64_t>(), 3U);
+    EXPECT_EQ(res.result["value"].as<std::string>(), "31");
+    EXPECT_EQ(res.result["receiver"].as<std::string>(), "erd1");
+    EXPECT_EQ(res.result["gas-price"].as<uint64_t>(), 4U);
+    EXPECT_EQ(res.result["gas-limit"].as<uint64_t>(), 44U);
+    EXPECT_EQ(res.result["pem"].as<std::string>(), "file1");
+    EXPECT_EQ(res.result["outfile"].as<std::string>(), "file2");
 }
 
-TEST(ArgHandler, parse_requestType_transaction_new_withData_expectCreateTransaction)
+TEST(ArgHandler, parse_transaction_new_withData_expectCreateTransaction)
 {
     int const argc = 11;
     char *argv[argc];
@@ -127,17 +168,27 @@ TEST(ArgHandler, parse_requestType_transaction_new_withData_expectCreateTransact
     argv[1] = (char *) "transaction";
     argv[2] = (char *) "new";
     argv[3] = (char *) "--nonce=3";
-    argv[4] = (char *) "--value=\"31\"";
-    argv[5] = (char *) "--receiver=\"da\"";
+    argv[4] = (char *) "--value=31";
+    argv[5] = (char *) "--receiver=erd1";
     argv[6] = (char *) "--gas-price=31";
     argv[7] = (char *) "--gas-limit=31";
-    argv[8] = (char *) "--pem=\"dd\"";
-    argv[9] = (char *) "--outfile=\"dd\"";
-    argv[10] = (char *) "--data=\"dd\"";
+    argv[8] = (char *) "--pem=test1";
+    argv[9] = (char *) "--outfile=test2";
+    argv[10] = (char *) "--data=testData";
 
     ih::ArgHandler argHandler;
 
-    EXPECT_EQ(argHandler.parse(argc, argv).requestType, ih::createSignedTransactionWithPemFile);
+    auto const res = argHandler.parse(argc, argv);
+
+    EXPECT_EQ(res.requestType, ih::createSignedTransactionWithPemFile);
+    EXPECT_EQ(res.result["nonce"].as<uint64_t>(), 3U);
+    EXPECT_EQ(res.result["value"].as<std::string>(), "31");
+    EXPECT_EQ(res.result["receiver"].as<std::string>(), "erd1");
+    EXPECT_EQ(res.result["gas-price"].as<uint64_t>(), 31U);
+    EXPECT_EQ(res.result["gas-limit"].as<uint64_t>(), 31U);
+    EXPECT_EQ(res.result["pem"].as<std::string>(), "test1");
+    EXPECT_EQ(res.result["outfile"].as<std::string>(), "test2");
+    EXPECT_EQ(res.result["data"].as<std::string>(), "testData");
 }
 
 
@@ -245,7 +296,7 @@ TEST(ArgHandler, parse_transaction_new_invalidGasLimit_expectErrorGasLimit)
     EXPECT_THROW(argHandler.parse(argc, argv),cxxopts::OptionException);
 }
 
-TEST(ArgHandler, parse_transaction_new_invalidPem_expectErrorPem)
+TEST(ArgHandler, parse_transaction_new_invalidPemInput_expectErrorPem)
 {
     int const argc = 11;
     char *argv[argc];
@@ -265,7 +316,7 @@ TEST(ArgHandler, parse_transaction_new_invalidPem_expectErrorPem)
     EXPECT_PARSE_ERROR_MISSING_ARG<std::invalid_argument>(argc, argv, ERROR_MSG_EMPTY_VALUE, "pem");
 }
 
-TEST(ArgHandler, parse_transaction_new_invalidJson_expectErrorJson)
+TEST(ArgHandler, parse_transaction_new_invalidJsonOutput_expectErrorJson)
 {
     int const argc = 11;
     char *argv[argc];
