@@ -24,9 +24,11 @@ Transaction createTransaction(ih::wrapper::TransactionInputWrapper const &txWrap
              txWrapper.getOptions());
 }
 
-void signTransaction(Transaction &transaction, bytes const& seed)
+// TODO: replace keyFile param with template param once
+// we have key store or other key files implemented
+void signTransaction(Transaction &transaction, PemFileReader const &keyFile)
 {
-    Signer signer(seed);
+    Signer signer(keyFile.getSeed());
     transaction.sign(signer);
 }
 
@@ -58,7 +60,7 @@ void handleCreateSignedTransactionWithPemFile(cxxopts::ParseResult const &result
     PemFileReader pemReader(transactionInputWrapper.getInputFile());
 
     Transaction transaction = internal::createTransaction(transactionInputWrapper, pemReader.getAddress());
-    internal::signTransaction(transaction,pemReader.getSeed());
+    internal::signTransaction(transaction, pemReader);
 
     jsonFile.writeDataToFile(transaction.serialize());
 }
@@ -69,9 +71,10 @@ void handleIssueESDT(cxxopts::ParseResult const &result)
     auto config = data->get_table("Config");
     std::string const networkConfig = *config->get_as<std::string>("NetworkConfig");
 
-    auto userConfig = data->get_table("Testnet");
+    auto userConfig = data->get_table(networkConfig);
     std::string const chainID = *userConfig->get_as<std::string>("ChainID");
     std::string const issueESDTSCAddr = *userConfig->get_as<std::string>("IssueESDTSCAddress");
+    std::string const proxyUrl = *userConfig->get_as<std::string>("ProxyUrl");
 
     std::string const token = result["token-id"].as<std::string>();
     std::string const ticker = result["ticker"].as<std::string>();
@@ -80,21 +83,42 @@ void handleIssueESDT(cxxopts::ParseResult const &result)
     uint64_t const gasPrice = result["gas-price"].as<uint64_t>();
     uint64_t const nonce = result["nonce"].as<uint64_t>();
 
-    std::string const pem = result["pem"].as<std::string>();
+    bool const canFreeze = result["can-freeze"].as<bool>();
+    bool const canWipe = result["can-wipe"].as<bool>();
+    bool const canPause = result["can-pause"].as<bool>();
+    bool const canMint = result["can-mint"].as<bool>();
+    bool const canBurn = result["can-burn"].as<bool>();
+    bool const canChangeOwner = result["can-change-owner"].as<bool>();
+    bool const canUpgrade = result["can-upgrade"].as<bool>();
+    bool const canAddSpecialRoles = result["can-add-roles"].as<bool>();
 
-    PemFileReader pemFileReader(pem);
+    std::string const pemPath = result["pem"].as<std::string>();
+    PemFileReader const pemFileReader(pemPath);
 
     Transaction tx;
     tx.m_gasPrice = gasPrice;
     tx.m_nonce = nonce;
-    tx.m_sender = std::make_shared<Address>(Address("erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u"));
+    tx.m_sender = std::make_shared<Address>(pemFileReader.getAddress());
     tx.m_receiver = std::make_shared<Address>(Address(issueESDTSCAddr));
     tx.m_chainID = chainID;
 
-    prepareTransactionForESDTIssuance(tx, token, ticker, supply, decimals);
+    ESDTProperties esdtProperties
+            {canFreeze,
+             canWipe,
+             canPause,
+             canMint,
+             canBurn,
+             canChangeOwner,
+             canUpgrade,
+             canAddSpecialRoles};
 
-    internal::signTransaction(tx, pemFileReader.getSeed());
-    std::cerr<<tx.serialize();
+    prepareTransactionForESDTIssuance(tx, token, ticker, supply, decimals, esdtProperties);
+
+    internal::signTransaction(tx, pemFileReader);
+
+    ProxyProvider proxy(proxyUrl);
+    auto res =  proxy.send(tx);
+    std::cerr<<res.hash;
 }
 
 void handleRequest(ih::ArgParsedResult const &parsedRes)
