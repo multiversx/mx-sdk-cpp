@@ -1,0 +1,13 @@
+[Config]
+NetworkConfig = "Testnet"
+	
+[Testnet]
+ChainID = "T"
+ProxyUrl = "https://testnet-gateway.elrond.com"
+TransferESDTSCAddress = "erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u"
+IssueESDTSCAddress = "erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u"
+   
+[Devnet]
+	ChainID = "D"
+	ProxyUrl = "https://devnet-gateway.elrond.com"
+

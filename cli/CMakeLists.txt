@@ -3,9 +3,10 @@ include_directories(inputhandler)
 
 add_subdirectory(inputhandler)
 
-set(HEADER_FILES commandhandler.h)
+set(HEADER_FILES commandhandler.h 
+                 config/networkconfig.h)
 
-add_executable(main main.cpp ${HEADER_FILES})
+add_executable(main main.cpp config/networkconfig.cpp ${HEADER_FILES})
 
 target_link_libraries(main PUBLIC inputhandler)
 target_link_libraries(main PUBLIC utils)

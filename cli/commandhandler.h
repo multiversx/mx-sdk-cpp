@@ -6,7 +6,7 @@
 
 #include "inputhandler/ext.h"
 #include "erdsdk.h"
-#include "toml/cpptoml.h"
+#include "config/networkconfig.h"
 
 namespace internal
 {
@@ -67,42 +67,38 @@ void handleCreateSignedTransactionWithPemFile(cxxopts::ParseResult const &result
 
 void handleIssueESDT(cxxopts::ParseResult const &result)
 {
-    auto data = cpptoml::parse_file("config.toml");
-    auto config = data->get_table("Config");
-    std::string const networkConfig = *config->get_as<std::string>("NetworkConfig");
+    auto const config = NetworkConfig().config();
 
-    auto userConfig = data->get_table(networkConfig);
-    std::string const chainID = *userConfig->get_as<std::string>("ChainID");
-    std::string const issueESDTSCAddr = *userConfig->get_as<std::string>("IssueESDTSCAddress");
-    std::string const proxyUrl = *userConfig->get_as<std::string>("ProxyUrl");
+    auto const token = result["token-id"].as<std::string>();
+    auto const ticker = result["ticker"].as<std::string>();
+    auto const supply = result["supply"].as<std::string>();
+    auto const decimals = result["dec"].as<std::string>();
+    auto const gasPrice = result["gas-price"].as<uint64_t>();
+    auto const nonce = result["nonce"].as<uint64_t>();
 
-    std::string const token = result["token-id"].as<std::string>();
-    std::string const ticker = result["ticker"].as<std::string>();
-    std::string const supply = result["supply"].as<std::string>();
-    std::string const decimals = result["dec"].as<std::string>();
-    uint64_t const gasPrice = result["gas-price"].as<uint64_t>();
-    uint64_t const nonce = result["nonce"].as<uint64_t>();
+    auto const canFreeze = result["can-freeze"].as<bool>();
+    auto const canWipe = result["can-wipe"].as<bool>();
+    auto const canPause = result["can-pause"].as<bool>();
+    auto const canMint = result["can-mint"].as<bool>();
+    auto const canBurn = result["can-burn"].as<bool>();
+    auto const canChangeOwner = result["can-change-owner"].as<bool>();
+    auto const canUpgrade = result["can-upgrade"].as<bool>();
+    auto const canAddSpecialRoles = result["can-add-roles"].as<bool>();
 
-    bool const canFreeze = result["can-freeze"].as<bool>();
-    bool const canWipe = result["can-wipe"].as<bool>();
-    bool const canPause = result["can-pause"].as<bool>();
-    bool const canMint = result["can-mint"].as<bool>();
-    bool const canBurn = result["can-burn"].as<bool>();
-    bool const canChangeOwner = result["can-change-owner"].as<bool>();
-    bool const canUpgrade = result["can-upgrade"].as<bool>();
-    bool const canAddSpecialRoles = result["can-add-roles"].as<bool>();
+    auto const pemPath = result["pem"].as<std::string>();
 
-    std::string const pemPath = result["pem"].as<std::string>();
     PemFileReader const pemFileReader(pemPath);
+    Address const sender = pemFileReader.getAddress();
+    Address const receiver = Address(config.issueESDTSCAddress);
 
     Transaction tx;
-    tx.m_gasPrice = gasPrice;
     tx.m_nonce = nonce;
-    tx.m_sender = std::make_shared<Address>(pemFileReader.getAddress());
-    tx.m_receiver = std::make_shared<Address>(Address(issueESDTSCAddr));
-    tx.m_chainID = chainID;
+    tx.m_sender = std::make_shared<Address>(sender);
+    tx.m_receiver = std::make_shared<Address>(receiver);
+    tx.m_gasPrice = gasPrice;
+    tx.m_chainID = config.chainID;
 
-    ESDTProperties esdtProperties
+    ESDTProperties const esdtProperties
             {canFreeze,
              canWipe,
              canPause,
@@ -113,12 +109,11 @@ void handleIssueESDT(cxxopts::ParseResult const &result)
              canAddSpecialRoles};
 
     prepareTransactionForESDTIssuance(tx, token, ticker, supply, decimals, esdtProperties);
-
     internal::signTransaction(tx, pemFileReader);
 
-    ProxyProvider proxy(proxyUrl);
-    auto res =  proxy.send(tx);
-    std::cerr<<res.hash;
+    ProxyProvider proxy(config.proxyUrl);
+    auto const txHash =  proxy.send(tx).hash;
+    std::cerr<< "Transaction hash: " << txHash;
 }
 
 void handleRequest(ih::ArgParsedResult const &parsedRes)
