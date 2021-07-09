@@ -12,11 +12,9 @@ public:
 
     cxxopts::Options pem() const;
 
+    cxxopts::Options esdt() const;
+
     std::string help() const;
-
-    std::string helpPem() const;
-
-    std::string helpTx() const;
 
 private:
     void initOptions();
@@ -25,8 +23,11 @@ private:
 
     void initOptionsPem();
 
+    void initOptionsESDT();
+
     cxxopts::Options m_optionsTx;
     cxxopts::Options m_optionsPem;
+    cxxopts::Options m_optionsESDT;
 };
 
 #endif

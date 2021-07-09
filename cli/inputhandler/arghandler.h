@@ -11,7 +11,8 @@ enum RequestType
     invalid,
     help,
     loadPemFile,
-    createSignedTransactionWithPemFile
+    createSignedTransactionWithPemFile,
+    issueESDT
 };
 
 struct ArgParsedResult

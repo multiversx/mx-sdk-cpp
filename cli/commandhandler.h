@@ -3,8 +3,10 @@
 
 #include <sodium.h>
 #include <iostream>
+
 #include "inputhandler/ext.h"
 #include "erdsdk.h"
+#include "toml/cpptoml.h"
 
 namespace internal
 {
@@ -61,6 +63,40 @@ void handleCreateSignedTransactionWithPemFile(cxxopts::ParseResult const &result
     jsonFile.writeDataToFile(transaction.serialize());
 }
 
+void handleIssueESDT(cxxopts::ParseResult const &result)
+{
+    auto data = cpptoml::parse_file("config.toml");
+    auto config = data->get_table("Config");
+    std::string const networkConfig = *config->get_as<std::string>("NetworkConfig");
+
+    auto userConfig = data->get_table("Testnet");
+    std::string const chainID = *userConfig->get_as<std::string>("ChainID");
+    std::string const issueESDTSCAddr = *userConfig->get_as<std::string>("IssueESDTSCAddress");
+
+    std::string const token = result["token-id"].as<std::string>();
+    std::string const ticker = result["ticker"].as<std::string>();
+    std::string const supply = result["supply"].as<std::string>();
+    std::string const decimals = result["dec"].as<std::string>();
+    uint64_t const gasPrice = result["gas-price"].as<uint64_t>();
+    uint64_t const nonce = result["nonce"].as<uint64_t>();
+
+    std::string const pem = result["pem"].as<std::string>();
+
+    PemFileReader pemFileReader(pem);
+
+    Transaction tx;
+    tx.m_gasPrice = gasPrice;
+    tx.m_nonce = nonce;
+    tx.m_sender = std::make_shared<Address>(Address("erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u"));
+    tx.m_receiver = std::make_shared<Address>(Address(issueESDTSCAddr));
+    tx.m_chainID = chainID;
+
+    prepareTransactionForESDTIssuance(tx, token, ticker, supply, decimals);
+
+    internal::signTransaction(tx, pemFileReader.getSeed());
+    std::cerr<<tx.serialize();
+}
+
 void handleRequest(ih::ArgParsedResult const &parsedRes)
 {
     switch (parsedRes.requestType)
@@ -78,6 +114,11 @@ void handleRequest(ih::ArgParsedResult const &parsedRes)
         case ih::createSignedTransactionWithPemFile:
         {
             handleCreateSignedTransactionWithPemFile(parsedRes.result);
+            break;
+        }
+        case ih::issueESDT:
+        {
+            handleIssueESDT(parsedRes.result);
             break;
         }
         default:

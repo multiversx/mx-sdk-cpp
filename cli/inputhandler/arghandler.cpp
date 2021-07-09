@@ -76,13 +76,23 @@ ArgParsedResult ArgHandler::parse(int const &argc, char *const argv[])
     }
     else if (isCmd("pem") && isSubCmd("help") && argc == 3)
     {
-        helpMsg = m_options.helpPem();
+        helpMsg = m_options.pem().help();
         reqType = help;
     }
     else if (isCmd("transaction") && isSubCmd("help") && argc == 3)
     {
-        helpMsg = m_options.helpTx();
+        helpMsg = m_options.transaction().help();
         reqType = help;
+    }
+    else if (isCmd("esdt") && isSubCmd("help") && argc == 3)
+    {
+        helpMsg = m_options.esdt().help();
+        reqType = help;
+    }
+    else if (isCmd("esdt") && isSubCmd("issue") &&
+            canParse(argc, argv, m_options.esdt()))
+    {
+        reqType = issueESDT;
     }
     else if (isCmd("pem") && isSubCmd("load") &&
              canParse(argc, argv, m_options.pem()))

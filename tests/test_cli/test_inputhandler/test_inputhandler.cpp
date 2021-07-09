@@ -85,7 +85,7 @@ TEST(ArgHandler, parse_pem_help_expectHelp)
     auto const res = argHandler.parse(argc, argv);
 
     EXPECT_EQ(res.requestType, ih::help);
-    EXPECT_EQ(res.help, options.helpPem());
+    EXPECT_EQ(res.help, options.pem().help());
 }
 
 TEST(ArgHandler, parse_transaction_help_expectHelp)
@@ -102,7 +102,7 @@ TEST(ArgHandler, parse_transaction_help_expectHelp)
     auto const res = argHandler.parse(argc, argv);
 
     EXPECT_EQ(res.requestType, ih::help);
-    EXPECT_EQ(res.help, options.helpTx());
+    EXPECT_EQ(res.help, options.transaction().help());
 }
 
 TEST(ArgHandler, parse_pem_load_file_expectLoadPemFile)
