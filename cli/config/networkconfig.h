@@ -8,7 +8,6 @@ struct Config
     std::string chainID;
     std::string proxyUrl;
     std::string issueESDTSCAddress;
-    std::string transferESDTSCAddress;
 };
 
 class NetworkConfig

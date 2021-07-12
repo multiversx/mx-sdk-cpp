@@ -24,7 +24,6 @@ Config NetworkConfig::config() const
         ret.chainID = *config->get_as<std::string>("ChainID");
         ret.proxyUrl = *config->get_as<std::string>("ProxyUrl");
         ret.issueESDTSCAddress = *config->get_as<std::string>("IssueESDTSCAddress");
-        ret.transferESDTSCAddress = *config->get_as<std::string>("TransferESDTSCAddress");
     }
     catch (...)
     {
@@ -32,13 +31,11 @@ Config NetworkConfig::config() const
 
         std::cerr<< "\nChain ID: " << NETWORK_CONFIG_DEFAULT_CHAIN_ID;
         std::cerr<< "\nProxy url: " << NETWORK_CONFIG_DEFAULT_PROXY_URL;
-        std::cerr<< "\nESDT Issue SC Address: " << NETWORK_CONFIG_DEFAULT_ESDT_ISSUE_SC_ADDRESS;
-        std::cerr<< "\nESDT transfer SC Address: " << NETWORK_CONFIG_DEFAULT_ESDT_TRANSFER_SC_ADDRESS << "\n";
+        std::cerr<< "\nESDT Issue SC Address: " << NETWORK_CONFIG_DEFAULT_ESDT_ISSUE_SC_ADDRESS << "\n";
 
         ret.chainID = NETWORK_CONFIG_DEFAULT_CHAIN_ID;
         ret.proxyUrl = NETWORK_CONFIG_DEFAULT_PROXY_URL;
         ret.issueESDTSCAddress = NETWORK_CONFIG_DEFAULT_ESDT_ISSUE_SC_ADDRESS;
-        ret.transferESDTSCAddress = NETWORK_CONFIG_DEFAULT_ESDT_TRANSFER_SC_ADDRESS;
     }
 
     return ret;
