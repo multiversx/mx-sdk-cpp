@@ -113,7 +113,7 @@ void handleIssueESDT(cxxopts::ParseResult const &result)
 
     ProxyProvider proxy(config.proxyUrl);
     auto const txHash =  proxy.send(tx).hash;
-    std::cerr<< "Transaction hash: " << txHash;
+    std::cerr<< "Transaction hash: " << txHash << "\n";
 }
 
 void handleTransferESDT(cxxopts::ParseResult const &result)
@@ -122,6 +122,7 @@ void handleTransferESDT(cxxopts::ParseResult const &result)
 
     auto const nonce = result["nonce"].as<uint64_t>();
     auto const gasPrice = result["gas-price"].as<uint64_t>();
+    auto const receiverAdr = result["receiver"].as<std::string>();
     auto const token = result["token"].as<std::string>();
     auto const value = result["value"].as<std::string>();
     auto const function = result["function"].as<std::string>();
@@ -131,10 +132,11 @@ void handleTransferESDT(cxxopts::ParseResult const &result)
 
     PemFileReader const pemFileReader(pemPath);
     Address const sender = pemFileReader.getAddress();
-    Address const receiver = Address(config.transferESDTSCAddress);
+    Address const receiver = Address(receiverAdr);
 
     Transaction tx;
     tx.m_nonce = nonce;
+    tx.m_value = value;
     tx.m_sender = std::make_shared<Address>(sender);
     tx.m_receiver = std::make_shared<Address>(receiver);
     tx.m_gasPrice = gasPrice;
@@ -156,7 +158,7 @@ void handleTransferESDT(cxxopts::ParseResult const &result)
 
     ProxyProvider proxy(config.proxyUrl);
     auto const txHash =  proxy.send(tx).hash;
-    std::cerr<< "Transaction hash: " << txHash;
+    std::cerr<< "Transaction hash: " << txHash << "\n";
 }
 
 void handleRequest(ih::ArgParsedResult const &parsedRes)

@@ -54,10 +54,11 @@ void OptionsESDT::initOptionsTransfer()
     m_optionsTransfer.add_options("transfer") // esdt transfer group
             ("nonce", "Sender account's nonce", cxxopts::value<uint64_t>())
             ("gas-price", "Gas price", cxxopts::value<uint64_t>())
+            ("receiver", "Receiver's address", cxxopts::value<std::string>())
             ("token", "Token id", cxxopts::value<std::string>())
             ("value", "ESDT value to transfer", cxxopts::value<std::string>())
             ("function", "Smart contract function", cxxopts::value<std::string>()->default_value(""))
-            ("args", "Smart contract function args", cxxopts::value<std::vector<std::string>>()->default_value(""))
+            ("args", "Smart contract function args, hex encoded, comma separated", cxxopts::value<std::vector<std::string>>()->default_value(""))
             ("pem", "Pem keyfile", cxxopts::value<std::string>());
 }
 
