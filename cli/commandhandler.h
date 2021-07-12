@@ -122,6 +122,7 @@ void handleTransferESDT(cxxopts::ParseResult const &result)
 
     auto const nonce = result["nonce"].as<uint64_t>();
     auto const gasPrice = result["gas-price"].as<uint64_t>();
+    auto const gasLimit = result["gas-limit"].as<uint64_t>();
     auto const receiverAdr = result["receiver"].as<std::string>();
     auto const token = result["token"].as<std::string>();
     auto const value = result["value"].as<std::string>();
@@ -140,6 +141,7 @@ void handleTransferESDT(cxxopts::ParseResult const &result)
     tx.m_sender = std::make_shared<Address>(sender);
     tx.m_receiver = std::make_shared<Address>(receiver);
     tx.m_gasPrice = gasPrice;
+    tx.m_gasLimit = gasLimit;
     tx.m_chainID = config.chainID;
 
     prepareTransactionForESDTTransfer(tx, token, function);

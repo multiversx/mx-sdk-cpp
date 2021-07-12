@@ -54,6 +54,7 @@ void OptionsESDT::initOptionsTransfer()
     m_optionsTransfer.add_options("transfer") // esdt transfer group
             ("nonce", "Sender account's nonce", cxxopts::value<uint64_t>())
             ("gas-price", "Gas price", cxxopts::value<uint64_t>())
+            ("gas-limit", "Gas limit", cxxopts::value<uint64_t>())
             ("receiver", "Receiver's address", cxxopts::value<std::string>())
             ("token", "Token id", cxxopts::value<std::string>())
             ("value", "ESDT value to transfer", cxxopts::value<std::string>())
