@@ -3,7 +3,7 @@
 CLIOptions::CLIOptions() :
         m_optionsTx("transaction", "Manage transactions"),
         m_optionsPem("pem", "Manage pem files"),
-        m_optionsESDT("esdt", "Manage ESDT tokens")
+        m_optionsESDT()
 {
     initOptions();
 }
@@ -18,7 +18,7 @@ cxxopts::Options CLIOptions::pem() const
     return m_optionsPem;
 }
 
-cxxopts::Options CLIOptions::esdt() const
+OptionsESDT CLIOptions::esdt() const
 {
     return m_optionsESDT;
 }
@@ -34,7 +34,6 @@ void CLIOptions::initOptions()
 {
     initOptionsTx();
     initOptionsPem();
-    initOptionsESDT();
 }
 
 void CLIOptions::initOptionsTx()
@@ -59,32 +58,5 @@ void CLIOptions::initOptionsPem()
 {
     m_optionsPem.add_options("load") // pem load group
             ("f,file", "Load a pem file to check if valid", cxxopts::value<std::string>());
-}
-
-void CLIOptions::initOptionsESDT()
-{
-    m_optionsESDT.add_options("transfer") // esdt transfer group
-            ("token", "Token name", cxxopts::value<std::string>())
-            ("value", "ESDT value to be transfered", cxxopts::value<std::string>())
-            ("function", "Smart contract function", cxxopts::value<std::string>()->default_value(""))
-            ("args", "Smart contract function args", cxxopts::value<std::vector<std::string>>()->default_value(""))
-            ("file", "Pem keyfile", cxxopts::value<std::string>());
-
-    m_optionsESDT.add_options("issue") // esdt issue group
-            ("token-id", "Token id", cxxopts::value<std::string>())
-            ("ticker", "Token ticker", cxxopts::value<std::string>())
-            ("supply", "Initial supply", cxxopts::value<std::string>())
-            ("dec", "Number of decimals", cxxopts::value<std::string>())
-            ("gas-price", "Gas price", cxxopts::value<uint64_t>())
-            ("pem", "Sender's pem keyfile", cxxopts::value<std::string>())
-            ("nonce", "Sender account's nonce", cxxopts::value<uint64_t>())
-            ("can-freeze", "Can freeze property (default: false)", cxxopts::value<bool>()->default_value("false"))
-            ("can-wipe", "Can wipe property (default: false)", cxxopts::value<bool>()->default_value("false"))
-            ("can-pause", "Can pause property (default: false)", cxxopts::value<bool>()->default_value("false"))
-            ("can-mint", "Can mint property (default: false)", cxxopts::value<bool>()->default_value("false"))
-            ("can-burn", "Can burn property (default: false)", cxxopts::value<bool>()->default_value("false"))
-            ("can-change-owner", "Can change owner property (default: false)", cxxopts::value<bool>()->default_value("false"))
-            ("can-upgrade", "Can upgrade property (default: false)", cxxopts::value<bool>()->default_value("false"))
-            ("can-add-roles", "Can add special roles property (default: false)", cxxopts::value<bool>()->default_value("false"));
 }
 

@@ -1,7 +1,7 @@
 #ifndef CLI_OPTIONS_H
 #define CLI_OPTIONS_H
 
-#include "cliparser/cxxopts.hpp"
+#include "options_esdt.h"
 
 class CLIOptions
 {
@@ -12,7 +12,7 @@ public:
 
     cxxopts::Options pem() const;
 
-    cxxopts::Options esdt() const;
+    OptionsESDT esdt() const;
 
     std::string help() const;
 
@@ -23,11 +23,9 @@ private:
 
     void initOptionsPem();
 
-    void initOptionsESDT();
-
     cxxopts::Options m_optionsTx;
     cxxopts::Options m_optionsPem;
-    cxxopts::Options m_optionsESDT;
+    OptionsESDT m_optionsESDT;
 };
 
 #endif

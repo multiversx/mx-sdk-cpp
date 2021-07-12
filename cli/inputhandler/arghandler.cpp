@@ -90,9 +90,14 @@ ArgParsedResult ArgHandler::parse(int const &argc, char *const argv[])
         reqType = help;
     }
     else if (isCmd("esdt") && isSubCmd("issue") &&
-            canParse(argc, argv, m_options.esdt()))
+            canParse(argc, argv, m_options.esdt().issue()))
     {
         reqType = issueESDT;
+    }
+    else if (isCmd("esdt") && isSubCmd("transfer") &&
+             canParse(argc, argv, m_options.esdt().transfer()))
+    {
+        reqType = transferESDT;
     }
     else if (isCmd("pem") && isSubCmd("load") &&
              canParse(argc, argv, m_options.pem()))

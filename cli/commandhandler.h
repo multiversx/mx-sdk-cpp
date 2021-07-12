@@ -69,7 +69,7 @@ void handleIssueESDT(cxxopts::ParseResult const &result)
 {
     auto const config = NetworkConfig().config();
 
-    auto const token = result["token-id"].as<std::string>();
+    auto const token = result["token"].as<std::string>();
     auto const ticker = result["ticker"].as<std::string>();
     auto const supply = result["supply"].as<std::string>();
     auto const decimals = result["dec"].as<std::string>();
@@ -116,6 +116,49 @@ void handleIssueESDT(cxxopts::ParseResult const &result)
     std::cerr<< "Transaction hash: " << txHash;
 }
 
+void handleTransferESDT(cxxopts::ParseResult const &result)
+{
+    auto const config = NetworkConfig().config();
+
+    auto const nonce = result["nonce"].as<uint64_t>();
+    auto const gasPrice = result["gas-price"].as<uint64_t>();
+    auto const token = result["token"].as<std::string>();
+    auto const value = result["value"].as<std::string>();
+    auto const function = result["function"].as<std::string>();
+    auto const args = result["args"].as<std::vector<std::string>>();
+
+    auto const pemPath = result["pem"].as<std::string>();
+
+    PemFileReader const pemFileReader(pemPath);
+    Address const sender = pemFileReader.getAddress();
+    Address const receiver = Address(config.transferESDTSCAddress);
+
+    Transaction tx;
+    tx.m_nonce = nonce;
+    tx.m_sender = std::make_shared<Address>(sender);
+    tx.m_receiver = std::make_shared<Address>(receiver);
+    tx.m_gasPrice = gasPrice;
+    tx.m_chainID = config.chainID;
+
+    prepareTransactionForESDTTransfer(tx, token, function);
+
+    if (!args.empty())
+    {
+        std::string txData (tx.m_data->begin(), tx.m_data->end());
+        for (auto const &arg : args)
+        {
+            txData += "@" + arg;
+        }
+        *tx.m_data = bytes(txData.begin(), txData.end());
+    }
+
+    internal::signTransaction(tx, pemFileReader);
+
+    ProxyProvider proxy(config.proxyUrl);
+    auto const txHash =  proxy.send(tx).hash;
+    std::cerr<< "Transaction hash: " << txHash;
+}
+
 void handleRequest(ih::ArgParsedResult const &parsedRes)
 {
     switch (parsedRes.requestType)
@@ -138,6 +181,11 @@ void handleRequest(ih::ArgParsedResult const &parsedRes)
         case ih::issueESDT:
         {
             handleIssueESDT(parsedRes.result);
+            break;
+        }
+        case ih::transferESDT:
+        {
+            handleTransferESDT(parsedRes.result);
             break;
         }
         default:
