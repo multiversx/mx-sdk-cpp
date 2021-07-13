@@ -3,6 +3,7 @@
 #include "utils/hex.h"
 #include "utils/errors.h"
 #include "filehandler/pemreader.h"
+#include "filehandler/keyfilereader.h"
 
 class PemFileReaderConstructorFixture : public ::testing::Test
 {
@@ -93,4 +94,10 @@ TEST_P(PemFileReaderParametrized, getSeed_getPublicKey_getBech32Address)
     EXPECT_EQ(pemSeed, util::hexToBytes(currParam.seed));
     EXPECT_EQ(pemPubKey, util::hexToBytes(currParam.publicKey));
     EXPECT_EQ(pemBech32Address, currParam.bech32Address);
+}
+
+TEST(KeyFileReader, someTest)
+{
+    KeyFileReader keys("..//..//testData//keyFile.json");
+
 }
