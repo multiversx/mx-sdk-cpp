@@ -6,7 +6,7 @@
 
 #include "inputhandler/ext.h"
 #include "erdsdk.h"
-#include "config/networkconfig.h"
+#include "config/cliconfig.h"
 
 namespace internal
 {
@@ -67,7 +67,7 @@ void handleCreateSignedTransactionWithPemFile(cxxopts::ParseResult const &result
 
 void handleIssueESDT(cxxopts::ParseResult const &result)
 {
-    auto const config = NetworkConfig().config();
+    auto const config = CLIConfig().config();
 
     auto const token = result["token"].as<std::string>();
     auto const ticker = result["ticker"].as<std::string>();
@@ -118,7 +118,7 @@ void handleIssueESDT(cxxopts::ParseResult const &result)
 
 void handleTransferESDT(cxxopts::ParseResult const &result)
 {
-    auto const config = NetworkConfig().config();
+    auto const config = CLIConfig().config();
 
     auto const nonce = result["nonce"].as<uint64_t>();
     auto const gasPrice = result["gas-price"].as<uint64_t>();
