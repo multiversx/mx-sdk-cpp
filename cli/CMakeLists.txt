@@ -4,9 +4,9 @@ include_directories(inputhandler)
 add_subdirectory(inputhandler)
 
 set(HEADER_FILES commandhandler.h 
-                 config/networkconfig.h)
+                 config/cliconfig.h)
 
-add_executable(erdcpp main.cpp config/networkconfig.cpp ${HEADER_FILES})
+add_executable(erdcpp main.cpp config/cliconfig.cpp ${HEADER_FILES})
 
 target_link_libraries(erdcpp PUBLIC inputhandler)
 target_link_libraries(erdcpp PUBLIC utils)

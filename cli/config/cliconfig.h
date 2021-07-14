@@ -10,10 +10,10 @@ struct Config
     std::string issueESDTSCAddress;
 };
 
-class NetworkConfig
+class CLIConfig
 {
 public:
-    explicit NetworkConfig(std::string tomlConfigPath = "config/config.toml");
+    explicit CLIConfig(std::string tomlConfigPath = "config/config.toml");
 
     Config config() const;
 

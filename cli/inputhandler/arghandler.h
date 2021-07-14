@@ -10,7 +10,6 @@ enum RequestType
 {
     invalid,
     help,
-    loadPemFile,
     createSignedTransactionWithPemFile,
     issueESDT,
     transferESDT
@@ -35,9 +34,13 @@ private:
 
     bool canParse(int const &argc, char *const argv[], cxxopts::Options options);
 
-    bool isCmd(std::string const& arg);
+    bool isCmd(std::string const& arg) const;
 
-    bool isSubCmd(std::string const& arg);
+    bool isSubCmd(std::string const& arg) const;
+
+    bool isCmdHelp() const;
+
+    bool isSubCmdHelp() const;
 
     std::string m_cmd;
     std::string m_subCmd;

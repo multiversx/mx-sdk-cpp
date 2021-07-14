@@ -1,8 +1,8 @@
 #include "options_esdt.h"
 
 OptionsESDT::OptionsESDT() :
-        m_optionsIssue("ESDT", "Issue ESDT"),
-        m_optionsTransfer("ESDT", "Transfer ESDT")
+        m_optionsIssue("erdcpp esdt issue", "Issue ESDT\n[command]: esdt\n[subcommand]: issue"),
+        m_optionsTransfer("erdcpp esdt transfer", "Transfer ESDT\n[command]: esdt\n[subcommand]: transfer")
 {
     initOptions();
 }
@@ -39,14 +39,14 @@ void OptionsESDT::initOptionsIssue()
             ("gas-price", "Gas price", cxxopts::value<uint64_t>())
             ("pem", "Sender's pem keyfile", cxxopts::value<std::string>())
             ("nonce", "Sender account's nonce", cxxopts::value<uint64_t>())
-            ("can-freeze", "Can freeze property (default: false)", cxxopts::value<bool>()->default_value("false"))
-            ("can-wipe", "Can wipe property (default: false)", cxxopts::value<bool>()->default_value("false"))
-            ("can-pause", "Can pause property (default: false)", cxxopts::value<bool>()->default_value("false"))
-            ("can-mint", "Can mint property (default: false)", cxxopts::value<bool>()->default_value("false"))
-            ("can-burn", "Can burn property (default: false)", cxxopts::value<bool>()->default_value("false"))
-            ("can-change-owner", "Can change owner property (default: false)", cxxopts::value<bool>()->default_value("false"))
-            ("can-upgrade", "Can upgrade property (default: false)", cxxopts::value<bool>()->default_value("false"))
-            ("can-add-roles", "Can add special roles property (default: false)", cxxopts::value<bool>()->default_value("false"));
+            ("can-freeze", "[Can freeze] property (default: false)", cxxopts::value<bool>()->default_value("false"))
+            ("can-wipe", "[Can wipe] property (default: false)", cxxopts::value<bool>()->default_value("false"))
+            ("can-pause", "[Can pause] property (default: false)", cxxopts::value<bool>()->default_value("false"))
+            ("can-mint", "[Can mint] property (default: false)", cxxopts::value<bool>()->default_value("false"))
+            ("can-burn", "[Can burn] property (default: false)", cxxopts::value<bool>()->default_value("false"))
+            ("can-change-owner", "[Can change owner] property (default: false)", cxxopts::value<bool>()->default_value("false"))
+            ("can-upgrade", "[Can upgrade] property (default: false)", cxxopts::value<bool>()->default_value("false"))
+            ("can-add-roles", "[Can add special roles] property (default: false)", cxxopts::value<bool>()->default_value("false"));
 }
 
 void OptionsESDT::initOptionsTransfer()
@@ -59,7 +59,7 @@ void OptionsESDT::initOptionsTransfer()
             ("token", "Token id", cxxopts::value<std::string>())
             ("value", "ESDT value to transfer", cxxopts::value<std::string>())
             ("function", "Smart contract function", cxxopts::value<std::string>()->default_value(""))
-            ("args", "Smart contract function args, hex encoded, comma separated", cxxopts::value<std::vector<std::string>>()->default_value(""))
+            ("args", "Smart contract function args, hex encoded, comma separated, e.g.: 0a,3f6f", cxxopts::value<std::vector<std::string>>()->default_value(""))
             ("pem", "Pem keyfile", cxxopts::value<std::string>());
 }
 

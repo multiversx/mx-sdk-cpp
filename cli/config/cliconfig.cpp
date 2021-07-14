@@ -1,4 +1,4 @@
-#include "networkconfig.h"
+#include "cliconfig.h"
 #include "toml/cpptoml.h"
 #include "utils/params.h"
 
@@ -8,17 +8,17 @@
 #define END  "\x1B[0m"
 #define YELLOW(x) BEGIN x END
 
-NetworkConfig::NetworkConfig(std::string tomlConfigPath):
+CLIConfig::CLIConfig(std::string tomlConfigPath):
     m_tomlPath(tomlConfigPath) {}
 
-Config NetworkConfig::config() const
+Config CLIConfig::config() const
 {
     Config ret;
 
     try
     {
         auto const data = cpptoml::parse_file(m_tomlPath);
-        auto const networkConfig = *data->get_qualified_as<std::string>("Config.NetworkConfig");
+        auto const networkConfig = *data->get_qualified_as<std::string>("Config.CLIConfig");
         auto const config = data->get_table(networkConfig);
 
         ret.chainID = *config->get_as<std::string>("ChainID");

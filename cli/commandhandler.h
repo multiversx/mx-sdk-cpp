@@ -6,7 +6,7 @@
 
 #include "inputhandler/ext.h"
 #include "erdsdk.h"
-#include "config/networkconfig.h"
+#include "config/cliconfig.h"
 
 namespace internal
 {
@@ -45,13 +45,6 @@ void init()
     }
 }
 
-void handleLoadPemFile(cxxopts::ParseResult const &result)
-{
-    ih::wrapper::PemHandlerInputWrapper const pemInputWrapper(result);
-    PemFileReader pemReader(pemInputWrapper.getPemFilePath());
-    std::cerr << "File loaded successfully!\nBech32 address: " << pemReader.getAddress().getBech32Address() << "\n";
-}
-
 void handleCreateSignedTransactionWithPemFile(cxxopts::ParseResult const &result)
 {
     ih::wrapper::TransactionInputWrapper const transactionInputWrapper(result);
@@ -67,7 +60,7 @@ void handleCreateSignedTransactionWithPemFile(cxxopts::ParseResult const &result
 
 void handleIssueESDT(cxxopts::ParseResult const &result)
 {
-    auto const config = NetworkConfig().config();
+    auto const config = CLIConfig().config();
 
     auto const token = result["token"].as<std::string>();
     auto const ticker = result["ticker"].as<std::string>();
@@ -118,7 +111,7 @@ void handleIssueESDT(cxxopts::ParseResult const &result)
 
 void handleTransferESDT(cxxopts::ParseResult const &result)
 {
-    auto const config = NetworkConfig().config();
+    auto const config = CLIConfig().config();
 
     auto const nonce = result["nonce"].as<uint64_t>();
     auto const gasPrice = result["gas-price"].as<uint64_t>();
@@ -163,33 +156,28 @@ void handleTransferESDT(cxxopts::ParseResult const &result)
     std::cerr<< "Transaction hash: " << txHash << "\n";
 }
 
-void handleRequest(ih::ArgParsedResult const &parsedRes)
+void handleRequest(ih::ArgParsedResult const &parsedResult)
 {
-    switch (parsedRes.requestType)
+    switch (parsedResult.requestType)
     {
         case ih::help:
         {
-            std::cerr<< parsedRes.help;
-            break;
-        }
-        case ih::loadPemFile:
-        {
-            handleLoadPemFile(parsedRes.result);
+            std::cerr<< parsedResult.help;
             break;
         }
         case ih::createSignedTransactionWithPemFile:
         {
-            handleCreateSignedTransactionWithPemFile(parsedRes.result);
+            handleCreateSignedTransactionWithPemFile(parsedResult.result);
             break;
         }
         case ih::issueESDT:
         {
-            handleIssueESDT(parsedRes.result);
+            handleIssueESDT(parsedResult.result);
             break;
         }
         case ih::transferESDT:
         {
-            handleTransferESDT(parsedRes.result);
+            handleTransferESDT(parsedResult.result);
             break;
         }
         default:

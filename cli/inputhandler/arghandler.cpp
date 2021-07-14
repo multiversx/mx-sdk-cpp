@@ -30,14 +30,24 @@ namespace ih
 
 ArgHandler::ArgHandler() : m_options() {}
 
-bool ArgHandler::isCmd(std::string const& arg)
+bool ArgHandler::isCmd(std::string const& arg) const
 {
     return arg == m_cmd;
 }
 
-bool ArgHandler::isSubCmd(std::string const& arg)
+bool ArgHandler::isSubCmd(std::string const& arg) const
 {
     return arg == m_subCmd;
+}
+
+bool ArgHandler::isCmdHelp() const
+{
+    return isCmd("help") || isCmd("--help") || isCmd("-h");
+}
+
+bool ArgHandler::isSubCmdHelp() const
+{
+    return isSubCmd("help") || isSubCmd("--help") || isSubCmd("-h");
 }
 
 bool ArgHandler::canParse(int const &argc, char *const argv[], cxxopts::Options options)
@@ -69,25 +79,25 @@ ArgParsedResult ArgHandler::parse(int const &argc, char *const argv[])
     m_cmd = parseCmd(argc, argv);
     m_subCmd = parseSubCmd(argc, argv);
 
-    if (isCmd("help") && argc == 2)
+    if (isCmdHelp() && argc == 2)
     {
         helpMsg = m_options.help();
         reqType = help;
     }
-    else if (isCmd("pem") && isSubCmd("help") && argc == 3)
-    {
-        helpMsg = m_options.pem().help();
-        reqType = help;
-    }
-    else if (isCmd("transaction") && isSubCmd("help") && argc == 3)
+    else if (isCmd("transaction") && isSubCmdHelp() && argc == 3)
     {
         helpMsg = m_options.transaction().help();
         reqType = help;
     }
-    else if (isCmd("esdt") && isSubCmd("help") && argc == 3)
+    else if (isCmd("esdt") && isSubCmdHelp() && argc == 3)
     {
         helpMsg = m_options.esdt().help();
         reqType = help;
+    }
+    else if (isCmd("transaction") && isSubCmd("new") &&
+             canParse(argc, argv, m_options.transaction()))
+    {
+        reqType = createSignedTransactionWithPemFile;
     }
     else if (isCmd("esdt") && isSubCmd("issue") &&
             canParse(argc, argv, m_options.esdt().issue()))
@@ -98,16 +108,6 @@ ArgParsedResult ArgHandler::parse(int const &argc, char *const argv[])
              canParse(argc, argv, m_options.esdt().transfer()))
     {
         reqType = transferESDT;
-    }
-    else if (isCmd("pem") && isSubCmd("load") &&
-             canParse(argc, argv, m_options.pem()))
-    {
-        reqType = loadPemFile;
-    }
-    else if (isCmd("transaction") && isSubCmd("new") &&
-             canParse(argc, argv, m_options.transaction()))
-    {
-        reqType = createSignedTransactionWithPemFile;
     }
 
     return ArgParsedResult {reqType, helpMsg, m_result};

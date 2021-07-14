@@ -6,7 +6,7 @@
 #include "utils/ext.h"
 
 template <typename T>
-void EXPECT_PARSE_ERROR_MISSING_ARG(int const &argc, char *const argv[], errorMessage const &errMsg, std::string arg)
+void EXPECT_PARSE_ERROR_MISSING_ARG(int const &argc, char *const argv[], errorMessage const &errMsg, std::string const &arg)
 {
     EXPECT_THROW({
                      try
@@ -71,23 +71,6 @@ TEST(ArgHandler, parse_help_expectHelp)
     EXPECT_EQ(res.help, options.help());
 }
 
-TEST(ArgHandler, parse_pem_help_expectHelp)
-{
-    int const argc = 3;
-    char *argv[argc];
-    argv[0] = (char *) "ERDProject.exe";
-    argv[1] = (char *) "pem";
-    argv[2] = (char *) "help";
-
-    ih::ArgHandler argHandler;
-    CLIOptions options;
-
-    auto const res = argHandler.parse(argc, argv);
-
-    EXPECT_EQ(res.requestType, ih::help);
-    EXPECT_EQ(res.help, options.pem().help());
-}
-
 TEST(ArgHandler, parse_transaction_help_expectHelp)
 {
     int const argc = 3;
@@ -105,28 +88,12 @@ TEST(ArgHandler, parse_transaction_help_expectHelp)
     EXPECT_EQ(res.help, options.transaction().help());
 }
 
-TEST(ArgHandler, parse_pem_load_file_expectLoadPemFile)
-{
-    int const argc = 4;
-    char *argv[argc];
-    argv[0] = (char *) "ERDProject.exe";
-    argv[1] = (char *) "pem";
-    argv[2] = (char *) "load";
-    argv[3] = (char *) "--file=someFile";
-
-    ih::ArgHandler argHandler;
-    auto const res = argHandler.parse(argc, argv);
-
-    EXPECT_EQ(res.requestType, ih::loadPemFile);
-    EXPECT_EQ(res.result["file"].as<std::string>(), "someFile");
-}
-
-TEST(ArgHandler, parse_pem_withoutSubArgument_expectInvalid)
+TEST(ArgHandler, parse_transaction_withoutSubArgument_expectInvalid)
 {
     int const argc = 2;
     char *argv[argc];
     argv[0] = (char *) "ERDProject.exe";
-    argv[1] = (char *) "pem";
+    argv[1] = (char *) "transaction";
 
     ih::ArgHandler argHandler;
 
@@ -135,7 +102,7 @@ TEST(ArgHandler, parse_pem_withoutSubArgument_expectInvalid)
 
 TEST(ArgHandler, parse_transaction_new_noData_expectCreateTransaction)
 {
-    int const argc = 10;
+    int const argc = 12;
     char *argv[argc];
     argv[0] = (char *) "ERDProject.exe";
     argv[1] = (char *) "transaction";
@@ -147,6 +114,8 @@ TEST(ArgHandler, parse_transaction_new_noData_expectCreateTransaction)
     argv[7] = (char *) "--gas-limit=44";
     argv[8] = (char *) "--pem=file1";
     argv[9] = (char *) "--outfile=file2";
+    argv[10] = (char *) "--sender-name=Joe";
+    argv[11] = (char *) "--receiver-name=Doe";
 
     ih::ArgHandler argHandler;
     auto const res = argHandler.parse(argc, argv);
@@ -159,6 +128,8 @@ TEST(ArgHandler, parse_transaction_new_noData_expectCreateTransaction)
     EXPECT_EQ(res.result["gas-limit"].as<uint64_t>(), 44U);
     EXPECT_EQ(res.result["pem"].as<std::string>(), "file1");
     EXPECT_EQ(res.result["outfile"].as<std::string>(), "file2");
+    EXPECT_EQ(res.result["sender-name"].as<std::string>(), "Joe");
+    EXPECT_EQ(res.result["receiver-name"].as<std::string>(), "Doe");
 }
 
 TEST(ArgHandler, parse_transaction_new_withData_expectCreateTransaction)

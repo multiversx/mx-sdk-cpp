@@ -10,8 +10,6 @@ public:
 
     cxxopts::Options transaction() const;
 
-    cxxopts::Options pem() const;
-
     OptionsESDT esdt() const;
 
     std::string help() const;
@@ -21,10 +19,7 @@ private:
 
     void initOptionsTx();
 
-    void initOptionsPem();
-
     cxxopts::Options m_optionsTx;
-    cxxopts::Options m_optionsPem;
     OptionsESDT m_optionsESDT;
 };
 
