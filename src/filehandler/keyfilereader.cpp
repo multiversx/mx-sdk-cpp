@@ -5,8 +5,6 @@
 #include "base64.h"
 #include "hex.h"
 #include "aes_128_ctr/aes.hpp"
-#include "aes_128_ctr/aes.h"
-#include "aes_128_ctr/aes.c"
 #include <fstream>
 #include <iostream>
 #include <stdexcept>
@@ -82,32 +80,18 @@ EncryptedData KeyFileReader::getFileContent() const
 
         ret.cipherText = util::hexToString(ret.cipherText);
 
-        bytes pass(passw.begin(), passw.end());
-        bytes salt(ret.kdfparams.salt.begin(),
-                   ret.kdfparams.salt.end());
+        bytes derivedKey = wrapper::crypto::scryptsy(passw,ret.kdfparams);
 
-
-        uint8_t derivedKey[32];
-        crypto_pwhash_scryptsalsa208sha256_ll
-        (pass.data(),passw.size(),
-         salt.data(),salt.size(),
-         ret.kdfparams.n,8,ret.kdfparams.p,
-         derivedKey,32);
-
-        std::string derivedKeystr;
-        for (int i= 0 ; i<32;i++)
-        {
-            derivedKeystr.push_back(derivedKey[i]);
-        }
+        std::string derivedKeystr(derivedKey.begin(), derivedKey.end());
 
         bytes secondHalf(derivedKeystr.begin() + 16, derivedKeystr.end());
         bytes firstHalf(derivedKeystr.begin(), derivedKeystr.begin() + 16);
 
-        std::cerr<<util::stringToHex(derivedKeystr) << "\n";
+        std::cerr<<util::stringToHex(derivedKeystr)<<"HERE" << "\n";
 
         unsigned char mac[32];
 
-
+int x;
 
         crypto_auth_hmacsha256_state state;
 

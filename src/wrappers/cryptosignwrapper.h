@@ -21,6 +21,8 @@ bytes getSecretKey(bytes const &seed);
 bytes getPublicKey(bytes const &secretKey);
 
 bool verify(std::string const &signature, std::string const &message, bytes const &publicKey);
+
+bytes scryptsy(std::string const &password, KdfParams const &kdfParams);
 }
 }
 

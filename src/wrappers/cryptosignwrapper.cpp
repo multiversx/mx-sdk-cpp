@@ -64,6 +64,28 @@ bool verify(std::string const &signature, std::string const &message, bytes cons
     return res == 0;
 }
 
+bytes scryptsy(std::string const &password, KdfParams const &kdfParams)
+{
+    uint8_t derivedKey[32];
+
+    auto passw = reinterpret_cast<const unsigned char*>(password.data());
+    auto s = reinterpret_cast<const unsigned char*>(kdfParams.salt.data());
+
+    crypto_pwhash_scryptsalsa208sha256_ll
+            (passw, password.size(),
+             s,kdfParams.salt.size(),
+             kdfParams.n,kdfParams.r, kdfParams.p,
+             derivedKey,kdfParams.dklen);
+
+    std::string derivedKeystr;
+    for (int i= 0 ; i<32;i++)
+    {
+        derivedKeystr.push_back(derivedKey[i]);
+    }
+
+    return bytes(derivedKeystr.begin(), derivedKeystr.end());
+}
+
 }
 }
 

@@ -8,15 +8,6 @@
 #include "account/address.h"
 #include "internal/internal.h"
 
-struct KdfParams
-{
-    uint32_t dklen = 32;
-    uint32_t n = 4096;
-    uint32_t r = 8;
-    uint32_t p = 1;
-    std::string salt;
-};
-
 struct EncryptedData
 {
     uint32_t version;
