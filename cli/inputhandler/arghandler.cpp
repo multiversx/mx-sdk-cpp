@@ -69,25 +69,16 @@ ArgParsedResult ArgHandler::parse(int const &argc, char *const argv[])
     m_cmd = parseCmd(argc, argv);
     m_subCmd = parseSubCmd(argc, argv);
 
-    if (isCmd("help") && argc == 2)
+    if ((isCmd("help") || isCmd("--help") || isCmd("-h") ) && argc == 2)
     {
         helpMsg = m_options.help();
         reqType = help;
     }
-    else if (isCmd("pem") && isSubCmd("help") && argc == 3)
-    {
-        helpMsg = m_options.helpPem();
-        reqType = help;
-    }
-    else if (isCmd("transaction") && isSubCmd("help") && argc == 3)
+    else if (isCmd("transaction") &&
+            (isSubCmd("help") || isSubCmd("--help") || isSubCmd("-h")) && argc == 3)
     {
         helpMsg = m_options.helpTx();
         reqType = help;
-    }
-    else if (isCmd("pem") && isSubCmd("load") &&
-             canParse(argc, argv, m_options.pem()))
-    {
-        reqType = loadPemFile;
     }
     else if (isCmd("transaction") && isSubCmd("new") &&
              canParse(argc, argv, m_options.transaction()))

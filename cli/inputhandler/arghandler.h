@@ -10,7 +10,6 @@ enum RequestType
 {
     invalid,
     help,
-    loadPemFile,
     createSignedTransactionWithPemFile
 };
 

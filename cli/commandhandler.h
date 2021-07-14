@@ -41,13 +41,6 @@ void init()
     }
 }
 
-void handleLoadPemFile(cxxopts::ParseResult const &result)
-{
-    ih::wrapper::PemHandlerInputWrapper const pemInputWrapper(result);
-    PemFileReader pemReader(pemInputWrapper.getPemFilePath());
-    std::cerr << "File loaded successfully!\nBech32 address: " << pemReader.getAddress().getBech32Address() << "\n";
-}
-
 void handleCreateSignedTransactionWithPemFile(cxxopts::ParseResult const &result)
 {
     ih::wrapper::TransactionInputWrapper const transactionInputWrapper(result);
@@ -61,23 +54,18 @@ void handleCreateSignedTransactionWithPemFile(cxxopts::ParseResult const &result
     jsonFile.writeDataToFile(transaction.serialize());
 }
 
-void handleRequest(ih::ArgParsedResult const &parsedRes)
+void handleRequest(ih::ArgParsedResult const &parsedResult)
 {
-    switch (parsedRes.requestType)
+    switch (parsedResult.requestType)
     {
         case ih::help:
         {
-            std::cerr<< parsedRes.help;
-            break;
-        }
-        case ih::loadPemFile:
-        {
-            handleLoadPemFile(parsedRes.result);
+            std::cerr<< parsedResult.help;
             break;
         }
         case ih::createSignedTransactionWithPemFile:
         {
-            handleCreateSignedTransactionWithPemFile(parsedRes.result);
+            handleCreateSignedTransactionWithPemFile(parsedResult.result);
             break;
         }
         default:

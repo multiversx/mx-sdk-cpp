@@ -10,11 +10,7 @@ public:
 
     cxxopts::Options transaction() const;
 
-    cxxopts::Options pem() const;
-
     std::string help() const;
-
-    std::string helpPem() const;
 
     std::string helpTx() const;
 
@@ -23,10 +19,7 @@ private:
 
     void initOptionsTx();
 
-    void initOptionsPem();
-
     cxxopts::Options m_optionsTx;
-    cxxopts::Options m_optionsPem;
 };
 
 #endif
