@@ -99,5 +99,6 @@ TEST_P(PemFileReaderParametrized, getSeed_getPublicKey_getBech32Address)
 TEST(KeyFileReader, someTest)
 {
     KeyFileReader keys("..//..//testData//keyFile.json", "12345678Qq!");
-    std::cerr<<keys.getAddress().getBech32Address();
+
+    EXPECT_EQ(keys.getAddress().getBech32Address(), "erd14az58querrtwuzae5s463y9rttycdx5mlzd676c4awdayr543c6ql24rry");
 }

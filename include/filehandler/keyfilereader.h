@@ -8,20 +8,6 @@
 #include "account/address.h"
 #include "internal/internal.h"
 
-struct EncryptedData
-{
-    uint32_t version;
-    std::string id;
-    std::string address;
-    std::string bech32;
-    KdfParams kdfparams;
-    std::string iv;
-    std::string kdf;
-    std::string cipher;
-    std::string cipherText;
-    std::string mac;
-};
-
 class KeyFileReader : public IFile
 {
 public:
