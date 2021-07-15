@@ -1,23 +1,45 @@
 #include "filehandler/keyfilereader.h"
 #include "cryptosignwrapper.h"
-#include <sodium.h>
+
 #include "errors.h"
-#include "base64.h"
+
 #include "hex.h"
-#include "aes_128_ctr/aes.hpp"
+
 #include <fstream>
 #include <iostream>
 #include <stdexcept>
 #include "json/json.hpp"
 
-KeyFileReader::KeyFileReader(std::string const &filePath) :
+namespace internal
+{
+bytes deriveSecretKey(EncryptedData const &data, std::string const& password)
+{
+    bytes derivedKey = wrapper::crypto::scryptsy(password, data.kdfparams);
+    unsigned int const derivedKeyLength = derivedKey.size();
+
+    bytes derivedKeyFirstHalf(derivedKey.begin(), derivedKey.begin() + derivedKeyLength/2);
+    bytes derivedKeySecondHalf(derivedKey.begin() + derivedKeyLength/2, derivedKey.end());
+
+    std::string computedMac = wrapper::crypto::hmacsha256(derivedKeySecondHalf, data.cipherText);
+
+    if (computedMac != data.mac)
+    {
+        throw std::runtime_error("MAC mismatch, possibly wrong password");
+    }
+
+   return wrapper::crypto::aes128ctrDecrypt(derivedKeyFirstHalf, data.cipherText, data.iv);
+}
+}
+
+KeyFileReader::KeyFileReader(std::string const &filePath, std::string const &password) :
         IFile(filePath)
 {
     try
     {
         KeyFileReader::checkFile();
 
-        m_encryptedData = getFileContent();
+        auto const data = getFileContent();
+        m_secretKey = internal::deriveSecretKey(data, password);
     }
     catch (std::exception const &error)
     {
@@ -39,151 +61,39 @@ void KeyFileReader::checkFile() const
 
 Address KeyFileReader::getAddress() const
 {
-    return Address(m_encryptedData.address);
+    bytes const publicKey = wrapper::crypto::getPublicKey(m_secretKey);
+
+    return Address(publicKey);
 }
 
 bytes KeyFileReader::getSeed() const
 {
-    return bytes();
+    return wrapper::crypto::getSeed(m_secretKey);
 }
 
 EncryptedData KeyFileReader::getFileContent() const
 {
-    EncryptedData ret;
+    EncryptedData data;
 
     try
     {
         std::ifstream stream(IFile::getFilePath());
+        auto json = nlohmann::json::parse(stream);
 
-        nlohmann::json data = nlohmann::json::parse(stream);
-
-        ret.address = data["address"];
-        ret.bech32 = data["bech32"];
-        ret.version = data["version"];
-        ret.id = data["id"];
-        ret.cipher = data["crypto"]["cipher"];
-        ret.cipherText = data["crypto"]["ciphertext"];
-        ret.iv = data["crypto"]["cipherparams"]["iv"];
-        ret.cipher = data["crypto"]["cipher"];
-        ret.kdf = data["crypto"]["kdf"];
-        ret.kdfparams.dklen = data["crypto"]["kdfparams"]["dklen"];
-        ret.kdfparams.n = data["crypto"]["kdfparams"]["n"];
-        ret.kdfparams.r = data["crypto"]["kdfparams"]["r"];
-        ret.kdfparams.p = data["crypto"]["kdfparams"]["p"];
-        ret.kdfparams.salt = data["crypto"]["kdfparams"]["salt"];
-        ret.mac = data["crypto"]["mac"];
-
-        //decrypt
-        std::string passw = "12345678Qq!";
-
-        ret.kdfparams.salt = util::hexToString(ret.kdfparams.salt);
-
-        ret.cipherText = util::hexToString(ret.cipherText);
-
-        bytes derivedKey = wrapper::crypto::scryptsy(passw,ret.kdfparams);
-
-        std::string derivedKeystr(derivedKey.begin(), derivedKey.end());
-
-        bytes secondHalf(derivedKeystr.begin() + 16, derivedKeystr.end());
-        bytes firstHalf(derivedKeystr.begin(), derivedKeystr.begin() + 16);
-
-        std::cerr<<util::stringToHex(derivedKeystr)<<"HERE" << "\n";
-
-        unsigned char mac[32];
-
-int x;
-
-        crypto_auth_hmacsha256_state state;
-
-        crypto_auth_hmacsha256_init(&state, secondHalf.data(), secondHalf.size());
-
-
-
-        unsigned char msggg[ret.cipherText.size()];
-        for (int i =0;i<ret.cipherText.size();i++)
-        {
-            msggg[i] = ret.cipherText[i];
-        }
-        crypto_auth_hmacsha256_update(&state, msggg,ret.cipherText.size());
-
-        crypto_auth_hmacsha256_final(&state,mac);
-
-
-
-
-
-
-        std::string macStr;
-        for (int i= 0 ; i<32;i++)
-        {
-            macStr.push_back(mac[i]);
-        }
-        std::cerr<<util::stringToHex(macStr) << "\n";
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        ret.iv = util::hexToString(ret.iv);
-
-        unsigned char iv[ret.iv.size()];
-        for (int i=0;i<ret.iv.size();i++)
-        {
-            iv[i] = ret.iv[i];
-        }
-
-
-
-        unsigned char cipherText2[ret.cipherText.size()];
-        for (int i =0;i<ret.cipherText.size();i++)
-        {
-            cipherText2[i] = ret.cipherText[i];
-        }
-
-
-        AES_ctx ctx;
-
-
-        AES_init_ctx_iv(&ctx, firstHalf.data(),iv);
-
-
-        AES_CTR_xcrypt_buffer(&ctx,cipherText2, ret.cipherText.size());
-
-        std::string secretKey;
-        for (int i=0;i<ret.cipherText.size();i++)
-        {
-            secretKey.push_back(cipherText2[i]);
-        }
-
-
-        std::cerr<<util::stringToHex(secretKey)<< "\n";
-
-
-        bytes sk(secretKey.begin(), secretKey.end());
-        bytes pk = wrapper::crypto::getPublicKey(sk);
-
-        std::string pkStr (pk.begin(), pk.end());
-        std::cerr<<util::stringToHex(pkStr);
-
+        data.kdfparams.dklen = json["crypto"]["kdfparams"]["dklen"];
+        data.kdfparams.n = json["crypto"]["kdfparams"]["n"];
+        data.kdfparams.r = json["crypto"]["kdfparams"]["r"];
+        data.kdfparams.p = json["crypto"]["kdfparams"]["p"];
+        data.kdfparams.salt = util::hexToString(json["crypto"]["kdfparams"]["salt"]);
+        data.iv = util::hexToString(json["crypto"]["cipherparams"]["iv"]);
+        data.cipherText = util::hexToString(json["crypto"]["ciphertext"]);
+        data.mac = util::hexToString(json["crypto"]["mac"]);
     }
     catch(...)
     {
-        throw;
+        throw std::invalid_argument(ERROR_MSG_KEY_FILE);
     }
 
-    return ret;
+    return data;
 }
 

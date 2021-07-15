@@ -46,6 +46,8 @@ errorMessage const ERROR_MSG_JSON_KEY_NOT_FOUND = "Json does not contain key: ";
 errorMessage const ERROR_MSG_JSON_SET = "Json can not insert key:  ";
 errorMessage const ERROR_MSG_HTTP_REQUEST_FAILED = "Request failed with message: ";
 errorMessage const ERROR_MSG_REASON = "Error reason: ";
+errorMessage const ERROR_MSG_KEY_FILE = "Invalid keyfile.";
+errorMessage const ERROR_MSG_SCRYPTSY = "Scrypt function failed. Could not derive keys, possible cause: operating system refused to allocate the amount of requested memory.";
 
 std::map<errorCode, errorMessage> const errors =
         {

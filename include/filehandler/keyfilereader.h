@@ -25,7 +25,7 @@ struct EncryptedData
 class KeyFileReader : public IFile
 {
 public:
-    explicit KeyFileReader(std::string const &filePath);
+    explicit KeyFileReader(std::string const &filePath, std::string const &password);
 
     Address getAddress() const;
 
@@ -37,7 +37,7 @@ protected:
 private:
     EncryptedData getFileContent() const;
 
-    EncryptedData m_encryptedData;
+    bytes m_secretKey;
 };
 
 
