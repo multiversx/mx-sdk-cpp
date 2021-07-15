@@ -96,7 +96,7 @@ TEST_P(PemFileReaderParametrized, getSeed_getPublicKey_getBech32Address)
     EXPECT_EQ(pemBech32Address, currParam.bech32Address);
 }
 
-TEST(KeyFileReader, someTest)
+TEST(KeyFileReader, getAddress)
 {
     KeyFileReader keys("..//..//testData//keyFile.json", "12345678Qq!");
 

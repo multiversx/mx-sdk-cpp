@@ -10,19 +10,19 @@
 
 namespace internal
 {
-bytes deriveSecretKey(EncryptedData const &data, std::string const& password)
+bytes deriveSecretKey(EncryptedData const &data, std::string const &password)
 {
-    bytes derivedKey = wrapper::crypto::scryptsy(password, data.kdfparams);
+    bytes const derivedKey = wrapper::crypto::scryptsy(password, data.kdfparams);
     unsigned int const derivedKeyLength = derivedKey.size();
 
-    bytes derivedKeyFirstHalf(derivedKey.begin(), derivedKey.begin() + derivedKeyLength/2);
-    bytes derivedKeySecondHalf(derivedKey.begin() + derivedKeyLength/2, derivedKey.end());
+    bytes const derivedKeyFirstHalf(derivedKey.begin(), derivedKey.begin() + derivedKeyLength/2);
+    bytes const derivedKeySecondHalf(derivedKey.begin() + derivedKeyLength/2, derivedKey.end());
 
     std::string computedMac = wrapper::crypto::hmacsha256(derivedKeySecondHalf, data.cipherText);
 
     if (computedMac != data.mac)
     {
-        throw std::runtime_error("MAC mismatch, possibly wrong password");
+        throw std::runtime_error(ERROR_MSG_MAC);
     }
 
    return wrapper::crypto::aes128ctrDecrypt(derivedKeyFirstHalf, data.cipherText, data.iv);
