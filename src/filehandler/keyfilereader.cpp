@@ -12,7 +12,7 @@ namespace internal
 {
 bytes deriveSecretKey(EncryptedData const &data, std::string const &password)
 {
-    bytes const derivedKey = wrapper::crypto::scryptsy(password, data.kdfparams);
+    bytes const derivedKey = wrapper::crypto::scryptsy(password, data.kdfParams);
     unsigned int const derivedKeyLength = derivedKey.size();
 
     bytes const derivedKeyFirstHalf(derivedKey.begin(), derivedKey.begin() + derivedKeyLength/2);
@@ -108,11 +108,11 @@ EncryptedData KeyFileReader::getFileContent() const
         data.kdf = json["crypto"]["kdf"];
         data.cipher = json["crypto"]["cipher"];
 
-        data.kdfparams.dklen = json["crypto"]["kdfparams"]["dklen"];
-        data.kdfparams.n = json["crypto"]["kdfparams"]["n"];
-        data.kdfparams.r = json["crypto"]["kdfparams"]["r"];
-        data.kdfparams.p = json["crypto"]["kdfparams"]["p"];
-        data.kdfparams.salt = util::hexToString(json["crypto"]["kdfparams"]["salt"]);
+        data.kdfParams.dklen = json["crypto"]["kdfparams"]["dklen"];
+        data.kdfParams.n = json["crypto"]["kdfparams"]["n"];
+        data.kdfParams.r = json["crypto"]["kdfparams"]["r"];
+        data.kdfParams.p = json["crypto"]["kdfparams"]["p"];
+        data.kdfParams.salt = util::hexToString(json["crypto"]["kdfparams"]["salt"]);
 
         data.iv = util::hexToString(json["crypto"]["cipherparams"]["iv"]);
         data.cipherText = util::hexToString(json["crypto"]["ciphertext"]);

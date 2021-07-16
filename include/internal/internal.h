@@ -25,7 +25,7 @@ struct EncryptedData
     uint32_t version;
     std::string id;
     std::string kdf;
-    KdfParams kdfparams;
+    KdfParams kdfParams;
     std::string iv;
     std::string cipher;
     std::string cipherText;
