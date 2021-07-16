@@ -13,10 +13,15 @@ namespace internal
 bytes deriveSecretKey(EncryptedData const &data, std::string const &password)
 {
     bytes const derivedKey = wrapper::crypto::scryptsy(password, data.kdfParams);
+
     unsigned int const derivedKeyLength = derivedKey.size();
 
-    bytes const derivedKeyFirstHalf(derivedKey.begin(), derivedKey.begin() + derivedKeyLength/2);
-    bytes const derivedKeySecondHalf(derivedKey.begin() + derivedKeyLength/2, derivedKey.end());
+    auto const itKeyBegin = derivedKey.begin();
+    auto const itKeyHalf = derivedKey.begin() + derivedKeyLength/2;
+    auto const itKeyEnd = derivedKey.end();
+
+    bytes const derivedKeyFirstHalf(itKeyBegin, itKeyHalf);
+    bytes const derivedKeySecondHalf(itKeyHalf, itKeyEnd);
 
     std::string computedMac = wrapper::crypto::hmacsha256(derivedKeySecondHalf, data.cipherText);
 
