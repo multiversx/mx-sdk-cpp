@@ -24,8 +24,6 @@ struct EncryptedData
 {
     uint32_t version;
     std::string id;
-    std::string address;
-    std::string bech32;
     std::string kdf;
     KdfParams kdfparams;
     std::string iv;

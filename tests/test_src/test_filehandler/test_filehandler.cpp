@@ -96,6 +96,53 @@ TEST_P(PemFileReaderParametrized, getSeed_getPublicKey_getBech32Address)
     EXPECT_EQ(pemBech32Address, currParam.bech32Address);
 }
 
+class KeyFileReaderConstructorFixture : public ::testing::Test
+{
+public:
+    template <typename T>
+    void expectException(std::string const &filePath, std::string const &password, errorMessage const &errMsg)
+    {
+        EXPECT_THROW({
+                         try
+                         {
+                             KeyFileReader keyFile(filePath, password);
+                         }
+                         catch(const T &e)
+                         {
+                             std::string const err = e.what();
+                             EXPECT_TRUE(err.find(errMsg) != std::string::npos );
+                             throw;
+                         }
+                     }, T );
+    }
+
+};
+
+TEST_F(KeyFileReaderConstructorFixture, invalidMac)
+{
+    expectException<std::runtime_error>("..//..//testData//keyFileInvalidMac.json", "", ERROR_MSG_MAC);
+}
+
+TEST_F(KeyFileReaderConstructorFixture, invalidVersion)
+{
+    expectException<std::invalid_argument>("..//..//testData//keyFileInvalidVersion.json", "", ERROR_MSG_KEY_FILE_VERSION);
+}
+
+TEST_F(KeyFileReaderConstructorFixture, invalidCipher)
+{
+    expectException<std::invalid_argument>("..//..//testData//keyFileInvalidCipher.json", "", ERROR_MSG_KEY_FILE_CIPHER);
+}
+
+TEST_F(KeyFileReaderConstructorFixture, invalidKdf)
+{
+    expectException<std::invalid_argument>("..//..//testData//keyFileInvalidKdf.json", "", ERROR_MSG_KEY_FILE_DERIVATION_FUNCTION);
+}
+
+TEST_F(KeyFileReaderConstructorFixture, invalidContent)
+{
+    expectException<std::invalid_argument>("..//..//testData//keyFileInvalidContent.json", "", ERROR_MSG_KEY_FILE);
+}
+
 TEST(KeyFileReader, getAddress)
 {
     KeyFileReader keys("..//..//testData//keyFile.json", "12345678Qq!");
