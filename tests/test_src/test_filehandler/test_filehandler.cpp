@@ -143,9 +143,23 @@ TEST_F(KeyFileReaderConstructorFixture, invalidContent)
     expectException<std::invalid_argument>("..//..//testData//keyFileInvalidContent.json", "", ERROR_MSG_KEY_FILE);
 }
 
-TEST(KeyFileReader, getAddress)
+// These tests are from :
+// https://github.com/ElrondNetwork/elrond-sdk-erdjs/blob/bb926b029150d7c79f2b37308f4334f98a4cabf7/src/testutils/wallets.ts
+TEST(KeyFileReader, getAddress_getSeed_differentFiles)
 {
-    KeyFileReader keys("..//..//testData//keyFile.json", "12345678Qq!");
+    KeyFileReader aliceKeyFile("..//..//testData//aliceKeyFile.json", "password");
+    KeyFileReader bobKeyFile("..//..//testData//bobKeyFile.json", "password");
+    KeyFileReader carolKeyFile("..//..//testData//carolKeyFile.json", "password");
 
-    EXPECT_EQ(keys.getAddress().getBech32Address(), "erd14az58querrtwuzae5s463y9rttycdx5mlzd676c4awdayr543c6ql24rry");
+    PemFileReader alicePem("..//..//testData//alicePem.pem");
+    PemFileReader bobPem("..//..//testData//bobPem.pem");
+    PemFileReader carolPem("..//..//testData//carolPem.pem");
+
+    EXPECT_EQ(aliceKeyFile.getAddress().getBech32Address(), "erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th");
+    EXPECT_EQ(bobKeyFile.getAddress().getBech32Address(), "erd1spyavw0956vq68xj8y4tenjpq2wd5a9p2c6j8gsz7ztyrnpxrruqzu66jx");
+    EXPECT_EQ(carolKeyFile.getAddress().getBech32Address(), "erd1k2s324ww2g0yj38qn2ch2jwctdy8mnfxep94q9arncc6xecg3xaq6mjse8");
+
+    EXPECT_EQ(aliceKeyFile.getSeed(), alicePem.getSeed());
+    EXPECT_EQ(bobKeyFile.getSeed(), bobPem.getSeed());
+    EXPECT_EQ(carolKeyFile.getSeed(), carolPem.getSeed());
 }
