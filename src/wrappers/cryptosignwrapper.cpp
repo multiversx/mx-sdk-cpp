@@ -79,7 +79,7 @@ bool verify(std::string const &signature, std::string const &message, bytes cons
     return res == 0;
 }
 
-bytes scryptsy(std::string const &password, KdfParams const &kdfParams)
+bytes scrypt(std::string const &password, KdfParams const &kdfParams)
 {
     unsigned int const keyLength = kdfParams.dklen;
     unsigned char derivedKey[keyLength];

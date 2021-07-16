@@ -12,7 +12,7 @@ namespace internal
 {
 bytes deriveSecretKey(EncryptedData const &data, std::string const &password)
 {
-    bytes const derivedKey = wrapper::crypto::scryptsy(password, data.kdfParams);
+    bytes const derivedKey = wrapper::crypto::scrypt(password, data.kdfParams);
 
     unsigned int const derivedKeyLength = derivedKey.size();
 

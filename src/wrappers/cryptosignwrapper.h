@@ -25,7 +25,7 @@ bytes getPublicKey(bytes const &secretKey);
 
 bool verify(std::string const &signature, std::string const &message, bytes const &publicKey);
 
-bytes scryptsy(std::string const &password, KdfParams const &kdfParams);
+bytes scrypt(std::string const &password, KdfParams const &kdfParams);
 
 std::string hmacsha256(bytes const &key, std::string const &cipherText);
 
