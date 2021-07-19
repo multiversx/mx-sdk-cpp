@@ -5,6 +5,7 @@
 #include "transaction/esdt.h"
 #include "transaction/signer.h"
 #include "transaction/transaction.h"
+#include "transaction/messagesigner.h"
 #include "wrappers/cryptosignwrapper.h"
 
 // Most tests for signing and transaction construction are adapted from one of the following sources:
@@ -12,6 +13,7 @@
 //         https://github.com/ElrondNetwork/elrond-sdk-erdjs/blob/main/src/walletcore/users.spec.ts#L120
 // ERD-PY: https://github.com/ElrondNetwork/elrond-sdk-erdpy/blob/main/erdpy/tests/test_wallet.py
 // ERD-GO: https://github.com/ElrondNetwork/elrond-go/blob/master/examples/construction_test.go
+//         https://github.com/ElrondNetwork/elrond-go/blob/7d133422048b7e65f0a8730cfdd1fff9d51077e9/examples/messageSign_test.go#L87
 
 class SignerConstructorFixture : public ::testing::Test
 {
@@ -763,4 +765,20 @@ TEST(prepareTransactionForESDTIssuance, customESDTProperties)
     EXPECT_EQ(tx.m_value, ESDT_ISSUANCE_VALUE);
     EXPECT_EQ(tx.m_gasLimit, ESDT_ISSUANCE_GAS_LIMIT);
     EXPECT_EQ(txDataAfterIssuance, "issue@416c696365546f6b656e73@414c43@f3d7b4c0@06@63616e467265657a65@66616c7365@63616e57697065@66616c7365@63616e5061757365@66616c7365@63616e4d696e74@74727565@63616e4275726e@74727565@63616e4368616e67654f776e6572@66616c7365@63616e55706772616465@66616c7365@63616e4164645370656369616c526f6c6573@66616c7365");
+}
+
+TEST(MessageSigner, getSignature_verify)
+{
+    Address const address("erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th");
+    std::string const message = "custom message of Alice";
+    bytes const seed = util::hexToBytes("413f42575f7f26fad3317a778771212fdb80245850981e48b58a4f25e344e8f9");
+
+    MessageSigner signer(seed);
+    std::string const signature = signer.getSignature(message);
+
+    EXPECT_EQ(signature, util::hexToString("b83647b88cdc7904895f510250cc735502bf4fd86331dd1b76e078d6409433753fd6f619fc7f8152cf8589a4669eb8318b2e735e41309ed3b60e64221d814f08"));
+
+    EXPECT_TRUE(signer.verify(signature, message));
+    EXPECT_TRUE(MessageSigner::verify(signature, message, address));
+    EXPECT_TRUE(MessageSigner::verify(signature, message, address.getPublicKey()));
 }
