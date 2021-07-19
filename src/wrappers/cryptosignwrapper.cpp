@@ -117,7 +117,7 @@ std::string hmacsha256(bytes const &key, std::string const &cipherText)
     return std::string(digest, digest + HMAC_SHA256_BYTES);
 }
 
-bytes aes128ctrDecrypt(bytes const &key, std::string const &cipherText, std::string const &iv)
+bytes aes128ctrDecrypt(bytes const &key, std::string cipherText, std::string const &iv)
 {
     auto k = reinterpret_cast<const unsigned char*>(key.data());
     auto initVector = reinterpret_cast<const unsigned char*>(iv.data());
