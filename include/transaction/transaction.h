@@ -22,7 +22,6 @@
 #define DEFAULT_VERSION 1U
 #define DEFAULT_OPTIONS nullptr
 
-
 class Transaction
 {
 public:
@@ -44,6 +43,8 @@ public:
     explicit Transaction();
 
     void sign(Signer const &signer);
+
+    bool verify(Address const &address);
 
     std::string serialize() const;
 
