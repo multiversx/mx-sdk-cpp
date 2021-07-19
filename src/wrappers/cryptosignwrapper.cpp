@@ -5,7 +5,7 @@
 #include <sodium.h>
 #include <stdexcept>
 #include "aes_128_ctr/aes.hpp"
-#include "keccak/sha3.h"
+#include "keccak/sha3.hpp"
 
 #if \
     (PUBLIC_KEY_LENGTH != crypto_sign_PUBLICKEYBYTES) || \
@@ -135,15 +135,12 @@ bytes aes128ctrDecrypt(bytes const &key, std::string const &cipherText, std::str
 
 std::string sha3Keccak(std::string const &message)
 {
-   // std::string prefix = hexToString("17456c726f6e64205369676e6564204d6573736167653a0a");
-   // std::string finalMSg = prefix + "23" + message;
-
     auto msg = reinterpret_cast<unsigned char*> (const_cast<char*>(message.data()));
 
     uint8_t out[SHA3_KECCAK_BYTES];
     sha3(msg, message.size(), out, SHA3_KECCAK_BYTES);
 
-    return std::string(out, out+ SHA3_KECCAK_BYTES);
+    return std::string(out, out + SHA3_KECCAK_BYTES);
 }
 
 }

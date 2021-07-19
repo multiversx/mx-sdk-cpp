@@ -3,6 +3,7 @@ add_subdirectory(utils)
 file(GLOB src
         transaction/transaction.cpp
         transaction/signer.cpp
+        transaction/messagesigner.cpp
         transaction/scarguments.cpp
         transaction/esdt.cpp
         internal/biguint.cpp
