@@ -32,74 +32,21 @@ void signTransaction(Transaction &transaction, bytes const& seed)
 
 namespace cli
 {
-typedef std::map<std::string, std::vector<std::string>> commandGroupMap;
 
-static commandGroupMap const cmdGroupMap =
-        {
-                {"transaction", {"new"}},
-                {"pem",         {"load"}},
-                {"help",        {}}
-        };
-
-void showSubGroupAvailableCmds(std::string const &cmdGroup)
+void init()
 {
-    std::vector<std::string> cmd = cmdGroupMap.at(cmdGroup);
-
-    if (cmd.empty()) std::cerr << "-";
-
-    else
-    {
-        for (std::string const &subCmd : cmd)
-        {
-            std::cerr << subCmd << " ";
-        }
-    }
-}
-
-void showInfo()
-{
-    std::cerr << "----\nInfo\n----\n\nCommand groups: Avaiable arguments\n";
-
-    for (const auto & it : cmdGroupMap)
-    {
-        std::cerr << it.first << ": ";
-        showSubGroupAvailableCmds(it.first);
-        std::cerr << "\n";
-    }
-}
-
-void reportError(errorCode const err)
-{
-    std::cerr << "Error. ";
-
-    if (errors.find(err) != errors.end()) std::cerr << errors.at(err) << "\n";
-}
-
-bool init()
-{
-    bool ret = true;
     if (sodium_init() < 0)
     {
-        ret = false;
-        reportError(ERROR_SODIUM_INIT);
+        throw std::runtime_error(ERROR_MSG_SODIUM_INIT);
     }
-    return ret;
 }
 
-void handleLoadPemFile(const std::map<uint32_t, std::string> &userInputs)
+void handleCreateSignedTransactionWithPemFile(cxxopts::ParseResult const &result)
 {
-    ih::wrapper::PemHandlerInputWrapper const pemInputWrapper(userInputs);
-    PemFileReader pemReader(pemInputWrapper.getPemFilePath());
-    std::cerr << "File loaded successfully! Bech32 address: " << pemReader.getAddress().getBech32Address() << "\n";
-}
-
-void handleCreateSignedTransactionWithPemFile(const std::map<uint32_t, std::string> &userInputs)
-{
-    ih::wrapper::TransactionInputWrapper const transactionInputWrapper(userInputs);
-    ih::wrapper::PemHandlerInputWrapper const pemInputWrapper(userInputs);
+    ih::wrapper::TransactionInputWrapper const transactionInputWrapper(result);
 
     ih::JsonFile jsonFile(transactionInputWrapper.getOutputFile());
-    PemFileReader pemReader(pemInputWrapper.getPemFilePath());
+    PemFileReader pemReader(transactionInputWrapper.getInputFile());
 
     Transaction transaction = internal::createTransaction(transactionInputWrapper, pemReader.getAddress());
     internal::signTransaction(transaction,pemReader.getSeed());
@@ -107,28 +54,22 @@ void handleCreateSignedTransactionWithPemFile(const std::map<uint32_t, std::stri
     jsonFile.writeDataToFile(transaction.serialize());
 }
 
-void handleRequest(ih::RequestedCmd const &requestedCmd)
+void handleRequest(ih::ArgParsedResult const &parsedResult)
 {
-    switch (requestedCmd.getRequestType())
+    switch (parsedResult.requestType)
     {
         case ih::help:
         {
-            showInfo();
-            break;
-        }
-        case ih::loadPemFile:
-        {
-            handleLoadPemFile(requestedCmd.getUserInputs());
+            std::cerr<< parsedResult.help;
             break;
         }
         case ih::createSignedTransactionWithPemFile:
         {
-            handleCreateSignedTransactionWithPemFile(requestedCmd.getUserInputs());
+            handleCreateSignedTransactionWithPemFile(parsedResult.result);
             break;
         }
         default:
         {
-            showInfo();
             break;
         }
     }

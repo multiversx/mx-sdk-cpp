@@ -1,11 +1,8 @@
 #ifndef ARGHANDLER_H
 #define ARGHANDLER_H
 
-#include <string>
-#include <vector>
-#include <map>
-
 #include "utils/errors.h"
+#include "options.h"
 
 namespace ih
 {
@@ -13,53 +10,37 @@ enum RequestType
 {
     invalid,
     help,
-    loadPemFile,
     createSignedTransactionWithPemFile
 };
 
-class RequestedCmd
+struct ArgParsedResult
 {
-public:
-    RequestedCmd(std::map<uint32_t, std::string> const &userInputs,
-                 RequestType const &reqType, errorCode const &errCode);
-
-    const std::map<uint32_t, std::string> &getUserInputs() const;
-
-    const RequestType &getRequestType() const;
-
-    const errorCode &getErrorCode() const;
-
-private:
-    std::map<uint32_t, std::string> const m_userInputs;
-    RequestType const m_requestType;
-    errorCode const m_errCode;
+    RequestType requestType;
+    std::string help;
+    cxxopts::ParseResult result;
 };
 
 class ArgHandler
 {
 public:
 
-    explicit ArgHandler(int const &argc, char *const argv[]);
+    explicit ArgHandler();
 
-    RequestedCmd getRequestedCmd();
+    ArgParsedResult parse(int const &argc, char *const argv[]);
 
 private:
 
-    unsigned long argCount() const;
+    bool canParse(int const &argc, char *const argv[], cxxopts::Options options);
 
-    bool isCmdGroup(std::string const &arg) const;
+    bool isCmd(std::string const& arg);
 
-    bool isSubCmd(uint32_t subCmdIdx, std::string const &subCmd) const;
+    bool isSubCmd(std::string const& arg);
 
-    template<typename T>
-    bool checkAndSetUserInput(uint32_t const &argIdx, std::string const &arg,
-                              std::map<uint32_t, std::string> &userInputs, uint32_t userInputIdx,
-                              errorCode errCode);
-
-    std::vector<std::string> m_arguments;
-    errorCode m_errCode;
+    std::string m_cmd;
+    std::string m_subCmd;
+    CLIOptions m_options;
+    cxxopts::ParseResult m_result;
 };
 }
-
 
 #endif // !ARGHANDLER_H

@@ -19,6 +19,7 @@ errorCode const ERROR_JSON_OUT_FILE = 7U;
 errorCode const ERROR_DATA = 8U;
 errorCode const ERROR_SODIUM_INIT = 9U;
 
+errorMessage const ERROR_MSG_EMPTY_VALUE = "Empty value: ";
 errorMessage const ERROR_MSG_NONCE = "Invalid nonce.";
 errorMessage const ERROR_MSG_VALUE = "Invalid value.";
 errorMessage const ERROR_MSG_RECEIVER = "Invalid receiver.";
@@ -36,7 +37,7 @@ errorMessage const ERROR_MSG_BECH32 = "Invalid bech32 address.";
 errorMessage const ERROR_MSG_HEX = "Invalid hex digit format.";
 errorMessage const ERROR_MSG_CONVERT_BITS = "Cannot convert bits";
 errorMessage const ERROR_MSG_FILE_EMPTY = "File is empty.";
-errorMessage const ERROR_MSG_FILE_DOES_NOT_EXIST = "File does not exists.";
+errorMessage const ERROR_MSG_FILE_DOES_NOT_EXIST = "File does not exists: ";
 errorMessage const ERROR_MSG_FILE_EXTENSION_INVALID = "File extension invalid.";
 errorMessage const ERROR_MSG_KEY_BYTES_SIZE = "Key bytes size invalid.";
 errorMessage const ERROR_MSG_JSON_SERIALIZED = "Invalid serialized json string: ";
