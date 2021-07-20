@@ -202,7 +202,25 @@ INSTANTIATE_TEST_CASE_P (
         /* Signature           */   std::make_shared<std::string>("dummy"),
         /* Options             */   DEFAULT_OPTIONS,
         /* Expected serialized */   "{\"nonce\":8,\"value\":\"10000000000000000000\",\"receiver\":\"erd1cux02zersde0l7hhklzhywcxk4u9n4py5tdxyx7vrvhnza2r4gmq4vw35r\",\"sender\":\"erd1l453hd0gt5gzdp7czpuall8ggt2dcv5zwmfdf3sd3lguxseux2fsmsgldz\",\"gasPrice\":1000000000,\"gasLimit\":50000,\"signature\":\"dummy\",\"chainID\":\"1\",\"version\":1}",
-        /* Expected signature  */   "4a6d8186eae110894e7417af82c9bf9592696c0600faf110972e0e5310d8485efc656b867a2336acec2b4c1e5f76c9cc70ba1803c6a46455ed7f1e2989a90105"}));
+        /* Expected signature  */   "4a6d8186eae110894e7417af82c9bf9592696c0600faf110972e0e5310d8485efc656b867a2336acec2b4c1e5f76c9cc70ba1803c6a46455ed7f1e2989a90105"},
+
+        signSerializedTxData
+        /* Signer seed         */   {"1a927e2af5306a9bb2ea777f73e06ecc0ac9aaa72fb4ea3fecf659451394cccf",
+        /* Nonce               */   0,
+        /* Value               */   "0",
+        /* Receiver username   */   "",
+        /* Sender username     */   "",
+        /* Receiver            */   Address("erd1cux02zersde0l7hhklzhywcxk4u9n4py5tdxyx7vrvhnza2r4gmq4vw35r"),
+        /* Sender              */   Address("erd1l453hd0gt5gzdp7czpuall8ggt2dcv5zwmfdf3sd3lguxseux2fsmsgldz"),
+        /* Gas price           */   1000000000,
+        /* Gas limit           */   50000,
+        /* Chain ID            */   "1",
+        /* Version             */   2U,
+        /* Data                */   "foo",
+        /* Signature           */   nullptr,
+        /* Options             */   std::make_shared<uint32_t>(1U),
+        /* Expected serialized */   "{\"nonce\":0,\"value\":\"0\",\"receiver\":\"erd1cux02zersde0l7hhklzhywcxk4u9n4py5tdxyx7vrvhnza2r4gmq4vw35r\",\"sender\":\"erd1l453hd0gt5gzdp7czpuall8ggt2dcv5zwmfdf3sd3lguxseux2fsmsgldz\",\"gasPrice\":1000000000,\"gasLimit\":50000,\"data\":\"Zm9v\",\"chainID\":\"1\",\"version\":2,\"options\":1}",
+        /* Expected signature  */   "95250a4d85a92e15c7567da736a959a5278c85e15a14ae4c1c67d381f76652a65d4b29ef1760b64f3598ca240fa2746ca9239c8f3d7ec71ea85a956b3932140a"}));
 
 TEST_P(TransactionSignSerializeParametrized, getSignature_serialize)
 {
@@ -228,6 +246,7 @@ TEST_P(TransactionSignSerializeParametrized, getSignature_serialize)
     signTransaction(transaction, currParam.signerSeed);
 
     EXPECT_EQ((*transaction.m_signature), currParam.expectedSignature);
+    EXPECT_TRUE(transaction.verify());
 }
 
 struct deserializedTxData
@@ -499,7 +518,7 @@ TEST_F(TransactionSerializeFixture, serialize_missingFields)
     expectSerializeException<std::invalid_argument>(tx, ERROR_MSG_RECEIVER);
 }
 
-TEST(SCArguments, add_emtpy_asOnData)
+TEST(SCArguments, add_empty_asOnData)
 {
     SCArguments args;
 

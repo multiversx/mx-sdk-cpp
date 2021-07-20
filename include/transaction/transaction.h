@@ -44,7 +44,7 @@ public:
 
     void sign(Signer const &signer);
 
-    bool verify(Address const &address);
+    bool verify();
 
     std::string serialize() const;
 
@@ -64,6 +64,5 @@ public:
     std::shared_ptr<std::string> m_signature;
     std::shared_ptr<uint32_t> m_options;
 };
-
 
 #endif //ERD_TRANSACTION_H
