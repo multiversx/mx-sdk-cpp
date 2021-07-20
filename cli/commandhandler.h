@@ -3,8 +3,10 @@
 
 #include <sodium.h>
 #include <iostream>
+
 #include "inputhandler/ext.h"
 #include "erdsdk.h"
+#include "config/cliconfig.h"
 
 namespace internal
 {
@@ -22,9 +24,11 @@ Transaction createTransaction(ih::wrapper::TransactionInputWrapper const &txWrap
              txWrapper.getOptions());
 }
 
-void signTransaction(Transaction &transaction, bytes const& seed)
+// TODO: replace keyFile param with template param once
+// we have key store or other key files implemented
+void signTransaction(Transaction &transaction, PemFileReader const &keyFile)
 {
-    Signer signer(seed);
+    Signer signer(keyFile.getSeed());
     transaction.sign(signer);
 }
 
@@ -49,9 +53,107 @@ void handleCreateSignedTransactionWithPemFile(cxxopts::ParseResult const &result
     PemFileReader pemReader(transactionInputWrapper.getInputFile());
 
     Transaction transaction = internal::createTransaction(transactionInputWrapper, pemReader.getAddress());
-    internal::signTransaction(transaction,pemReader.getSeed());
+    internal::signTransaction(transaction, pemReader);
 
     jsonFile.writeDataToFile(transaction.serialize());
+}
+
+void handleIssueESDT(cxxopts::ParseResult const &result)
+{
+    auto const config = CLIConfig().config();
+
+    auto const token = result["token"].as<std::string>();
+    auto const ticker = result["ticker"].as<std::string>();
+    auto const supply = result["supply"].as<std::string>();
+    auto const decimals = result["dec"].as<std::string>();
+    auto const gasPrice = result["gas-price"].as<uint64_t>();
+    auto const nonce = result["nonce"].as<uint64_t>();
+
+    auto const canFreeze = result["can-freeze"].as<bool>();
+    auto const canWipe = result["can-wipe"].as<bool>();
+    auto const canPause = result["can-pause"].as<bool>();
+    auto const canMint = result["can-mint"].as<bool>();
+    auto const canBurn = result["can-burn"].as<bool>();
+    auto const canChangeOwner = result["can-change-owner"].as<bool>();
+    auto const canUpgrade = result["can-upgrade"].as<bool>();
+    auto const canAddSpecialRoles = result["can-add-roles"].as<bool>();
+
+    auto const pemPath = result["pem"].as<std::string>();
+
+    PemFileReader const pemFileReader(pemPath);
+    Address const sender = pemFileReader.getAddress();
+    Address const receiver = Address(config.issueESDTSCAddress);
+
+    Transaction tx;
+    tx.m_nonce = nonce;
+    tx.m_sender = std::make_shared<Address>(sender);
+    tx.m_receiver = std::make_shared<Address>(receiver);
+    tx.m_gasPrice = gasPrice;
+    tx.m_chainID = config.chainID;
+
+    ESDTProperties const esdtProperties
+            {canFreeze,
+             canWipe,
+             canPause,
+             canMint,
+             canBurn,
+             canChangeOwner,
+             canUpgrade,
+             canAddSpecialRoles};
+
+    prepareTransactionForESDTIssuance(tx, token, ticker, supply, decimals, esdtProperties);
+    internal::signTransaction(tx, pemFileReader);
+
+    ProxyProvider proxy(config.proxyUrl);
+    auto const txHash =  proxy.send(tx).hash;
+    std::cerr<< "Transaction hash: " << txHash << "\n";
+}
+
+void handleTransferESDT(cxxopts::ParseResult const &result)
+{
+    auto const config = CLIConfig().config();
+
+    auto const nonce = result["nonce"].as<uint64_t>();
+    auto const gasPrice = result["gas-price"].as<uint64_t>();
+    auto const gasLimit = result["gas-limit"].as<uint64_t>();
+    auto const receiverAdr = result["receiver"].as<std::string>();
+    auto const token = result["token"].as<std::string>();
+    auto const value = result["value"].as<std::string>();
+    auto const function = result["function"].as<std::string>();
+    auto const args = result["args"].as<std::vector<std::string>>();
+
+    auto const pemPath = result["pem"].as<std::string>();
+
+    PemFileReader const pemFileReader(pemPath);
+    Address const sender = pemFileReader.getAddress();
+    Address const receiver = Address(receiverAdr);
+
+    Transaction tx;
+    tx.m_nonce = nonce;
+    tx.m_value = value;
+    tx.m_sender = std::make_shared<Address>(sender);
+    tx.m_receiver = std::make_shared<Address>(receiver);
+    tx.m_gasPrice = gasPrice;
+    tx.m_gasLimit = gasLimit;
+    tx.m_chainID = config.chainID;
+
+    prepareTransactionForESDTTransfer(tx, token, function);
+
+    if (!args.empty())
+    {
+        std::string txData (tx.m_data->begin(), tx.m_data->end());
+        for (auto const &arg : args)
+        {
+            txData += "@" + arg;
+        }
+        *tx.m_data = bytes(txData.begin(), txData.end());
+    }
+
+    internal::signTransaction(tx, pemFileReader);
+
+    ProxyProvider proxy(config.proxyUrl);
+    auto const txHash =  proxy.send(tx).hash;
+    std::cerr<< "Transaction hash: " << txHash << "\n";
 }
 
 void handleRequest(ih::ArgParsedResult const &parsedResult)
@@ -66,6 +168,16 @@ void handleRequest(ih::ArgParsedResult const &parsedResult)
         case ih::createSignedTransactionWithPemFile:
         {
             handleCreateSignedTransactionWithPemFile(parsedResult.result);
+            break;
+        }
+        case ih::issueESDT:
+        {
+            handleIssueESDT(parsedResult.result);
+            break;
+        }
+        case ih::transferESDT:
+        {
+            handleTransferESDT(parsedResult.result);
             break;
         }
         default:

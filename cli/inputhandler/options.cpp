@@ -1,7 +1,8 @@
 #include "options.h"
 
 CLIOptions::CLIOptions() :
-        m_optionsTx("erdcpp transaction [subcommand]", "Manage transactions\n[command]: transaction\n[subcommands]: new")
+        m_optionsTx("erdcpp transaction new", "Create and sign transactions\n[command]: transaction\n[subcommand]: new"),
+        m_optionsESDT()
 {
     initOptions();
 }
@@ -11,15 +12,15 @@ cxxopts::Options CLIOptions::transaction() const
     return m_optionsTx;
 }
 
-std::string CLIOptions::help() const
+OptionsESDT CLIOptions::esdt() const
 {
-    return helpTx();
+    return m_optionsESDT;
 }
 
-
-std::string CLIOptions::helpTx() const
+std::string CLIOptions::help() const
 {
-    return m_optionsTx.help();
+    return transaction().help() + "\n" +
+           esdt().help();
 }
 
 void CLIOptions::initOptions()

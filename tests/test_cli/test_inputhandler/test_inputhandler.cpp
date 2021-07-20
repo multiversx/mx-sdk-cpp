@@ -85,7 +85,7 @@ TEST(ArgHandler, parse_transaction_help_expectHelp)
     auto const res = argHandler.parse(argc, argv);
 
     EXPECT_EQ(res.requestType, ih::help);
-    EXPECT_EQ(res.help, options.helpTx());
+    EXPECT_EQ(res.help, options.transaction().help());
 }
 
 TEST(ArgHandler, parse_transaction_withoutSubArgument_expectInvalid)
