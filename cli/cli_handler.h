@@ -3,82 +3,13 @@
 
 #include <sodium.h>
 #include <iostream>
+#include <fstream>
 
 #include "inputhandler/ext.h"
+#include "cli_utility.h"
 #include "erdsdk.h"
 #include "config/cliconfig.h"
 
-class SecretKeyProvider
-{
-public:
-    explicit SecretKeyProvider(std::shared_ptr<ISecretKey> &&keyFile) :
-        m_keyFile(std::move(keyFile)) {};
-
-    bytes getSeed()
-    {
-        return m_keyFile->getSeed();
-    }
-    Address getAddress()
-    {
-        return m_keyFile->getAddress();
-    }
-
-private:
-    std::shared_ptr<ISecretKey> m_keyFile;
-};
-
-namespace internal
-{
-
-Transaction createTransaction(ih::wrapper::TransactionInputWrapper const &txWrapper, Address const& senderAddress)
-{
-    //TODO: Maybe in the future add a transaction builder here
-    return Transaction
-            (txWrapper.getNonce(), txWrapper.getValue(),
-             txWrapper.getReceiver(), senderAddress,
-             txWrapper.getReceiverName(), txWrapper.getSenderName(),
-             txWrapper.getGasPrice(), txWrapper.getGasLimit(),
-             txWrapper.getData(), txWrapper.getSignature(),
-             txWrapper.getChainId(), txWrapper.getVersion(),
-             txWrapper.getOptions());
-}
-
-void signTransaction(Transaction &transaction, SecretKeyProvider keyFile)
-{
-    Signer signer(keyFile.getSeed());
-    transaction.sign(signer);
-}
-
-SecretKeyProvider getSecretKeyFileFromInput(cxxopts::ParseResult const &input)
-{
-    auto const keyPath = input["key"].as<std::string>();
-    auto const fileExtension = IFile::getFileExtension(keyPath);
-
-    std::shared_ptr<ISecretKey> keyFileType;
-
-    if (fileExtension == "pem")
-    {
-        keyFileType = std::make_shared<PemFileReader>(keyPath);
-    }
-    else if (fileExtension == "json")
-    {
-        auto const password = input["password"].as<std::string>();
-
-        if (password.empty())
-        {
-            throw std::invalid_argument(ERROR_MSG_MISSING_PASSWORD);
-        }
-        keyFileType = std::make_shared<KeyFileReader>(keyPath, password);
-    }
-    else
-    {
-        throw std::invalid_argument(ERROR_MSG_FILE_EXTENSION_INVALID);
-    }
-
-    return SecretKeyProvider(std::move(keyFileType));
-}
-
-}
 
 namespace cli
 {
@@ -95,14 +26,16 @@ void handleCreateSignedTransaction(cxxopts::ParseResult const &result)
 {
     ih::wrapper::TransactionInputWrapper const transactionInputWrapper(result);
 
-    ih::JsonFile jsonFile(transactionInputWrapper.getOutputFile());
-    auto secretKeyFile = internal::getSecretKeyFileFromInput(result);
+    auto secretKeyFile = utility::getSecretKeyFileFromInput(result);
 
-    Transaction transaction = internal::createTransaction(transactionInputWrapper, secretKeyFile.getAddress());
-    internal::signTransaction(transaction, secretKeyFile);
+    Transaction transaction = utility::createTransaction(transactionInputWrapper, secretKeyFile.getAddress());
+    utility::signTransaction(transaction, secretKeyFile);
 
-    jsonFile.writeDataToFile(transaction.serialize());
-    std::cerr<<"here"<<"\n";
+    IFile file(transactionInputWrapper.getOutputFile(), "json");
+    std::ofstream outFile(file.getFilePath());
+    outFile << transaction.serialize();
+    outFile.close();
+    std::cerr << "Transaction created and written successfully!\n";
 }
 
 void handleIssueESDT(cxxopts::ParseResult const &result)
@@ -125,7 +58,7 @@ void handleIssueESDT(cxxopts::ParseResult const &result)
     auto const canUpgrade = result["can-upgrade"].as<bool>();
     auto const canAddSpecialRoles = result["can-add-roles"].as<bool>();
 
-    auto secretKeyFile = internal::getSecretKeyFileFromInput(result);
+    auto secretKeyFile = utility::getSecretKeyFileFromInput(result);
 
     Address const sender = secretKeyFile.getAddress();
     Address const receiver = Address(config.issueESDTSCAddress);
@@ -148,7 +81,7 @@ void handleIssueESDT(cxxopts::ParseResult const &result)
              canAddSpecialRoles};
 
     prepareTransactionForESDTIssuance(tx, token, ticker, supply, decimals, esdtProperties);
-    internal::signTransaction(tx, secretKeyFile);
+    utility::signTransaction(tx, secretKeyFile);
 
     ProxyProvider proxy(config.proxyUrl);
     auto const txHash =  proxy.send(tx).hash;
@@ -168,7 +101,7 @@ void handleTransferESDT(cxxopts::ParseResult const &result)
     auto const function = result["function"].as<std::string>();
     auto const args = result["args"].as<std::vector<std::string>>();
 
-    auto secretKeyFile = internal::getSecretKeyFileFromInput(result);
+    auto secretKeyFile = utility::getSecretKeyFileFromInput(result);
 
     Address const sender = secretKeyFile.getAddress();
     Address const receiver = Address(receiverAdr);
@@ -194,7 +127,7 @@ void handleTransferESDT(cxxopts::ParseResult const &result)
         *tx.m_data = bytes(txData.begin(), txData.end());
     }
 
-    internal::signTransaction(tx, secretKeyFile);
+    utility::signTransaction(tx, secretKeyFile);
 
     ProxyProvider proxy(config.proxyUrl);
     auto const txHash =  proxy.send(tx).hash;
