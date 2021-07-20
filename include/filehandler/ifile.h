@@ -6,22 +6,20 @@
 class IFile
 {
 public:
-    explicit IFile(std::string path);
+    explicit IFile(std::string path, std::string expectedExtension = "");
 
     const std::string &getFilePath() const;
 
 protected:
-    virtual void checkFile() const = 0;
+    virtual void checkFile() const;
 
     bool fileExists() const;
 
-    bool isFileExtension(std::string const &ext) const;
+    static std::string getFileExtension(std::string const &filePath);
 
 private:
-    std::string getFileExtension() const;
-
     std::string const m_filePath;
-
+    std::string const m_expectedExtension;
 };
 
 #endif

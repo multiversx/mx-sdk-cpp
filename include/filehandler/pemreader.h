@@ -19,9 +19,6 @@ public:
 
     bytes getSeed() const override;
 
-protected:
-    void checkFile() const override;
-
 private:
     std::string getFileContent() const;
 

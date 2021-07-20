@@ -10,6 +10,7 @@
 #include "transaction/scarguments.h"
 #include "account/account.h"
 #include "account/address.h"
+#include "filehandler/isecretkey.h"
 #include "filehandler/pemreader.h"
 #include "filehandler/keyfilereader.h"
 #include "provider/proxyprovider.h"

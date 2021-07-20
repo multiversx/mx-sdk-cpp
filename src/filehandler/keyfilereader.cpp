@@ -1,12 +1,11 @@
 #include "filehandler/keyfilereader.h"
 #include "cryptosignwrapper.h"
 #include "json/json.hpp"
-#include "errors.h"
+#include "common.h"
 #include "hex.h"
 
 #include <fstream>
 #include <stdexcept>
-
 
 namespace internal
 {
@@ -32,59 +31,24 @@ bytes deriveSecretKey(EncryptedData const &data, std::string const &password)
 
    return wrapper::crypto::aes128ctrDecrypt(derivedKeyFirstHalf, data.cipherText, data.iv);
 }
-
-template <typename T>
-void checkParam(T const &param, T const &expectedParam, errorMessage const &error)
-{
-    if (param != expectedParam)
-    {
-        throw std::invalid_argument
-                (error + "Expected: " + std::to_string(expectedParam) +", got: " + std::to_string(param));
-    }
-}
-
-template <>
-void checkParam<std::string>(std::string const &param, std::string const &expectedParam, errorMessage const &error)
-{
-    if (param != expectedParam)
-    {
-        throw std::invalid_argument
-                (error + "Expected: " + expectedParam +", got: " + param);
-    }
-}
-
 }
 
 KeyFileReader::KeyFileReader(std::string const &filePath, std::string const &password) :
-        IFile(filePath), ISecretKeyProvider()
+        IFile(filePath, "json"), ISecretKeyProvider()
 {
     try
     {
-        KeyFileReader::checkFile();
-
         auto const data = getFileContent();
 
-        internal::checkParam(data.version, KEY_FILE_VERSION, ERROR_MSG_KEY_FILE_VERSION);
-        internal::checkParam(data.cipher, KEY_FILE_CIPHER_ALGORITHM, ERROR_MSG_KEY_FILE_CIPHER);
-        internal::checkParam(data.kdf, KEY_FILE_DERIVATION_FUNCTION, ERROR_MSG_KEY_FILE_DERIVATION_FUNCTION);
+        util::checkParam(data.version, KEY_FILE_VERSION, ERROR_MSG_KEY_FILE_VERSION);
+        util::checkParam(data.cipher, KEY_FILE_CIPHER_ALGORITHM, ERROR_MSG_KEY_FILE_CIPHER);
+        util::checkParam(data.kdf, KEY_FILE_DERIVATION_FUNCTION, ERROR_MSG_KEY_FILE_DERIVATION_FUNCTION);
 
         m_secretKey = internal::deriveSecretKey(data, password);
     }
     catch (std::exception const &error)
     {
         throw;
-    }
-}
-
-void KeyFileReader::checkFile() const
-{
-    if (!IFile::fileExists())
-    {
-        throw std::invalid_argument(ERROR_MSG_FILE_DOES_NOT_EXIST + getFilePath());
-    }
-    if (!IFile::isFileExtension("json"))
-    {
-        throw std::invalid_argument(ERROR_MSG_FILE_EXTENSION_INVALID);
     }
 }
 
