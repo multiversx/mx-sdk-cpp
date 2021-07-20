@@ -30,7 +30,7 @@ bytes scrypt(std::string const &password, KdfParams const &kdfParams);
 
 std::string hmacsha256(bytes const &key, std::string const &cipherText);
 
-bytes aes128ctrDecrypt(bytes const &key, std::string const &cipherText, std::string const &iv);
+bytes aes128ctrDecrypt(bytes const &key, std::string cipherText, std::string const &iv);
 
 std::string sha3Keccak(std::string const &message);
 }
