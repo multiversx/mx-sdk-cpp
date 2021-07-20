@@ -5,18 +5,19 @@
 #include <vector>
 
 #include "ifile.h"
+#include "isecretkey.h"
 #include "account/address.h"
 #include "internal/internal.h"
 
 
-class PemFileReader : public IFile
+class PemFileReader : public IFile, public ISecretKeyProvider
 {
 public:
     explicit PemFileReader(std::string const &filePath);
 
-    Address getAddress() const;
+    Address getAddress() const override;
 
-    bytes getSeed() const;
+    bytes getSeed() const override;
 
 protected:
     void checkFile() const override;

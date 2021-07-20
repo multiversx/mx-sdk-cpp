@@ -9,7 +9,7 @@
 #include <stdexcept>
 
 PemFileReader::PemFileReader(std::string const &filePath) :
-        IFile(filePath)
+        IFile(filePath), ISecretKeyProvider()
 {
     try
     {

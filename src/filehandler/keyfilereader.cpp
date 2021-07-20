@@ -56,7 +56,7 @@ void checkParam<std::string>(std::string const &param, std::string const &expect
 }
 
 KeyFileReader::KeyFileReader(std::string const &filePath, std::string const &password) :
-        IFile(filePath)
+        IFile(filePath), ISecretKeyProvider()
 {
     try
     {
