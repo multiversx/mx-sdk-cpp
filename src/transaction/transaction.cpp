@@ -96,7 +96,7 @@ void Transaction::sign(Signer const &signer)
         m_signature = nullptr;
     }
 
-    std::string txSerialized = internal::getTxSerializedHashIfRequired(*this);
+    std::string const txSerialized = internal::getTxSerializedHashIfRequired(*this);
     std::string const tmpSign = signer.getSignature(txSerialized);
     std::string const signature = util::stringToHex(tmpSign);
 

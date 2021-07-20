@@ -15,6 +15,7 @@ errorMessage const ERROR_MSG_GAS_PRICE = "Invalid gas price.";
 errorMessage const ERROR_MSG_GAS_LIMIT = "Invalid gas limit.";
 errorMessage const ERROR_MSG_CHAIN_ID = "Invalid chain id.";
 errorMessage const ERROR_MSG_VERSION = "Invalid version.";
+errorMessage const ERROR_MSG_SIGNATURE = "Missing signature.";
 errorMessage const ERROR_MSG_SODIUM_INIT = "Could not initialize sodium library.";
 
 errorMessage const ERROR_MSG_BECH32 = "Invalid bech32 address.";
