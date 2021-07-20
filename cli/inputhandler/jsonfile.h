@@ -13,9 +13,6 @@ public:
     explicit JsonFile(std::string const &filePath);
 
     void writeDataToFile(std::string const &data);
-
-protected:
-    void checkFile() const override;
 };
 }
 

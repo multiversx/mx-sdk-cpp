@@ -120,7 +120,7 @@ TEST(ArgHandler, parse_transaction_new_noData_expectCreateTransaction)
     ih::ArgHandler argHandler;
     auto const res = argHandler.parse(argc, argv);
 
-    EXPECT_EQ(res.requestType, ih::createSignedTransactionWithPemFile);
+    EXPECT_EQ(res.requestType, ih::createSignedTransaction);
     EXPECT_EQ(res.result["nonce"].as<uint64_t>(), 3U);
     EXPECT_EQ(res.result["value"].as<std::string>(), "31");
     EXPECT_EQ(res.result["receiver"].as<std::string>(), "erd1");
@@ -152,7 +152,7 @@ TEST(ArgHandler, parse_transaction_new_withData_expectCreateTransaction)
 
     auto const res = argHandler.parse(argc, argv);
 
-    EXPECT_EQ(res.requestType, ih::createSignedTransactionWithPemFile);
+    EXPECT_EQ(res.requestType, ih::createSignedTransaction);
     EXPECT_EQ(res.result["nonce"].as<uint64_t>(), 3U);
     EXPECT_EQ(res.result["value"].as<std::string>(), "31");
     EXPECT_EQ(res.result["receiver"].as<std::string>(), "erd1");

@@ -1,13 +1,13 @@
-#ifndef I_SECRET_KEY_PROVIDER_H
-#define I_SECRET_KEY_PROVIDER_H
+#ifndef I_SECRET_KEY_H
+#define I_SECRET_KEY_H
 
 #include "account/address.h"
 #include "internal/internal.h"
 
-class ISecretKeyProvider
+class ISecretKey
 {
 public:
-    explicit ISecretKeyProvider() = default;
+    explicit ISecretKey() = default;
 
     virtual Address getAddress() const = 0;
 

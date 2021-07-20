@@ -10,7 +10,7 @@ enum RequestType
 {
     invalid,
     help,
-    createSignedTransactionWithPemFile,
+    createSignedTransaction,
     issueESDT,
     transferESDT
 };

@@ -9,8 +9,7 @@
 #include "account/address.h"
 #include "internal/internal.h"
 
-
-class PemFileReader : public IFile, public ISecretKeyProvider
+class PemFileReader : protected IFile, public ISecretKey
 {
 public:
     explicit PemFileReader(std::string const &filePath);

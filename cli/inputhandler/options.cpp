@@ -42,7 +42,8 @@ void CLIOptions::initOptionsTx()
             ("chainID", "Chain identifier", cxxopts::value<std::string>()->default_value("T"))
             ("version", "Transaction version", cxxopts::value<uint64_t>()->default_value("1"))
             ("options", "Transaction options", cxxopts::value<uint32_t>()->default_value("0"))
-            ("pem", "Pem keyfile", cxxopts::value<std::string>())
+            ("key", "File containing the private key (pem or keyfile)", cxxopts::value<std::string>())
+            ("password", "Password for key file, not applicable for pem", cxxopts::value<std::string>()->default_value(""))
             ("outfile", "Json file where the output will be stored", cxxopts::value<std::string>());
 }
 

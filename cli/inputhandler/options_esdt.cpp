@@ -37,7 +37,8 @@ void OptionsESDT::initOptionsIssue()
             ("supply", "Initial supply", cxxopts::value<std::string>())
             ("dec", "Number of decimals", cxxopts::value<std::string>())
             ("gas-price", "Gas price", cxxopts::value<uint64_t>())
-            ("pem", "Sender's pem keyfile", cxxopts::value<std::string>())
+            ("key", "Sender's private key (pem or keyfile)", cxxopts::value<std::string>())
+            ("password", "Password for key file, not applicable for pem", cxxopts::value<std::string>()->default_value(""))
             ("nonce", "Sender account's nonce", cxxopts::value<uint64_t>())
             ("can-freeze", "[Can freeze] property (default: false)", cxxopts::value<bool>()->default_value("false"))
             ("can-wipe", "[Can wipe] property (default: false)", cxxopts::value<bool>()->default_value("false"))
@@ -60,6 +61,7 @@ void OptionsESDT::initOptionsTransfer()
             ("value", "ESDT value to transfer", cxxopts::value<std::string>())
             ("function", "Smart contract function", cxxopts::value<std::string>()->default_value(""))
             ("args", "Smart contract function args, hex encoded, comma separated, e.g.: 0a,3f6f", cxxopts::value<std::vector<std::string>>()->default_value(""))
-            ("pem", "Pem keyfile", cxxopts::value<std::string>());
+            ("key", "Sender's private key (pem or keyfile)", cxxopts::value<std::string>())
+            ("password", "Password for key file, not applicable for pem", cxxopts::value<std::string>()->default_value(""));
 }
 

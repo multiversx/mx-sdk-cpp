@@ -34,7 +34,7 @@ bytes deriveSecretKey(EncryptedData const &data, std::string const &password)
 }
 
 KeyFileReader::KeyFileReader(std::string const &filePath, std::string const &password) :
-        IFile(filePath, "json"), ISecretKeyProvider()
+        IFile(filePath, "json"), ISecretKey()
 {
     try
     {

@@ -7,23 +7,9 @@
 namespace ih
 {
 JsonFile::JsonFile(std::string const &filePath) :
-        IFile(filePath)
-{
-    try
-    {
-        JsonFile::checkFile();
-    }
-    catch (std::exception const &error)
-    {
-        throw;
-    }
-}
+        IFile(filePath, "json")
+{}
 
-void JsonFile::checkFile() const
-{
-    if (!IFile::fileExists()) throw std::invalid_argument(ERROR_MSG_FILE_DOES_NOT_EXIST + getFilePath());
-    if (!IFile::isFileExtension("json")) throw std::invalid_argument(ERROR_MSG_FILE_EXTENSION_INVALID);
-}
 
 void JsonFile::writeDataToFile(std::string const &data)
 {

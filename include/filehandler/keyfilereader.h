@@ -9,7 +9,7 @@
 #include "account/address.h"
 #include "internal/internal.h"
 
-class KeyFileReader : public IFile, public ISecretKeyProvider
+class KeyFileReader : protected IFile, public ISecretKey
 {
 public:
     explicit KeyFileReader(std::string const &filePath, std::string const &password);

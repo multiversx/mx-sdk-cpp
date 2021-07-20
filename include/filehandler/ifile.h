@@ -10,12 +10,12 @@ public:
 
     const std::string &getFilePath() const;
 
+    static std::string getFileExtension(std::string const &filePath);
+
 protected:
     virtual void checkFile() const;
 
     bool fileExists() const;
-
-    static std::string getFileExtension(std::string const &filePath);
 
 private:
     std::string const m_filePath;
