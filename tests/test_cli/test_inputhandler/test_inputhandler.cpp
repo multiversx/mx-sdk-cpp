@@ -328,9 +328,11 @@ TEST(ArgHandler, parse_transaction_new_invalidData_expectErrorData)
     EXPECT_PARSE_ERROR_MISSING_ARG<std::invalid_argument>(argc, argv, ERROR_MSG_EMPTY_VALUE, "data");
 }
 
+// Warning: This test only passes if default config network chainID is set to Testnet
+// Reason: Expected signature is for a serialized transaction which has chainID = "T"
 TEST(HandleCreateSignedTransaction, withPemFile_expectCorrectWrittenTx)
 {
-    int const argc = 12;
+    int const argc = 11;
     char *argv[argc];
 
     argv[0] = (char *) "erdcpp";
@@ -342,9 +344,8 @@ TEST(HandleCreateSignedTransaction, withPemFile_expectCorrectWrittenTx)
     argv[6] = (char *) "--gas-price=1000000000";
     argv[7] = (char *) "--gas-limit=50000";
     argv[8] = (char *) "--data=test";
-    argv[9] = (char *) "--chainID=T";
-    argv[10] = (char *) "--key=..//..//testData//keysValid1.pem";
-    argv[11] = (char *) "--outfile=..//..//testData//outputJson.json";
+    argv[9] = (char *) "--key=..//..//testData//keysValid1.pem";
+    argv[10] = (char *) "--outfile=..//..//testData//outputJson.json";
 
     ih::ArgHandler argHandler;
     auto const res = argHandler.parse(argc, argv).result;

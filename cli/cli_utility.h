@@ -3,6 +3,7 @@
 
 #include "secretkeyprovider.h"
 #include "inputhandler/ext.h"
+#include "config/cliconfig.h"
 #include "erdsdk.h"
 
 namespace cli
@@ -10,7 +11,9 @@ namespace cli
 namespace utility
 {
 
-Transaction createTransaction(ih::wrapper::TransactionInputWrapper const &txWrapper, std::shared_ptr<ISecretKey> const &keyFile)
+Transaction createTransaction(ih::wrapper::TransactionInputWrapper const &txWrapper,
+                              Config const &config,
+                              std::shared_ptr<ISecretKey> const &keyFile)
 {
     return Transaction
             (txWrapper.getNonce(),
@@ -23,7 +26,7 @@ Transaction createTransaction(ih::wrapper::TransactionInputWrapper const &txWrap
              txWrapper.getGasLimit(),
              txWrapper.getData(),
              txWrapper.getSignature(),
-             txWrapper.getChainId(),
+             config.chainID,
              txWrapper.getVersion(),
              txWrapper.getOptions());
 }

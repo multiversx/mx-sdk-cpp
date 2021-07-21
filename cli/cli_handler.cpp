@@ -20,16 +20,18 @@ void init()
 
 void handleCreateSignedTransaction(cxxopts::ParseResult const &result)
 {
-    ih::wrapper::TransactionInputWrapper const transactionInputWrapper(result);
-    auto keyFile = std::make_shared<SecretKeyProvider>(result);
+    auto const config = CLIConfig().config();
+    auto const keyFile = std::make_shared<SecretKeyProvider>(result);
+    ih::wrapper::TransactionInputWrapper const txWrapper(result);
 
-    Transaction transaction = utility::createTransaction(transactionInputWrapper, keyFile);
+    Transaction transaction = utility::createTransaction(txWrapper, config, keyFile);
     utility::signTransaction(transaction, keyFile);
 
-    IFile file(transactionInputWrapper.getOutputFile(), "json");
+    IFile file(txWrapper.getOutputFile(), "json");
     std::ofstream outFile(file.getFilePath());
     outFile << transaction.serialize();
     outFile.close();
+
     std::cerr << "Transaction created and written successfully!\n";
 }
 
