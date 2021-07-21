@@ -9,7 +9,7 @@
 #define YELLOW(x) BEGIN x END
 
 CLIConfig::CLIConfig(std::string tomlConfigPath):
-    m_tomlPath(tomlConfigPath) {}
+    m_tomlPath(std::move(tomlConfigPath)) {}
 
 Config CLIConfig::config() const
 {

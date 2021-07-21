@@ -26,10 +26,10 @@ void handleCreateSignedTransaction(cxxopts::ParseResult const &result)
 {
     ih::wrapper::TransactionInputWrapper const transactionInputWrapper(result);
 
-    auto secretKeyFile = utility::getSecretKeyFileFromInput(result);
+    auto keyFile = std::make_shared<SecretKeyProvider>(result);
 
-    Transaction transaction = utility::createTransaction(transactionInputWrapper, secretKeyFile.getAddress());
-    utility::signTransaction(transaction, secretKeyFile);
+    Transaction transaction = utility::createTransaction(transactionInputWrapper, keyFile);
+    utility::signTransaction(transaction, keyFile);
 
     IFile file(transactionInputWrapper.getOutputFile(), "json");
     std::ofstream outFile(file.getFilePath());
@@ -58,9 +58,9 @@ void handleIssueESDT(cxxopts::ParseResult const &result)
     auto const canUpgrade = result["can-upgrade"].as<bool>();
     auto const canAddSpecialRoles = result["can-add-roles"].as<bool>();
 
-    auto secretKeyFile = utility::getSecretKeyFileFromInput(result);
+    auto keyFile = std::make_shared<SecretKeyProvider>(result);
 
-    Address const sender = secretKeyFile.getAddress();
+    Address const sender = keyFile->getAddress();
     Address const receiver = Address(config.issueESDTSCAddress);
 
     Transaction tx;
@@ -81,7 +81,7 @@ void handleIssueESDT(cxxopts::ParseResult const &result)
              canAddSpecialRoles};
 
     prepareTransactionForESDTIssuance(tx, token, ticker, supply, decimals, esdtProperties);
-    utility::signTransaction(tx, secretKeyFile);
+    utility::signTransaction(tx, keyFile);
 
     ProxyProvider proxy(config.proxyUrl);
     auto const txHash =  proxy.send(tx).hash;
@@ -101,9 +101,9 @@ void handleTransferESDT(cxxopts::ParseResult const &result)
     auto const function = result["function"].as<std::string>();
     auto const args = result["args"].as<std::vector<std::string>>();
 
-    auto secretKeyFile = utility::getSecretKeyFileFromInput(result);
+    auto keyFile = std::make_shared<SecretKeyProvider>(result);
 
-    Address const sender = secretKeyFile.getAddress();
+    Address const sender = keyFile->getAddress();
     Address const receiver = Address(receiverAdr);
 
     Transaction tx;
@@ -127,7 +127,7 @@ void handleTransferESDT(cxxopts::ParseResult const &result)
         *tx.m_data = bytes(txData.begin(), txData.end());
     }
 
-    utility::signTransaction(tx, secretKeyFile);
+    utility::signTransaction(tx, keyFile);
 
     ProxyProvider proxy(config.proxyUrl);
     auto const txHash =  proxy.send(tx).hash;

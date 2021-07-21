@@ -112,7 +112,7 @@ TEST(ArgHandler, parse_transaction_new_noData_expectCreateTransaction)
     argv[5] = (char *) "--receiver=erd1";
     argv[6] = (char *) "--gas-price=4";
     argv[7] = (char *) "--gas-limit=44";
-    argv[8] = (char *) "--pem=file1";
+    argv[8] = (char *) "--key=file1";
     argv[9] = (char *) "--outfile=file2";
     argv[10] = (char *) "--sender-name=Joe";
     argv[11] = (char *) "--receiver-name=Doe";
@@ -126,7 +126,7 @@ TEST(ArgHandler, parse_transaction_new_noData_expectCreateTransaction)
     EXPECT_EQ(res.result["receiver"].as<std::string>(), "erd1");
     EXPECT_EQ(res.result["gas-price"].as<uint64_t>(), 4U);
     EXPECT_EQ(res.result["gas-limit"].as<uint64_t>(), 44U);
-    EXPECT_EQ(res.result["pem"].as<std::string>(), "file1");
+    EXPECT_EQ(res.result["key"].as<std::string>(), "file1");
     EXPECT_EQ(res.result["outfile"].as<std::string>(), "file2");
     EXPECT_EQ(res.result["sender-name"].as<std::string>(), "Joe");
     EXPECT_EQ(res.result["receiver-name"].as<std::string>(), "Doe");
@@ -144,7 +144,7 @@ TEST(ArgHandler, parse_transaction_new_withData_expectCreateTransaction)
     argv[5] = (char *) "--receiver=erd1";
     argv[6] = (char *) "--gas-price=31";
     argv[7] = (char *) "--gas-limit=31";
-    argv[8] = (char *) "--pem=test1";
+    argv[8] = (char *) "--key=test1";
     argv[9] = (char *) "--outfile=test2";
     argv[10] = (char *) "--data=testData";
 
@@ -158,7 +158,7 @@ TEST(ArgHandler, parse_transaction_new_withData_expectCreateTransaction)
     EXPECT_EQ(res.result["receiver"].as<std::string>(), "erd1");
     EXPECT_EQ(res.result["gas-price"].as<uint64_t>(), 31U);
     EXPECT_EQ(res.result["gas-limit"].as<uint64_t>(), 31U);
-    EXPECT_EQ(res.result["pem"].as<std::string>(), "test1");
+    EXPECT_EQ(res.result["key"].as<std::string>(), "test1");
     EXPECT_EQ(res.result["outfile"].as<std::string>(), "test2");
     EXPECT_EQ(res.result["data"].as<std::string>(), "testData");
 }
@@ -197,7 +197,7 @@ TEST(ArgHandler, parse_transaction_new_invalidValue_expectErrorValue)
     argv[5] = (char *) "--receiver=\"da\"";
     argv[6] = (char *) "--gas-price=31";
     argv[7] = (char *) "--gas-limit=31";
-    argv[8] = (char *) "--pem=\"dd\"";
+    argv[8] = (char *) "--key=\"dd\"";
     argv[9] = (char *) "--outfile=\"dd\"";
     argv[10] = (char *) "--data=\"dd\"";
 
@@ -217,7 +217,7 @@ TEST(ArgHandler, parse_transaction_new_invalidReceiver_expectErrorReceiver)
     argv[5] = (char *) "--receiver=";
     argv[6] = (char *) "--gas-price=31";
     argv[7] = (char *) "--gas-limit=31";
-    argv[8] = (char *) "--pem=\"dd\"";
+    argv[8] = (char *) "--key=\"dd\"";
     argv[9] = (char *) "--outfile=\"dd\"";
     argv[10] = (char *) "--data=\"dd\"";
 
@@ -281,11 +281,11 @@ TEST(ArgHandler, parse_transaction_new_invalidPemInput_expectErrorPem)
     argv[5] = (char *) "--receiver=address";
     argv[6] = (char *) "--gas-price=1000";
     argv[7] = (char *) "--gas-limit=700";
-    argv[8] = (char *) "--pem=";
+    argv[8] = (char *) "--key=";
     argv[9] = (char *) "--outfile=\"dd\"";
     argv[10] = (char *) "--data=\"dd\"";
 
-    EXPECT_PARSE_ERROR_MISSING_ARG<std::invalid_argument>(argc, argv, ERROR_MSG_EMPTY_VALUE, "pem");
+    EXPECT_PARSE_ERROR_MISSING_ARG<std::invalid_argument>(argc, argv, ERROR_MSG_EMPTY_VALUE, "key");
 }
 
 TEST(ArgHandler, parse_transaction_new_invalidJsonOutput_expectErrorJson)
@@ -301,7 +301,7 @@ TEST(ArgHandler, parse_transaction_new_invalidJsonOutput_expectErrorJson)
     argv[5] = (char *) "--receiver=address";
     argv[6] = (char *) "--gas-price=1000";
     argv[7] = (char *) "--gas-limit=700";
-    argv[8] = (char *) "--pem=someFile";
+    argv[8] = (char *) "--key=someFile";
     argv[9] = (char *) "--outfile=";
     argv[10] = (char *) "--data=\"dd\"";
 
@@ -321,7 +321,7 @@ TEST(ArgHandler, parse_transaction_new_invalidData_expectErrorData)
     argv[5] = (char *) "--receiver=address";
     argv[6] = (char *) "--gas-price=1000";
     argv[7] = (char *) "--gas-limit=700";
-    argv[8] = (char *) "--pem=someFile";
+    argv[8] = (char *) "--key=someFile";
     argv[9] = (char *) "--outfile=otherFile";
     argv[10] = (char *) "--data=";
 
@@ -342,11 +342,11 @@ TEST(JsonFileHandler, writeOutputFile)
     argv[5] = (char *) "--receiver=erd10536tc3s886yqxtln74u6mztuwl5gy9k9gp8fttxda0klgxg979srtg5wt";
     argv[6] = (char *) "--gas-price=1000000000";
     argv[7] = (char *) "--gas-limit=50000";
-    argv[8] = (char *) "--pem=someFile";
+    argv[8] = (char *) "--key=someFile";
     argv[9] = (char *) "--outfile=otherFile";
     argv[10] = (char *) "--data=test";
     argv[11] = (char *) "--chainID=T";
-    argv[12] = (char *) "--pem=..//..//testData//keysValid1.pem";
+    argv[12] = (char *) "--key=..//..//testData//keysValid1.pem";
     argv[13] = (char *) "--outfile=..//..//testData//outputJson.json";
 
     ih::ArgHandler argHandler;
@@ -354,7 +354,7 @@ TEST(JsonFileHandler, writeOutputFile)
 
     ih::wrapper::TransactionInputWrapper const transactionWrapper(res.result);
     PemFileReader pemHandler(transactionWrapper.getInputFile());
-    ih::JsonFile jsonFile(transactionWrapper.getOutputFile());
+    std::ofstream outFile(transactionWrapper.getOutputFile());
 
     Transaction transaction(transactionWrapper.getNonce(), transactionWrapper.getValue(),
                             transactionWrapper.getReceiver(), pemHandler.getAddress(),
@@ -368,7 +368,8 @@ TEST(JsonFileHandler, writeOutputFile)
     transaction.sign(signer);
     std::string const txSerialized = transaction.serialize();
 
-    jsonFile.writeDataToFile(txSerialized);
+    outFile << txSerialized;
+    outFile.close();
 
     std::string writtenTx;
     std::ifstream inFile(transactionWrapper.getOutputFile());

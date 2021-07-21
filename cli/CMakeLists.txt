@@ -3,10 +3,17 @@ include_directories(inputhandler)
 
 add_subdirectory(inputhandler)
 
-set(HEADER_FILES commandhandler.h 
+set(HEADER_FILES cli_handler.h
+                 cli_utility.h 
+                 secretkeyprovider.h
                  config/cliconfig.h)
-
-add_executable(erdcpp main.cpp config/cliconfig.cpp ${HEADER_FILES})
+                 
+set(SOURCE_FILES main.cpp
+                 secretkeyprovider.cpp
+                 config/cliconfig.cpp )
+                 
+add_executable(erdcpp ${SOURCE_FILES}
+                      ${HEADER_FILES})
 
 target_link_libraries(erdcpp PUBLIC inputhandler)
 target_link_libraries(erdcpp PUBLIC utils)

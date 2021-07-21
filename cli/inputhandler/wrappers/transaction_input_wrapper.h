@@ -105,7 +105,7 @@ public:
 
     std::string getInputFile() const
     {
-        return getInputData()["pem"].as<std::string>();
+        return getInputData()["key"].as<std::string>();
     }
 
     std::string getOutputFile() const
