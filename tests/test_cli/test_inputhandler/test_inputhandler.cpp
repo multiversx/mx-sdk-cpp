@@ -3,6 +3,7 @@
 
 #include "gtest/gtest.h"
 #include "inputhandler/ext.h"
+#include "cli_handler.h"
 #include "utils/ext.h"
 
 template <typename T>
@@ -162,7 +163,6 @@ TEST(ArgHandler, parse_transaction_new_withData_expectCreateTransaction)
     EXPECT_EQ(res.result["outfile"].as<std::string>(), "test2");
     EXPECT_EQ(res.result["data"].as<std::string>(), "testData");
 }
-
 
 TEST(ArgHandler, parse_transaction_new_invalidNonce_expectErrorNonce)
 {
@@ -328,10 +328,9 @@ TEST(ArgHandler, parse_transaction_new_invalidData_expectErrorData)
     EXPECT_PARSE_ERROR_MISSING_ARG<std::invalid_argument>(argc, argv, ERROR_MSG_EMPTY_VALUE, "data");
 }
 
-
-TEST(JsonFileHandler, writeOutputFile)
+TEST(HandleCreateSignedTransaction, withPemFile_expectCorrectWrittenTx)
 {
-    int const argc = 14;
+    int const argc = 12;
     char *argv[argc];
 
     argv[0] = (char *) "erdcpp";
@@ -342,42 +341,21 @@ TEST(JsonFileHandler, writeOutputFile)
     argv[5] = (char *) "--receiver=erd10536tc3s886yqxtln74u6mztuwl5gy9k9gp8fttxda0klgxg979srtg5wt";
     argv[6] = (char *) "--gas-price=1000000000";
     argv[7] = (char *) "--gas-limit=50000";
-    argv[8] = (char *) "--key=someFile";
-    argv[9] = (char *) "--outfile=otherFile";
-    argv[10] = (char *) "--data=test";
-    argv[11] = (char *) "--chainID=T";
-    argv[12] = (char *) "--key=..//..//testData//keysValid1.pem";
-    argv[13] = (char *) "--outfile=..//..//testData//outputJson.json";
+    argv[8] = (char *) "--data=test";
+    argv[9] = (char *) "--chainID=T";
+    argv[10] = (char *) "--key=..//..//testData//keysValid1.pem";
+    argv[11] = (char *) "--outfile=..//..//testData//outputJson.json";
 
     ih::ArgHandler argHandler;
-    auto const res = argHandler.parse(argc, argv);
+    auto const res = argHandler.parse(argc, argv).result;
 
-    ih::wrapper::TransactionInputWrapper const transactionWrapper(res.result);
-    PemFileReader pemHandler(transactionWrapper.getInputFile());
-    std::ofstream outFile(transactionWrapper.getOutputFile());
-
-    Transaction transaction(transactionWrapper.getNonce(), transactionWrapper.getValue(),
-                            transactionWrapper.getReceiver(), pemHandler.getAddress(),
-                            transactionWrapper.getReceiverName(), transactionWrapper.getSenderName(),
-                            transactionWrapper.getGasPrice(), transactionWrapper.getGasLimit(),
-                            transactionWrapper.getData(),
-                            transactionWrapper.getSignature(), transactionWrapper.getChainId(),
-                            transactionWrapper.getVersion(), transactionWrapper.getOptions());
-
-    Signer signer(pemHandler.getSeed());
-    transaction.sign(signer);
-    std::string const txSerialized = transaction.serialize();
-
-    outFile << txSerialized;
-    outFile.close();
+    cli::handleCreateSignedTransaction(res);
 
     std::string writtenTx;
-    std::ifstream inFile(transactionWrapper.getOutputFile());
+    std::ifstream inFile(res["outfile"].as<std::string>());
     std::getline(inFile, writtenTx);
 
-    std::string const expectedTxSerialized = "{\"nonce\":5,\"value\":\"10000000000000000000\",\"receiver\":\"erd10536tc3s886yqxtln74u6mztuwl5gy9k9gp8fttxda0klgxg979srtg5wt\",\"sender\":\"erd1sjsk3n2d0krq3pyxxtgf0q7j3t56sgusqaujj4n82l39t9h7jers6gslr4\",\"gasPrice\":1000000000,\"gasLimit\":50000,\"data\":\"dGVzdA==\",\"signature\":\"62af8fa927e4f1ebd64fb8d7cca8aac9d5d33fefa4b185d44bb16ecefc2a7214304b4654406fe76fa36207fbb91f245586f66500cc554a3eb798faab8c435706\",\"chainID\":\"T\",\"version\":1}";
-    EXPECT_EQ(txSerialized, expectedTxSerialized);
-    EXPECT_EQ(writtenTx, expectedTxSerialized);
+    EXPECT_EQ(writtenTx, "{\"nonce\":5,\"value\":\"10000000000000000000\",\"receiver\":\"erd10536tc3s886yqxtln74u6mztuwl5gy9k9gp8fttxda0klgxg979srtg5wt\",\"sender\":\"erd1sjsk3n2d0krq3pyxxtgf0q7j3t56sgusqaujj4n82l39t9h7jers6gslr4\",\"gasPrice\":1000000000,\"gasLimit\":50000,\"data\":\"dGVzdA==\",\"signature\":\"62af8fa927e4f1ebd64fb8d7cca8aac9d5d33fefa4b185d44bb16ecefc2a7214304b4654406fe76fa36207fbb91f245586f66500cc554a3eb798faab8c435706\",\"chainID\":\"T\",\"version\":1}");
 }
 
 //TODO: Create CMake function to automatically run all tests

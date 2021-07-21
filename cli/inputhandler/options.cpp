@@ -1,7 +1,7 @@
 #include "options.h"
 
 CLIOptions::CLIOptions() :
-        m_optionsTx("erdcpp transaction new", "Create and sign transactions\n[command]: transaction\n[subcommand]: new"),
+        m_optionsTx("erdcpp transaction new", "Create signed transactions\n[command]: transaction\n[subcommand]: new"),
         m_optionsESDT()
 {
     initOptions();
