@@ -15,6 +15,6 @@ constexpr auto NETWORK_CONFIG_DEFAULT_ESDT_ISSUE_SC_ADDRESS = "erd1qqqqqqqqqqqqq
 // 4. Testnet has not been reset (e.g.: tested hash transaction still exists)
 // If all of the above conditions are satisfied, one might turn this flag ON
 // resulting on successfully executed tests, otherwise the behavior is undefined
-#define HTTP_PRECONDITIONS OFF
+#define GTESTS_HTTPS_PRECONDITIONS OFF
 
 #endif
