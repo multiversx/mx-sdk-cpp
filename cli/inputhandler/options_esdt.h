@@ -1,5 +1,5 @@
-#ifndef CLI_OPTIONS_ESDT_H
-#define CLI_OPTIONS_ESDT_H
+#ifndef ERD_CLI_OPTIONS_ESDT_H
+#define ERD_CLI_OPTIONS_ESDT_H
 
 #include "cliparser/cxxopts.hpp"
 

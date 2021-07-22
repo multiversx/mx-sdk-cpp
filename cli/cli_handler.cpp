@@ -2,6 +2,7 @@
 #include "cli_utility.h"
 #include "erdsdk.h"
 #include "config/cliconfig.h"
+#include "secretkeyprovider.h"
 
 #include <sodium.h>
 #include <iostream>

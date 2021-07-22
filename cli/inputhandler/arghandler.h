@@ -1,5 +1,5 @@
-#ifndef ARGHANDLER_H
-#define ARGHANDLER_H
+#ifndef ERD_CLI_ARG_HANDLER_H
+#define ERD_CLI_ARG_HANDLER_H
 
 #include "utils/errors.h"
 #include "options.h"

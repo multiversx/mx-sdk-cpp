@@ -1,5 +1,5 @@
-#ifndef SECRET_KEY_PROVIDER_H
-#define SECRET_KEY_PROVIDER_H
+#ifndef ERD_CLI_SECRET_KEY_PROVIDER_H
+#define ERD_CLI_SECRET_KEY_PROVIDER_H
 
 #include "inputhandler/options.h"
 #include "filehandler/isecretkey.h"

@@ -10,6 +10,7 @@ set(HEADER_FILES cli_handler.h
                  
 set(SOURCE_FILES main.cpp
                  cli_handler.cpp
+                 cli_utility.cpp
                  secretkeyprovider.cpp
                  config/cliconfig.cpp )
                  

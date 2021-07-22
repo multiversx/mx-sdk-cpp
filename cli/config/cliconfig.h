@@ -1,5 +1,5 @@
-#ifndef ERD_CLI_NETWORK_CONFIG_H
-#define ERD_CLI_NETWORK_CONFIG_H
+#ifndef ERD_CLI_CONFIG_H
+#define ERD_CLI_CONFIG_H
 
 #include <string>
 
