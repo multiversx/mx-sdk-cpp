@@ -21,13 +21,14 @@ void init()
 void handleCreateSignedTransaction(cxxopts::ParseResult const &result)
 {
     auto const config = CLIConfig().config();
-    auto const keyFile = std::make_shared<SecretKeyProvider>(result);
-    ih::wrapper::TransactionInputWrapper const txWrapper(result);
 
-    Transaction transaction = utility::createTransaction(txWrapper, config, keyFile);
+    auto const path = result["outfile"].as<std::string>();
+    auto const keyFile = std::make_shared<SecretKeyProvider>(result);
+
+    Transaction transaction = utility::createTransaction(result, config);
     utility::signTransaction(transaction, keyFile);
 
-    IFile file(txWrapper.getOutputFile(), "json");
+    IFile file(path, "json");
     std::ofstream outFile(file.getFilePath());
     outFile << transaction.serialize();
     outFile.close();
@@ -43,8 +44,6 @@ void handleIssueESDT(cxxopts::ParseResult const &result)
     auto const ticker = result["ticker"].as<std::string>();
     auto const supply = result["supply"].as<std::string>();
     auto const decimals = result["dec"].as<std::string>();
-    auto const gasPrice = result["gas-price"].as<uint64_t>();
-    auto const nonce = result["nonce"].as<uint64_t>();
 
     auto const canFreeze = result["can-freeze"].as<bool>();
     auto const canWipe = result["can-wipe"].as<bool>();
@@ -56,16 +55,10 @@ void handleIssueESDT(cxxopts::ParseResult const &result)
     auto const canAddSpecialRoles = result["can-add-roles"].as<bool>();
 
     auto keyFile = std::make_shared<SecretKeyProvider>(result);
+    auto tx = utility::createTransaction(result, config);
 
-    Address const sender = keyFile->getAddress();
     Address const receiver = Address(config.issueESDTSCAddress);
-
-    Transaction tx;
-    tx.m_nonce = nonce;
-    tx.m_sender = std::make_shared<Address>(sender);
     tx.m_receiver = std::make_shared<Address>(receiver);
-    tx.m_gasPrice = gasPrice;
-    tx.m_chainID = config.chainID;
 
     ESDTProperties const esdtProperties
             {canFreeze,
@@ -89,28 +82,12 @@ void handleTransferESDT(cxxopts::ParseResult const &result)
 {
     auto const config = CLIConfig().config();
 
-    auto const nonce = result["nonce"].as<uint64_t>();
-    auto const gasPrice = result["gas-price"].as<uint64_t>();
-    auto const gasLimit = result["gas-limit"].as<uint64_t>();
-    auto const receiverAdr = result["receiver"].as<std::string>();
     auto const token = result["token"].as<std::string>();
-    auto const value = result["value"].as<std::string>();
     auto const function = result["function"].as<std::string>();
     auto const args = result["args"].as<std::vector<std::string>>();
 
     auto keyFile = std::make_shared<SecretKeyProvider>(result);
-
-    Address const sender = keyFile->getAddress();
-    Address const receiver = Address(receiverAdr);
-
-    Transaction tx;
-    tx.m_nonce = nonce;
-    tx.m_value = value;
-    tx.m_sender = std::make_shared<Address>(sender);
-    tx.m_receiver = std::make_shared<Address>(receiver);
-    tx.m_gasPrice = gasPrice;
-    tx.m_gasLimit = gasLimit;
-    tx.m_chainID = config.chainID;
+    auto tx = utility::createTransaction(result, config);
 
     prepareTransactionForESDTTransfer(tx, token, function);
 

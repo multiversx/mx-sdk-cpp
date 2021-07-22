@@ -30,7 +30,7 @@ TEST(ArgHandler, parse_noArgument_expectInvalid)
 {
     int const argc = 1;
     char *argv[argc];
-    argv[0] = (char *) "ERDProject.exe";
+    argv[0] = (char *) "erdcpp";
 
     ih::ArgHandler argHandler;
     auto const res = argHandler.parse(argc, argv);
@@ -44,7 +44,7 @@ TEST(ArgHandler, parse_randomArgs_expectInvalid)
 {
     int const argc = 3;
     char *argv[argc];
-    argv[0] = (char *) "ERDProject.exe";
+    argv[0] = (char *) "erdcpp";
     argv[1] = (char *) "dsa";
     argv[2] = (char *) "";
 
@@ -60,7 +60,7 @@ TEST(ArgHandler, parse_help_expectHelp)
 {
     int const argc = 2;
     char *argv[argc];
-    argv[0] = (char *) "ERDProject.exe";
+    argv[0] = (char *) "erdcpp";
     argv[1] = (char *) "help";
 
     ih::ArgHandler argHandler;
@@ -76,7 +76,7 @@ TEST(ArgHandler, parse_transaction_help_expectHelp)
 {
     int const argc = 3;
     char *argv[argc];
-    argv[0] = (char *) "ERDProject.exe";
+    argv[0] = (char *) "erdcpp";
     argv[1] = (char *) "transaction";
     argv[2] = (char *) "help";
 
@@ -93,7 +93,7 @@ TEST(ArgHandler, parse_transaction_withoutSubArgument_expectInvalid)
 {
     int const argc = 2;
     char *argv[argc];
-    argv[0] = (char *) "ERDProject.exe";
+    argv[0] = (char *) "erdcpp";
     argv[1] = (char *) "transaction";
 
     ih::ArgHandler argHandler;
@@ -105,7 +105,7 @@ TEST(ArgHandler, parse_transaction_new_noData_expectCreateTransaction)
 {
     int const argc = 12;
     char *argv[argc];
-    argv[0] = (char *) "ERDProject.exe";
+    argv[0] = (char *) "erdcpp";
     argv[1] = (char *) "transaction";
     argv[2] = (char *) "new";
     argv[3] = (char *) "--nonce=3";
@@ -137,7 +137,7 @@ TEST(ArgHandler, parse_transaction_new_withData_expectCreateTransaction)
 {
     int const argc = 11;
     char *argv[argc];
-    argv[0] = (char *) "ERDProject.exe";
+    argv[0] = (char *) "erdcpp";
     argv[1] = (char *) "transaction";
     argv[2] = (char *) "new";
     argv[3] = (char *) "--nonce=3";
@@ -168,7 +168,7 @@ TEST(ArgHandler, parse_transaction_new_invalidNonce_expectErrorNonce)
 {
     int const argc = 11;
     char *argv[argc];
-    argv[0] = (char *) "ERDProject.exe";
+    argv[0] = (char *) "erdcpp";
     argv[1] = (char *) "transaction";
     argv[2] = (char *) "new";
     argv[3] = (char *) "--nonce=3f";
@@ -189,7 +189,7 @@ TEST(ArgHandler, parse_transaction_new_invalidValue_expectErrorValue)
 {
     int const argc = 11;
     char *argv[argc];
-    argv[0] = (char *) "ERDProject.exe";
+    argv[0] = (char *) "erdcpp";
     argv[1] = (char *) "transaction";
     argv[2] = (char *) "new";
     argv[3] = (char *) "--nonce=3";
@@ -209,7 +209,7 @@ TEST(ArgHandler, parse_transaction_new_invalidReceiver_expectErrorReceiver)
     int const argc = 11;
     char *argv[argc];
 
-    argv[0] = (char *) "ERDProject.exe";
+    argv[0] = (char *) "erdcpp";
     argv[1] = (char *) "transaction";
     argv[2] = (char *) "new";
     argv[3] = (char *) "--nonce=0";
@@ -229,7 +229,7 @@ TEST(ArgHandler, parse_transaction_new_invalidGasPrice_expectErrorGasPrice)
     int const argc = 11;
     char *argv[argc];
 
-    argv[0] = (char *) "ERDProject.exe";
+    argv[0] = (char *) "erdcpp";
     argv[1] = (char *) "transaction";
     argv[2] = (char *) "new";
     argv[3] = (char *) "--nonce=0";
@@ -251,7 +251,7 @@ TEST(ArgHandler, parse_transaction_new_invalidGasLimit_expectErrorGasLimit)
     int const argc = 11;
     char *argv[argc];
 
-    argv[0] = (char *) "ERDProject.exe";
+    argv[0] = (char *) "erdcpp";
     argv[1] = (char *) "transaction";
     argv[2] = (char *) "new";
     argv[3] = (char *) "--nonce=0";
@@ -273,7 +273,7 @@ TEST(ArgHandler, parse_transaction_new_invalidPemInput_expectErrorPem)
     int const argc = 11;
     char *argv[argc];
 
-    argv[0] = (char *) "ERDProject.exe";
+    argv[0] = (char *) "erdcpp";
     argv[1] = (char *) "transaction";
     argv[2] = (char *) "new";
     argv[3] = (char *) "--nonce=0";
@@ -293,7 +293,7 @@ TEST(ArgHandler, parse_transaction_new_invalidJsonOutput_expectErrorJson)
     int const argc = 11;
     char *argv[argc];
 
-    argv[0] = (char *) "ERDProject.exe";
+    argv[0] = (char *) "erdcpp";
     argv[1] = (char *) "transaction";
     argv[2] = (char *) "new";
     argv[3] = (char *) "--nonce=0";
@@ -313,7 +313,7 @@ TEST(ArgHandler, parse_transaction_new_invalidData_expectErrorData)
     int const argc = 11;
     char *argv[argc];
 
-    argv[0] = (char *) "ERDProject.exe";
+    argv[0] = (char *) "erdcpp";
     argv[1] = (char *) "transaction";
     argv[2] = (char *) "new";
     argv[3] = (char *) "--nonce=0";
