@@ -45,6 +45,6 @@ After building with cmake, you can use the SDK by:
 #### 1.4.2 CLI SDK
 ```bash
 cd cli
-./main
+./erdcpp -h
 ```
 
