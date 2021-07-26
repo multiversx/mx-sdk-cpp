@@ -143,8 +143,8 @@ TEST_F(KeyFileReaderConstructorFixture, invalidContent)
     expectException<std::invalid_argument>("..//..//testData//keyFileInvalidContent.json", "", ERROR_MSG_KEY_FILE);
 }
 
-// These tests are from :
-// https://github.com/ElrondNetwork/elrond-sdk-erdjs/blob/bb926b029150d7c79f2b37308f4334f98a4cabf7/src/testutils/wallets.ts
+// These tests are adapted from :
+// https://github.com/ElrondNetwork/elrond-sdk-erdjs/blob/main/src/testutils/wallets.ts
 TEST(KeyFileReader, getAddress_getSeed_differentFiles)
 {
     KeyFileReader aliceKeyFile("..//..//testData//aliceKeyFile.json", "password");
