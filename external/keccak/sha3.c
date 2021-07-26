@@ -1,3 +1,6 @@
+// This code was adapted to compute keccak new legacy sha3 (instead of sha3) by changing
+// c->st.b[c->pt] ^= 0x01(instead of 0x06) in sha3_final function
+
 // sha3.c
 // 19-Nov-11  Markku-Juhani O. Saarinen <mjos@iki.fi>
 
