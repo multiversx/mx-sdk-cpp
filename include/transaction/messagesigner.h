@@ -20,7 +20,7 @@ public:
 
     static bool verify(std::string const &signature, std::string const &message, Address const &address);
 
-    static std::string computeHash(std::string const &message);
+    static std::string computeERDPrefixedMsgHash(std::string const &message);
 };
 
 
