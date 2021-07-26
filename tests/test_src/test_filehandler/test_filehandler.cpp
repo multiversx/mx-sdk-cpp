@@ -3,6 +3,7 @@
 #include "utils/hex.h"
 #include "utils/errors.h"
 #include "filehandler/pemreader.h"
+#include "filehandler/keyfilereader.h"
 
 class PemFileReaderConstructorFixture : public ::testing::Test
 {
@@ -93,4 +94,72 @@ TEST_P(PemFileReaderParametrized, getSeed_getPublicKey_getBech32Address)
     EXPECT_EQ(pemSeed, util::hexToBytes(currParam.seed));
     EXPECT_EQ(pemPubKey, util::hexToBytes(currParam.publicKey));
     EXPECT_EQ(pemBech32Address, currParam.bech32Address);
+}
+
+class KeyFileReaderConstructorFixture : public ::testing::Test
+{
+public:
+    template <typename T>
+    void expectException(std::string const &filePath, std::string const &password, errorMessage const &errMsg)
+    {
+        EXPECT_THROW({
+                         try
+                         {
+                             KeyFileReader keyFile(filePath, password);
+                         }
+                         catch(const T &e)
+                         {
+                             std::string const err = e.what();
+                             EXPECT_TRUE(err.find(errMsg) != std::string::npos );
+                             throw;
+                         }
+                     }, T );
+    }
+
+};
+
+TEST_F(KeyFileReaderConstructorFixture, invalidMac)
+{
+    expectException<std::runtime_error>("..//..//testData//keyFileInvalidMac.json", "", ERROR_MSG_MAC);
+}
+
+TEST_F(KeyFileReaderConstructorFixture, invalidVersion)
+{
+    expectException<std::invalid_argument>("..//..//testData//keyFileInvalidVersion.json", "", ERROR_MSG_KEY_FILE_VERSION);
+}
+
+TEST_F(KeyFileReaderConstructorFixture, invalidCipher)
+{
+    expectException<std::invalid_argument>("..//..//testData//keyFileInvalidCipher.json", "", ERROR_MSG_KEY_FILE_CIPHER);
+}
+
+TEST_F(KeyFileReaderConstructorFixture, invalidKdf)
+{
+    expectException<std::invalid_argument>("..//..//testData//keyFileInvalidKdf.json", "", ERROR_MSG_KEY_FILE_DERIVATION_FUNCTION);
+}
+
+TEST_F(KeyFileReaderConstructorFixture, invalidContent)
+{
+    expectException<std::invalid_argument>("..//..//testData//keyFileInvalidContent.json", "", ERROR_MSG_KEY_FILE);
+}
+
+// These tests are from :
+// https://github.com/ElrondNetwork/elrond-sdk-erdjs/blob/bb926b029150d7c79f2b37308f4334f98a4cabf7/src/testutils/wallets.ts
+TEST(KeyFileReader, getAddress_getSeed_differentFiles)
+{
+    KeyFileReader aliceKeyFile("..//..//testData//aliceKeyFile.json", "password");
+    KeyFileReader bobKeyFile("..//..//testData//bobKeyFile.json", "password");
+    KeyFileReader carolKeyFile("..//..//testData//carolKeyFile.json", "password");
+
+    PemFileReader alicePem("..//..//testData//alicePem.pem");
+    PemFileReader bobPem("..//..//testData//bobPem.pem");
+    PemFileReader carolPem("..//..//testData//carolPem.pem");
+
+    EXPECT_EQ(aliceKeyFile.getAddress().getBech32Address(), "erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th");
+    EXPECT_EQ(bobKeyFile.getAddress().getBech32Address(), "erd1spyavw0956vq68xj8y4tenjpq2wd5a9p2c6j8gsz7ztyrnpxrruqzu66jx");
+    EXPECT_EQ(carolKeyFile.getAddress().getBech32Address(), "erd1k2s324ww2g0yj38qn2ch2jwctdy8mnfxep94q9arncc6xecg3xaq6mjse8");
+
+    EXPECT_EQ(aliceKeyFile.getSeed(), alicePem.getSeed());
+    EXPECT_EQ(bobKeyFile.getSeed(), bobPem.getSeed());
+    EXPECT_EQ(carolKeyFile.getSeed(), carolPem.getSeed());
 }

@@ -4,20 +4,7 @@
 #include <map>
 #include <string>
 
-typedef unsigned long errorCode;
 typedef std::string errorMessage;
-
-errorCode const ERROR_NONE = 0UL;
-
-errorCode const ERROR_NONCE = 1U;
-errorCode const ERROR_VALUE = 2U;
-errorCode const ERROR_RECEIVER = 3U;
-errorCode const ERROR_GAS_PRICE = 4U;
-errorCode const ERROR_GAS_LIMIT = 5U;
-errorCode const ERROR_PEM_INPUT_FILE = 6U;
-errorCode const ERROR_JSON_OUT_FILE = 7U;
-errorCode const ERROR_DATA = 8U;
-errorCode const ERROR_SODIUM_INIT = 9U;
 
 errorMessage const ERROR_MSG_EMPTY_VALUE = "Empty value: ";
 errorMessage const ERROR_MSG_NONCE = "Invalid nonce.";
@@ -28,9 +15,6 @@ errorMessage const ERROR_MSG_GAS_PRICE = "Invalid gas price.";
 errorMessage const ERROR_MSG_GAS_LIMIT = "Invalid gas limit.";
 errorMessage const ERROR_MSG_CHAIN_ID = "Invalid chain id.";
 errorMessage const ERROR_MSG_VERSION = "Invalid version.";
-errorMessage const ERROR_MSG_PEM_INPUT_FILE = "Invalid pem file.";
-errorMessage const ERROR_MSG_JSON_OUT_FILE = "Invalid json file.";
-errorMessage const ERROR_MSG_DATA = "Invalid data.";
 errorMessage const ERROR_MSG_SODIUM_INIT = "Could not initialize sodium library.";
 
 errorMessage const ERROR_MSG_BECH32 = "Invalid bech32 address.";
@@ -46,18 +30,12 @@ errorMessage const ERROR_MSG_JSON_KEY_NOT_FOUND = "Json does not contain key: ";
 errorMessage const ERROR_MSG_JSON_SET = "Json can not insert key:  ";
 errorMessage const ERROR_MSG_HTTP_REQUEST_FAILED = "Request failed with message: ";
 errorMessage const ERROR_MSG_REASON = "Error reason: ";
+errorMessage const ERROR_MSG_KEY_FILE = "Invalid keyfile.";
+errorMessage const ERROR_MSG_MAC = "MAC mismatch, possibly wrong password.";
+errorMessage const ERROR_MSG_SCRYPTSY = "Scrypt function failed. Could not derive keys, possible cause: operating system refused to allocate the amount of requested memory.";
+errorMessage const ERROR_MSG_KEY_FILE_VERSION = "Key file version not supported.";
+errorMessage const ERROR_MSG_KEY_FILE_DERIVATION_FUNCTION = "Key file derivation function not supported.";
+errorMessage const ERROR_MSG_KEY_FILE_CIPHER = "Key file cipher algorithm not supported.";
 
-std::map<errorCode, errorMessage> const errors =
-        {
-                {ERROR_NONCE,          ERROR_MSG_NONCE},
-                {ERROR_VALUE,          ERROR_MSG_VALUE},
-                {ERROR_RECEIVER,       ERROR_MSG_RECEIVER},
-                {ERROR_GAS_PRICE,      ERROR_MSG_GAS_PRICE},
-                {ERROR_GAS_LIMIT,      ERROR_MSG_GAS_LIMIT},
-                {ERROR_PEM_INPUT_FILE, ERROR_MSG_PEM_INPUT_FILE},
-                {ERROR_JSON_OUT_FILE,  ERROR_MSG_JSON_OUT_FILE},
-                {ERROR_DATA,           ERROR_MSG_DATA},
-                {ERROR_SODIUM_INIT,    ERROR_MSG_SODIUM_INIT}
-        };
 
 #endif

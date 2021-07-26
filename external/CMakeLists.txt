@@ -4,6 +4,7 @@ file(GLOB external
         bech32/bech32.h bech32/bech32.cpp
         cliparser/cxxopts.hpp
         toml/cpptoml.h
+        aes_128_ctr/aes.c
         )
 
 add_library(external ${external})
