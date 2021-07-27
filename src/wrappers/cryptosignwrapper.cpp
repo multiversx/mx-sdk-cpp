@@ -6,6 +6,10 @@
 #include "aes_128_ctr/aes.hpp"
 #include "keccak/sha3.hpp"
 
+#define CHAR_PTR(x) (const_cast<char *>((x).data()))
+#define UCHAR_PTR(x) (reinterpret_cast<unsigned char *>(CHAR_PTR(x)))
+#define CONST_UCHAR_PTR(x) reinterpret_cast<unsigned char const *>((x).data())
+
 #if \
     (PUBLIC_KEY_LENGTH != crypto_sign_PUBLICKEYBYTES) || \
     (SECRET_KEY_LENGTH != crypto_sign_SECRETKEYBYTES) || \
@@ -22,8 +26,8 @@ namespace crypto
 {
 std::string getSignature(bytes const &secretKey, std::string const &message)
 {
-    auto msg = reinterpret_cast<unsigned char const *>(message.data());
-    auto sk = reinterpret_cast<unsigned char const *>(secretKey.data());
+    auto msg = CONST_UCHAR_PTR(message);
+    auto sk = CONST_UCHAR_PTR(secretKey);
 
     unsigned char sig[SIGNATURE_LENGTH];
     unsigned long long sigLength;
@@ -35,7 +39,7 @@ std::string getSignature(bytes const &secretKey, std::string const &message)
 
 bytes getSeed(bytes const &secretKey)
 {
-    auto sk = reinterpret_cast<const unsigned char*>(secretKey.data());
+    auto sk = CONST_UCHAR_PTR(secretKey);
 
     unsigned char seed[SEED_LENGTH];
 
@@ -46,7 +50,7 @@ bytes getSeed(bytes const &secretKey)
 
 bytes getSecretKey(bytes const &seed)
 {
-    auto sd = reinterpret_cast<const unsigned char*>(seed.data());
+    auto sd = CONST_UCHAR_PTR(seed);
 
     unsigned char pk[PUBLIC_KEY_LENGTH];
     unsigned char sk[SECRET_KEY_LENGTH];
@@ -58,7 +62,7 @@ bytes getSecretKey(bytes const &seed)
 
 bytes getPublicKey(bytes const &secretKey)
 {
-    auto sk = reinterpret_cast<const unsigned char*>(secretKey.data());
+    auto sk = CONST_UCHAR_PTR(secretKey);
 
     unsigned char pk[PUBLIC_KEY_LENGTH];
 
@@ -69,9 +73,9 @@ bytes getPublicKey(bytes const &secretKey)
 
 bool verify(std::string const &signature, std::string const &message, bytes const &publicKey)
 {
-    auto sig = reinterpret_cast<const unsigned char*>(signature.data());
-    auto msg = reinterpret_cast<const unsigned char*>(message.data());
-    auto pk = reinterpret_cast<const unsigned char*>(publicKey.data());
+    auto sig = CONST_UCHAR_PTR(signature);
+    auto msg = CONST_UCHAR_PTR(message);
+    auto pk = CONST_UCHAR_PTR(publicKey);
     auto msgLen = message.size();
 
     int const res = crypto_sign_verify_detached(sig, msg, msgLen, pk);
@@ -84,8 +88,8 @@ bytes scrypt(std::string const &password, KdfParams const &kdfParams)
     unsigned int const keyLength = kdfParams.dklen;
     unsigned char derivedKey[keyLength];
 
-    auto passw = reinterpret_cast<const unsigned char*>(password.data());
-    auto salt = reinterpret_cast<const unsigned char*>(kdfParams.salt.data());
+    auto passw = CONST_UCHAR_PTR(password);
+    auto salt = CONST_UCHAR_PTR(kdfParams.salt);
 
     if (crypto_pwhash_scryptsalsa208sha256_ll
             (passw, password.size(),
@@ -103,8 +107,8 @@ bytes scrypt(std::string const &password, KdfParams const &kdfParams)
 
 std::string hmacsha256(bytes const &key, std::string const &cipherText)
 {
-    auto k = reinterpret_cast<const unsigned char*>(key.data());
-    auto cipher = reinterpret_cast<const unsigned char*>(cipherText.data());
+    auto k = CONST_UCHAR_PTR(key);
+    auto cipher = CONST_UCHAR_PTR(cipherText);
 
     unsigned char digest[HMAC_SHA256_BYTES];
 
@@ -119,9 +123,9 @@ std::string hmacsha256(bytes const &key, std::string const &cipherText)
 
 bytes aes128ctrDecrypt(bytes const &key, std::string cipherText, std::string const &iv)
 {
-    auto k = reinterpret_cast<const unsigned char*>(key.data());
-    auto initVector = reinterpret_cast<const unsigned char*>(iv.data());
-    auto cipher = reinterpret_cast<unsigned char*>(const_cast<char*>(cipherText.data()));
+    auto k = CONST_UCHAR_PTR(key);
+    auto initVector = CONST_UCHAR_PTR(iv);
+    auto cipher = UCHAR_PTR(cipherText);
     auto cipherSize = cipherText.size();
 
     AES_ctx ctx{};
@@ -134,7 +138,7 @@ bytes aes128ctrDecrypt(bytes const &key, std::string cipherText, std::string con
 
 std::string sha3Keccak(std::string const &message)
 {
-    auto msg = reinterpret_cast<unsigned char*> (const_cast<char*>(message.data()));
+    auto msg = UCHAR_PTR(message);
 
     uint8_t out[SHA3_KECCAK_BYTES];
     sha3(msg, message.size(), out, SHA3_KECCAK_BYTES);

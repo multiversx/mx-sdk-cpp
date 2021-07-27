@@ -28,14 +28,23 @@ void getJsonValueIfNotNull(wrapper::json::OrderedJson const &json, std::string c
     }
 }
 
-std::string getTxSerializedHashIfRequired(Transaction const &tx)
+bool shouldSignHash(Transaction const &tx)
 {
+    return( tx.m_options != nullptr)               &&
+          ( tx.m_version >= VERSION_SIGN_TX_HASH)  &&
+          (*tx.m_options & OPTIONS_SIGN_TX_HASH_MASK);
+}
+
+std::string getSerializedTxMsg(Transaction tx, bool const withSignature)
+{
+    if (!withSignature)
+    {
+        tx.m_signature = nullptr;
+    }
+
     std::string txSerialized = tx.serialize();
 
-    if( tx.m_options != nullptr &&
-      ( tx.m_version == VERSION_SIGN_TX_HASH) &&
-      (*tx.m_options & OPTIONS_SIGN_TX_HASH_MASK))
-
+    if(shouldSignHash(tx))
     {
         txSerialized = wrapper::crypto::sha3Keccak(txSerialized);
     }
@@ -91,12 +100,7 @@ Transaction::Transaction() :
 
 void Transaction::sign(Signer const &signer)
 {
-    if (m_signature != nullptr)
-    {
-        m_signature = nullptr;
-    }
-
-    std::string const txSerialized = internal::getTxSerializedHashIfRequired(*this);
+    std::string const txSerialized = internal::getSerializedTxMsg(*this, false);
     std::string const tmpSign = signer.getSignature(txSerialized);
     std::string const signature = util::stringToHex(tmpSign);
 
@@ -108,10 +112,7 @@ bool Transaction::verify()
     if (m_signature == nullptr) throw std::runtime_error(ERROR_MSG_SIGNATURE);
     if (m_sender == nullptr) throw std::runtime_error(ERROR_MSG_SENDER);
 
-    auto tmp = m_signature;
-    m_signature = nullptr;
-    std::string const txSerialized = internal::getTxSerializedHashIfRequired(*this);
-    m_signature = tmp;
+    std::string const txSerialized = internal::getSerializedTxMsg(*this, false);
 
     return Signer::verify(util::hexToString(*m_signature), txSerialized, *m_sender);
 }
