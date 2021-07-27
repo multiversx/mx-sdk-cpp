@@ -8,14 +8,7 @@ IFile::IFile(std::string path, std::string expectedExtension) :
         m_filePath(std::move(path)),
         m_expectedExtension(std::move(expectedExtension))
 {
-    try
-    {
-        IFile::checkFile();
-    }
-    catch (std::exception const &error)
-    {
-        throw;
-    }
+    IFile::checkFile();
 }
 
 const std::string &IFile::getFilePath() const
