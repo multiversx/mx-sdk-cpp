@@ -5,6 +5,7 @@ file(GLOB external
         cliparser/cxxopts.hpp
         toml/cpptoml.h
         aes_128_ctr/aes.c
+        keccak/sha3.c
         )
 
 add_library(external ${external})

@@ -1,11 +1,13 @@
 #include "transaction/transaction.h"
 
-#include <utility>
-#include "jsonwrapper.h"
-#include "params.h"
 #include "hex.h"
-#include "base64.h"
 #include "errors.h"
+#include "params.h"
+#include "jsonwrapper.h"
+#include "cryptosignwrapper.h"
+
+#define OPTIONS_SIGN_TX_HASH_MASK 1U
+#define VERSION_SIGN_TX_HASH 2U
 
 namespace internal
 {
@@ -24,6 +26,30 @@ void getJsonValueIfNotNull(wrapper::json::OrderedJson const &json, std::string c
         T const tmpVal = json.at<T>(key);
         val = std::make_shared<T>(tmpVal);
     }
+}
+
+bool shouldSignHash(Transaction const &tx)
+{
+    return( tx.m_options != nullptr)               &&
+          ( tx.m_version >= VERSION_SIGN_TX_HASH)  &&
+          (*tx.m_options & OPTIONS_SIGN_TX_HASH_MASK);
+}
+
+std::string getSerializedTxMsg(Transaction tx, bool const withSignature)
+{
+    if (!withSignature)
+    {
+        tx.m_signature = nullptr;
+    }
+
+    std::string txSerialized = tx.serialize();
+
+    if(shouldSignHash(tx))
+    {
+        txSerialized = wrapper::crypto::sha3Keccak(txSerialized);
+    }
+
+    return txSerialized;
 }
 }
 
@@ -74,14 +100,21 @@ Transaction::Transaction() :
 
 void Transaction::sign(Signer const &signer)
 {
-    if (m_signature != nullptr)
-        m_signature = nullptr;
-
-    std::string const txSerialized = Transaction::serialize();
+    std::string const txSerialized = internal::getSerializedTxMsg(*this, false);
     std::string const tmpSign = signer.getSignature(txSerialized);
     std::string const signature = util::stringToHex(tmpSign);
 
     m_signature.reset(new std::string(signature));
+}
+
+bool Transaction::verify()
+{
+    if (m_signature == nullptr) throw std::runtime_error(ERROR_MSG_SIGNATURE);
+    if (m_sender == nullptr) throw std::runtime_error(ERROR_MSG_SENDER);
+
+    std::string const txSerialized = internal::getSerializedTxMsg(*this, false);
+
+    return Signer::verify(util::hexToString(*m_signature), txSerialized, *m_sender);
 }
 
 std::string Transaction::serialize() const

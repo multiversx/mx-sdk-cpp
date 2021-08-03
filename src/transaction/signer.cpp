@@ -4,7 +4,7 @@
 #include "cryptosignwrapper.h"
 #include "errors.h"
 
-Signer:: Signer(bytes const &seed)
+Signer::Signer(bytes const &seed)
 {
     if (seed.size() != SEED_LENGTH)
        throw std::length_error(ERROR_MSG_KEY_BYTES_SIZE);

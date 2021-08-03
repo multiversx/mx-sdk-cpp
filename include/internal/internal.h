@@ -11,6 +11,7 @@
 
 typedef std::vector<uint8_t> bytes;
 
+// See also https://github.com/ElrondNetwork/elrond-sdk-erdjs/blob/main/src/crypto/derivationParams.ts
 struct KdfParams
 {
     uint32_t dklen = 32;
@@ -20,6 +21,7 @@ struct KdfParams
     std::string salt;
 };
 
+// See also https://github.com/ElrondNetwork/elrond-sdk-erdjs/blob/main/src/crypto/encryptedData.ts
 struct EncryptedData
 {
     uint32_t version;

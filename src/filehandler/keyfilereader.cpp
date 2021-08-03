@@ -102,10 +102,10 @@ bytes KeyFileReader::getSeed() const
 
 EncryptedData KeyFileReader::getFileContent() const
 {
-    EncryptedData data;
-
     try
     {
+        EncryptedData data;
+
         std::ifstream stream(IFile::getFilePath());
         auto json = nlohmann::json::parse(stream);
 
@@ -122,12 +122,12 @@ EncryptedData KeyFileReader::getFileContent() const
         data.iv = util::hexToString(json["crypto"]["cipherparams"]["iv"]);
         data.cipherText = util::hexToString(json["crypto"]["ciphertext"]);
         data.mac = util::hexToString(json["crypto"]["mac"]);
+
+        return data;
     }
     catch(...)
     {
         throw std::invalid_argument(ERROR_MSG_KEY_FILE);
     }
-
-    return data;
 }
 

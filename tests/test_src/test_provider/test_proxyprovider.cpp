@@ -141,6 +141,23 @@ TEST_F(TestnetProxyProviderTxFixture, send_validTx)
     EXPECT_TRANSACTION_SENT_SUCCESSFULLY(transaction);
 }
 
+TEST_F(TestnetProxyProviderTxFixture, send_validTx_signedHashedTx)
+{
+    Transaction transaction;
+    transaction.m_sender = std::make_shared<Address>(m_senderAddr);
+    transaction.m_receiver = std::make_shared<Address>("erd1cux02zersde0l7hhklzhywcxk4u9n4py5tdxyx7vrvhnza2r4gmq4vw35r");
+    transaction.m_chainID = "T";
+    transaction.m_nonce = m_senderAcc.getNonce();
+    transaction.m_value = "1000000000000";
+    transaction.m_gasPrice = 1000000000;
+    transaction.m_gasLimit = 50000;
+    transaction.m_options = std::make_shared<uint32_t>(1U);
+    transaction.m_version = 2U;
+
+    signTransaction(transaction);
+    EXPECT_TRANSACTION_SENT_SUCCESSFULLY(transaction);
+}
+
 TEST_F(TestnetProxyProviderTxFixture, send_invalidTx_noSignature)
 {
     Transaction transaction;

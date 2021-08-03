@@ -22,7 +22,6 @@
 #define DEFAULT_VERSION 1U
 #define DEFAULT_OPTIONS nullptr
 
-
 class Transaction
 {
 public:
@@ -45,6 +44,8 @@ public:
 
     void sign(Signer const &signer);
 
+    bool verify();
+
     std::string serialize() const;
 
     void deserialize(std::string const& serializedTransaction);
@@ -63,6 +64,5 @@ public:
     std::shared_ptr<std::string> m_signature;
     std::shared_ptr<uint32_t> m_options;
 };
-
 
 #endif //ERD_TRANSACTION_H

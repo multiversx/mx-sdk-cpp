@@ -10,6 +10,7 @@
 #define SEED_LENGTH 32U
 #define SIGNATURE_LENGTH 64U
 #define HMAC_SHA256_BYTES 32U
+#define SHA3_KECCAK_BYTES 32U
 
 namespace wrapper
 {
@@ -30,6 +31,8 @@ bytes scrypt(std::string const &password, KdfParams const &kdfParams);
 std::string hmacsha256(bytes const &key, std::string const &cipherText);
 
 bytes aes128ctrDecrypt(bytes const &key, std::string cipherText, std::string const &iv);
+
+std::string sha3Keccak(std::string const &message);
 }
 }
 

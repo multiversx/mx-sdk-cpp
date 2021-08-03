@@ -4,6 +4,7 @@
 #include "internal/internal.h"
 #include "internal/biguint.h"
 #include "transaction/signer.h"
+#include "transaction/messagesigner.h"
 #include "transaction/transaction.h"
 #include "transaction/esdt.h"
 #include "transaction/scarguments.h"
