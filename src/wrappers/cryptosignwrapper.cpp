@@ -1,5 +1,4 @@
 #include "cryptosignwrapper.h"
-#include "strchr.h"
 #include "errors.h"
 
 #include <sodium.h>
@@ -35,7 +34,7 @@ std::string getSignature(bytes const &secretKey, std::string const &message)
 
     crypto_sign_detached(sig, &sigLength, msg, message.length(), sk);
 
-    return util::uCharToStr(sig, sigLength);
+    return std::string(sig, sig + sigLength);
 }
 
 bytes getSeed(bytes const &secretKey)

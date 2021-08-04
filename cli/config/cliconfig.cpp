@@ -1,6 +1,6 @@
 #include "cliconfig.h"
 #include "toml/cpptoml.h"
-#include "utils/params.h"
+#include "utils/cfg.h"
 
 #include <iostream>
 
@@ -9,7 +9,7 @@
 #define YELLOW(x) BEGIN x END
 
 CLIConfig::CLIConfig(std::string tomlConfigPath):
-    m_tomlPath(tomlConfigPath) {}
+    m_tomlPath(std::move(tomlConfigPath)) {}
 
 Config CLIConfig::config() const
 {

@@ -6,7 +6,7 @@
 #include "utils/errors.h"
 #include "utils/cfg.h"
 
-#if HTTP_PRECONDITIONS
+#if GTESTS_HTTPS_PRECONDITIONS
 
 TEST(ProxyProvider, getAccount)
 {

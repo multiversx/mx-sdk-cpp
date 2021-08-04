@@ -4,7 +4,7 @@ file(GLOB utils
         hex.h hex.cpp
         params.h
         errors.h
-        strchr.h
+        common.h
         cfg.h
         )
 

@@ -18,8 +18,4 @@ constexpr auto TX_VERSION = "version";
 constexpr auto TX_SIGNATURE = "signature";
 constexpr auto TX_OPTIONS = "options";
 
-constexpr auto NETWORK_CONFIG_DEFAULT_CHAIN_ID = "T";
-constexpr auto NETWORK_CONFIG_DEFAULT_PROXY_URL = "https://testnet-gateway.elrond.com";
-constexpr auto NETWORK_CONFIG_DEFAULT_ESDT_ISSUE_SC_ADDRESS = "erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u";
-
 #endif

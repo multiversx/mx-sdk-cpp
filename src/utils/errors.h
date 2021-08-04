@@ -37,6 +37,7 @@ errorMessage const ERROR_MSG_SCRYPTSY = "Scrypt function failed. Could not deriv
 errorMessage const ERROR_MSG_KEY_FILE_VERSION = "Key file version not supported.";
 errorMessage const ERROR_MSG_KEY_FILE_DERIVATION_FUNCTION = "Key file derivation function not supported.";
 errorMessage const ERROR_MSG_KEY_FILE_CIPHER = "Key file cipher algorithm not supported.";
+errorMessage const ERROR_MSG_MISSING_PASSWORD = "Missing key file password.";
 
 
 #endif

@@ -97,7 +97,7 @@ ArgParsedResult ArgHandler::parse(int const &argc, char *const argv[])
     else if (isCmd("transaction") && isSubCmd("new") &&
              canParse(argc, argv, m_options.transaction()))
     {
-        reqType = createSignedTransactionWithPemFile;
+        reqType = createSignedTransaction;
     }
     else if (isCmd("esdt") && isSubCmd("issue") &&
             canParse(argc, argv, m_options.esdt().issue()))
