@@ -1,133 +1,174 @@
-#include "gtest/gtest.h"
-#include "inputhandler/ext.h"
-#include "filehandler/pemreader.h"
-#include "utils/ext.h"
-#include "wrappers/cryptosignwrapper.h"
-#include <sodium.h>
+#include <filehandler/pemreader.h>
 #include <fstream>
 
-TEST(ArgHandler, getRequestedCmd_getRequestType_noArgument_expectInvalid)
+#include "gtest/gtest.h"
+#include "inputhandler/ext.h"
+#include "cli_handler.h"
+#include "utils/ext.h"
+
+template <typename T>
+void EXPECT_PARSE_ERROR_MISSING_ARG(int const &argc, char *const argv[], errorMessage const &errMsg, std::string const &arg)
+{
+    EXPECT_THROW({
+                     try
+                     {
+                         ih::ArgHandler handler;
+
+                         handler.parse(argc, argv);
+                     }
+                     catch(const T &e)
+                     {
+                         std::string const err = e.what();
+                         EXPECT_TRUE(err.find(errMsg) != std::string::npos );
+                         EXPECT_TRUE(err.find(arg) != std::string::npos );
+                         throw;
+                     }
+                 }, T );
+}
+
+TEST(ArgHandler, parse_noArgument_expectInvalid)
 {
     int const argc = 1;
     char *argv[argc];
-    argv[0] = (char *) "ERDProject.exe";
+    argv[0] = (char *) "erdcpp";
 
-    ih::ArgHandler argHandler(argc, argv);
+    ih::ArgHandler argHandler;
+    auto const res = argHandler.parse(argc, argv);
 
-    EXPECT_EQ(argHandler.getRequestedCmd().getRequestType(), ih::invalid);
+    EXPECT_EQ(res.requestType, ih::invalid);
+    EXPECT_TRUE(res.result.arguments().empty());
+    EXPECT_TRUE(res.help.empty());
 }
 
-TEST(ArgHandler, getRequestedCmd_getRequestType_randomArgs_expectInvalid)
+TEST(ArgHandler, parse_randomArgs_expectInvalid)
 {
     int const argc = 3;
     char *argv[argc];
-    argv[0] = (char *) "ERDProject.exe";
+    argv[0] = (char *) "erdcpp";
     argv[1] = (char *) "dsa";
     argv[2] = (char *) "";
 
-    ih::ArgHandler argHandler(argc, argv);
+    ih::ArgHandler argHandler;
+    auto const res = argHandler.parse(argc, argv);
 
-    EXPECT_EQ(argHandler.getRequestedCmd().getRequestType(), ih::invalid);
+    EXPECT_EQ(res.requestType, ih::invalid);
+    EXPECT_TRUE(res.result.arguments().empty());
+    EXPECT_TRUE(res.help.empty());
 }
 
-TEST(ArgHandler, getRequestedCmd_getRequestType_help_expectHelp)
+TEST(ArgHandler, parse_help_expectHelp)
 {
     int const argc = 2;
     char *argv[argc];
-    argv[0] = (char *) "ERDProject.exe";
+    argv[0] = (char *) "erdcpp";
     argv[1] = (char *) "help";
 
-    ih::ArgHandler argHandler(argc, argv);
+    ih::ArgHandler argHandler;
+    CLIOptions options;
 
-    EXPECT_EQ(argHandler.getRequestedCmd().getRequestType(), ih::help);
+    auto const res = argHandler.parse(argc, argv);
+
+    EXPECT_EQ(res.requestType, ih::help);
+    EXPECT_EQ(res.help, options.help());
 }
 
-TEST(ArgHandler, getRequestedCmd_getRequestType_pem_load_someFile_expectLoadPemFile)
-{
-    int const argc = 4;
-    char *argv[argc];
-    argv[0] = (char *) "ERDProject.exe";
-    argv[1] = (char *) "pem";
-    argv[2] = (char *) "load";
-    argv[3] = (char *) "--file=someFile";
-
-    ih::ArgHandler argHandler(argc, argv);
-
-    EXPECT_EQ(argHandler.getRequestedCmd().getRequestType(), ih::loadPemFile);
-}
-
-TEST(ArgHandler, getRequestedCmd_getRequestType_pem_load_withoutFile_expectInvalid)
+TEST(ArgHandler, parse_transaction_help_expectHelp)
 {
     int const argc = 3;
     char *argv[argc];
-    argv[0] = (char *) "ERDProject.exe";
-    argv[1] = (char *) "pem";
+    argv[0] = (char *) "erdcpp";
+    argv[1] = (char *) "transaction";
     argv[2] = (char *) "help";
 
-    ih::ArgHandler argHandler(argc, argv);
+    ih::ArgHandler argHandler;
+    CLIOptions options;
 
-    EXPECT_EQ(argHandler.getRequestedCmd().getRequestType(), ih::invalid);
+    auto const res = argHandler.parse(argc, argv);
+
+    EXPECT_EQ(res.requestType, ih::help);
+    EXPECT_EQ(res.help, options.transaction().help());
 }
 
-TEST(ArgHandler, getRequestedCmd_getRequestType_pem_withoutSubArgument_expectInvalid)
+TEST(ArgHandler, parse_transaction_withoutSubArgument_expectInvalid)
 {
     int const argc = 2;
     char *argv[argc];
-    argv[0] = (char *) "ERDProject.exe";
-    argv[1] = (char *) "pem";
+    argv[0] = (char *) "erdcpp";
+    argv[1] = (char *) "transaction";
 
-    ih::ArgHandler argHandler(argc, argv);
+    ih::ArgHandler argHandler;
 
-    EXPECT_EQ(argHandler.getRequestedCmd().getRequestType(), ih::invalid);
+    EXPECT_EQ(argHandler.parse(argc, argv).requestType, ih::invalid);
 }
 
-TEST(ArgHandler, getRequestedCmd_getRequestType_transaction_new_noData_expectCreateTransaction)
+TEST(ArgHandler, parse_transaction_new_noData_expectCreateTransaction)
 {
-    int const argc = 10;
+    int const argc = 12;
     char *argv[argc];
-    argv[0] = (char *) "ERDProject.exe";
+    argv[0] = (char *) "erdcpp";
     argv[1] = (char *) "transaction";
     argv[2] = (char *) "new";
     argv[3] = (char *) "--nonce=3";
-    argv[4] = (char *) "--value=\"31\"";
-    argv[5] = (char *) "--receiver=\"da\"";
-    argv[6] = (char *) "--gas-price=31";
-    argv[7] = (char *) "--gas-limit=31";
-    argv[8] = (char *) "--pem=\"dd\"";
-    argv[9] = (char *) "--outfile=\"dd\"";
+    argv[4] = (char *) "--value=31";
+    argv[5] = (char *) "--receiver=erd1";
+    argv[6] = (char *) "--gas-price=4";
+    argv[7] = (char *) "--gas-limit=44";
+    argv[8] = (char *) "--key=file1";
+    argv[9] = (char *) "--outfile=file2";
+    argv[10] = (char *) "--sender-name=Joe";
+    argv[11] = (char *) "--receiver-name=Doe";
 
-    ih::ArgHandler argHandler(argc, argv);
+    ih::ArgHandler argHandler;
+    auto const res = argHandler.parse(argc, argv);
 
-    EXPECT_EQ(argHandler.getRequestedCmd().getRequestType(), ih::createSignedTransactionWithPemFile);
+    EXPECT_EQ(res.requestType, ih::createSignedTransaction);
+    EXPECT_EQ(res.result["nonce"].as<uint64_t>(), 3U);
+    EXPECT_EQ(res.result["value"].as<std::string>(), "31");
+    EXPECT_EQ(res.result["receiver"].as<std::string>(), "erd1");
+    EXPECT_EQ(res.result["gas-price"].as<uint64_t>(), 4U);
+    EXPECT_EQ(res.result["gas-limit"].as<uint64_t>(), 44U);
+    EXPECT_EQ(res.result["key"].as<std::string>(), "file1");
+    EXPECT_EQ(res.result["outfile"].as<std::string>(), "file2");
+    EXPECT_EQ(res.result["sender-name"].as<std::string>(), "Joe");
+    EXPECT_EQ(res.result["receiver-name"].as<std::string>(), "Doe");
 }
 
-TEST(ArgHandler, getRequestedCmd_getRequestType_transaction_new_withData_expectCreateTransaction)
+TEST(ArgHandler, parse_transaction_new_withData_expectCreateTransaction)
 {
     int const argc = 11;
     char *argv[argc];
-    argv[0] = (char *) "ERDProject.exe";
+    argv[0] = (char *) "erdcpp";
     argv[1] = (char *) "transaction";
     argv[2] = (char *) "new";
     argv[3] = (char *) "--nonce=3";
-    argv[4] = (char *) "--value=\"31\"";
-    argv[5] = (char *) "--receiver=\"da\"";
+    argv[4] = (char *) "--value=31";
+    argv[5] = (char *) "--receiver=erd1";
     argv[6] = (char *) "--gas-price=31";
     argv[7] = (char *) "--gas-limit=31";
-    argv[8] = (char *) "--pem=\"dd\"";
-    argv[9] = (char *) "--outfile=\"dd\"";
-    argv[10] = (char *) "--data=\"dd\"";
+    argv[8] = (char *) "--key=test1";
+    argv[9] = (char *) "--outfile=test2";
+    argv[10] = (char *) "--data=testData";
 
-    ih::ArgHandler argHandler(argc, argv);
+    ih::ArgHandler argHandler;
 
-    EXPECT_EQ(argHandler.getRequestedCmd().getRequestType(), ih::createSignedTransactionWithPemFile);
+    auto const res = argHandler.parse(argc, argv);
+
+    EXPECT_EQ(res.requestType, ih::createSignedTransaction);
+    EXPECT_EQ(res.result["nonce"].as<uint64_t>(), 3U);
+    EXPECT_EQ(res.result["value"].as<std::string>(), "31");
+    EXPECT_EQ(res.result["receiver"].as<std::string>(), "erd1");
+    EXPECT_EQ(res.result["gas-price"].as<uint64_t>(), 31U);
+    EXPECT_EQ(res.result["gas-limit"].as<uint64_t>(), 31U);
+    EXPECT_EQ(res.result["key"].as<std::string>(), "test1");
+    EXPECT_EQ(res.result["outfile"].as<std::string>(), "test2");
+    EXPECT_EQ(res.result["data"].as<std::string>(), "testData");
 }
 
-
-TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidNonce_expectErrorNonce)
+TEST(ArgHandler, parse_transaction_new_invalidNonce_expectErrorNonce)
 {
     int const argc = 11;
     char *argv[argc];
-    argv[0] = (char *) "ERDProject.exe";
+    argv[0] = (char *) "erdcpp";
     argv[1] = (char *) "transaction";
     argv[2] = (char *) "new";
     argv[3] = (char *) "--nonce=3f";
@@ -139,16 +180,16 @@ TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidNonce_expec
     argv[9] = (char *) "--outfile=\"dd\"";
     argv[10] = (char *) "--data=\"dd\"";
 
-    ih::ArgHandler argHandler(argc, argv);
+    ih::ArgHandler argHandler;
 
-    EXPECT_EQ(argHandler.getRequestedCmd().getErrorCode(), ERROR_NONCE);
+    EXPECT_THROW(argHandler.parse(argc, argv),cxxopts::OptionException);
 }
 
-TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidValue_expectErrorValue)
+TEST(ArgHandler, parse_transaction_new_invalidValue_expectErrorValue)
 {
     int const argc = 11;
     char *argv[argc];
-    argv[0] = (char *) "ERDProject.exe";
+    argv[0] = (char *) "erdcpp";
     argv[1] = (char *) "transaction";
     argv[2] = (char *) "new";
     argv[3] = (char *) "--nonce=3";
@@ -156,21 +197,19 @@ TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidValue_expec
     argv[5] = (char *) "--receiver=\"da\"";
     argv[6] = (char *) "--gas-price=31";
     argv[7] = (char *) "--gas-limit=31";
-    argv[8] = (char *) "--pem=\"dd\"";
+    argv[8] = (char *) "--key=\"dd\"";
     argv[9] = (char *) "--outfile=\"dd\"";
     argv[10] = (char *) "--data=\"dd\"";
 
-    ih::ArgHandler argHandler(argc, argv);
-
-    EXPECT_EQ(argHandler.getRequestedCmd().getErrorCode(), ERROR_VALUE);
+    EXPECT_PARSE_ERROR_MISSING_ARG<std::invalid_argument>(argc, argv, ERROR_MSG_EMPTY_VALUE, "value");
 }
 
-TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidReceiver_expectErrorReceiver)
+TEST(ArgHandler, parse_transaction_new_invalidReceiver_expectErrorReceiver)
 {
     int const argc = 11;
     char *argv[argc];
 
-    argv[0] = (char *) "ERDProject.exe";
+    argv[0] = (char *) "erdcpp";
     argv[1] = (char *) "transaction";
     argv[2] = (char *) "new";
     argv[3] = (char *) "--nonce=0";
@@ -178,21 +217,19 @@ TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidReceiver_ex
     argv[5] = (char *) "--receiver=";
     argv[6] = (char *) "--gas-price=31";
     argv[7] = (char *) "--gas-limit=31";
-    argv[8] = (char *) "--pem=\"dd\"";
+    argv[8] = (char *) "--key=\"dd\"";
     argv[9] = (char *) "--outfile=\"dd\"";
     argv[10] = (char *) "--data=\"dd\"";
 
-    ih::ArgHandler argHandler(argc, argv);
-
-    EXPECT_EQ(argHandler.getRequestedCmd().getErrorCode(), ERROR_RECEIVER);
+    EXPECT_PARSE_ERROR_MISSING_ARG<std::invalid_argument>(argc, argv, ERROR_MSG_EMPTY_VALUE, "receiver");
 }
 
-TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidGasPrice_expectErrorGasPrice)
+TEST(ArgHandler, parse_transaction_new_invalidGasPrice_expectErrorGasPrice)
 {
     int const argc = 11;
     char *argv[argc];
 
-    argv[0] = (char *) "ERDProject.exe";
+    argv[0] = (char *) "erdcpp";
     argv[1] = (char *) "transaction";
     argv[2] = (char *) "new";
     argv[3] = (char *) "--nonce=0";
@@ -204,17 +241,17 @@ TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidGasPrice_ex
     argv[9] = (char *) "--outfile=\"dd\"";
     argv[10] = (char *) "--data=\"dd\"";
 
-    ih::ArgHandler argHandler(argc, argv);
+    ih::ArgHandler argHandler;
 
-    EXPECT_EQ(argHandler.getRequestedCmd().getErrorCode(), ERROR_GAS_PRICE);
+    EXPECT_THROW(argHandler.parse(argc, argv),cxxopts::OptionException);
 }
 
-TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidGasLimit_expectErrorGasLimit)
+TEST(ArgHandler, parse_transaction_new_invalidGasLimit_expectErrorGasLimit)
 {
     int const argc = 11;
     char *argv[argc];
 
-    argv[0] = (char *) "ERDProject.exe";
+    argv[0] = (char *) "erdcpp";
     argv[1] = (char *) "transaction";
     argv[2] = (char *) "new";
     argv[3] = (char *) "--nonce=0";
@@ -226,17 +263,17 @@ TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidGasLimit_ex
     argv[9] = (char *) "--outfile=\"dd\"";
     argv[10] = (char *) "--data=\"dd\"";
 
-    ih::ArgHandler argHandler(argc, argv);
+    ih::ArgHandler argHandler;
 
-    EXPECT_EQ(argHandler.getRequestedCmd().getErrorCode(), ERROR_GAS_LIMIT);
+    EXPECT_THROW(argHandler.parse(argc, argv),cxxopts::OptionException);
 }
 
-TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidPem_expectErrorPem)
+TEST(ArgHandler, parse_transaction_new_invalidPemInput_expectErrorPem)
 {
     int const argc = 11;
     char *argv[argc];
 
-    argv[0] = (char *) "ERDProject.exe";
+    argv[0] = (char *) "erdcpp";
     argv[1] = (char *) "transaction";
     argv[2] = (char *) "new";
     argv[3] = (char *) "--nonce=0";
@@ -244,21 +281,19 @@ TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidPem_expectE
     argv[5] = (char *) "--receiver=address";
     argv[6] = (char *) "--gas-price=1000";
     argv[7] = (char *) "--gas-limit=700";
-    argv[8] = (char *) "--pem=";
+    argv[8] = (char *) "--key=";
     argv[9] = (char *) "--outfile=\"dd\"";
     argv[10] = (char *) "--data=\"dd\"";
 
-    ih::ArgHandler argHandler(argc, argv);
-
-    EXPECT_EQ(argHandler.getRequestedCmd().getErrorCode(), ERROR_PEM_INPUT_FILE);
+    EXPECT_PARSE_ERROR_MISSING_ARG<std::invalid_argument>(argc, argv, ERROR_MSG_EMPTY_VALUE, "key");
 }
 
-TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidJson_expectErrorJson)
+TEST(ArgHandler, parse_transaction_new_invalidJsonOutput_expectErrorJson)
 {
     int const argc = 11;
     char *argv[argc];
 
-    argv[0] = (char *) "ERDProject.exe";
+    argv[0] = (char *) "erdcpp";
     argv[1] = (char *) "transaction";
     argv[2] = (char *) "new";
     argv[3] = (char *) "--nonce=0";
@@ -266,21 +301,19 @@ TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidJson_expect
     argv[5] = (char *) "--receiver=address";
     argv[6] = (char *) "--gas-price=1000";
     argv[7] = (char *) "--gas-limit=700";
-    argv[8] = (char *) "--pem=someFile";
+    argv[8] = (char *) "--key=someFile";
     argv[9] = (char *) "--outfile=";
     argv[10] = (char *) "--data=\"dd\"";
 
-    ih::ArgHandler argHandler(argc, argv);
-
-    EXPECT_EQ(argHandler.getRequestedCmd().getErrorCode(), ERROR_JSON_OUT_FILE);
+    EXPECT_PARSE_ERROR_MISSING_ARG<std::invalid_argument>(argc, argv, ERROR_MSG_EMPTY_VALUE, "outfile");
 }
 
-TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidData_expectErrorData)
+TEST(ArgHandler, parse_transaction_new_invalidData_expectErrorData)
 {
     int const argc = 11;
     char *argv[argc];
 
-    argv[0] = (char *) "ERDProject.exe";
+    argv[0] = (char *) "erdcpp";
     argv[1] = (char *) "transaction";
     argv[2] = (char *) "new";
     argv[3] = (char *) "--nonce=0";
@@ -288,56 +321,42 @@ TEST(ArgHandler, getRequestedCmd_getErrorCode_transaction_new_invalidData_expect
     argv[5] = (char *) "--receiver=address";
     argv[6] = (char *) "--gas-price=1000";
     argv[7] = (char *) "--gas-limit=700";
-    argv[8] = (char *) "--pem=someFile";
+    argv[8] = (char *) "--key=someFile";
     argv[9] = (char *) "--outfile=otherFile";
     argv[10] = (char *) "--data=";
 
-    ih::ArgHandler argHandler(argc, argv);
-
-    EXPECT_EQ(argHandler.getRequestedCmd().getErrorCode(), ERROR_DATA);
+    EXPECT_PARSE_ERROR_MISSING_ARG<std::invalid_argument>(argc, argv, ERROR_MSG_EMPTY_VALUE, "data");
 }
 
-TEST(JsonFileHandler, writeOutputFile)
+// Warning: This test only passes if default config network chainID is set to Testnet
+// Reason: Expected signature is for a serialized transaction which has chainID = "T"
+TEST(HandleCreateSignedTransaction, withPemFile_expectCorrectWrittenTx)
 {
-    std::map<uint32_t, std::string> input;
+    int const argc = 11;
+    char *argv[argc];
 
-    input[ARGS_TX_IDX_NONCE] = "5";
-    input[ARGS_TX_IDX_VALUE] = "10000000000000000000";
-    input[ARGS_TX_IDX_RECEIVER] = "erd10536tc3s886yqxtln74u6mztuwl5gy9k9gp8fttxda0klgxg979srtg5wt";
-    input[ARGS_TX_IDX_GAS_PRICE] = "1000000000";
-    input[ARGS_TX_IDX_GAS_LIMIT] = "50000";
-    input[ARGS_TX_IDX_DATA] = "test";
-    input[ARGS_TX_IDX_CHAIN_ID] = "T";
-    input[ARGS_TX_IDX_PEM_INPUT_FILE] = "..//..//testData//keysValid1.pem";
-    input[ARGS_TX_IDX_JSON_OUT_FILE] = "..//..//testData//outputJson.json";
+    argv[0] = (char *) "erdcpp";
+    argv[1] = (char *) "transaction";
+    argv[2] = (char *) "new";
+    argv[3] = (char *) "--nonce=5";
+    argv[4] = (char *) "--value=10000000000000000000";
+    argv[5] = (char *) "--receiver=erd10536tc3s886yqxtln74u6mztuwl5gy9k9gp8fttxda0klgxg979srtg5wt";
+    argv[6] = (char *) "--gas-price=1000000000";
+    argv[7] = (char *) "--gas-limit=50000";
+    argv[8] = (char *) "--data=test";
+    argv[9] = (char *) "--key=..//..//testData//keysValid1.pem";
+    argv[10] = (char *) "--outfile=..//..//testData//outputJson.json";
 
-    ih::wrapper::PemHandlerInputWrapper const pemWrapper(input);
-    ih::wrapper::TransactionInputWrapper const transactionWrapper(input);
+    ih::ArgHandler argHandler;
+    auto const res = argHandler.parse(argc, argv).result;
 
-    PemFileReader pemHandler(pemWrapper.getPemFilePath());
-    ih::JsonFile jsonFile(transactionWrapper.getOutputFile());
-
-    Transaction transaction(transactionWrapper.getNonce(), transactionWrapper.getValue(),
-                            transactionWrapper.getReceiver(), pemHandler.getAddress(),
-                            transactionWrapper.getReceiverName(), transactionWrapper.getSenderName(),
-                            transactionWrapper.getGasPrice(), transactionWrapper.getGasLimit(),
-                            transactionWrapper.getData(),
-                            transactionWrapper.getSignature(), transactionWrapper.getChainId(),
-                            transactionWrapper.getVersion(), transactionWrapper.getOptions());
-
-    Signer signer(pemHandler.getSeed());
-    transaction.sign(signer);
-    std::string const txSerialized = transaction.serialize();
-
-    jsonFile.writeDataToFile(txSerialized);
+    cli::handleCreateSignedTransaction(res);
 
     std::string writtenTx;
-    std::ifstream inFile(transactionWrapper.getOutputFile());
+    std::ifstream inFile(res["outfile"].as<std::string>());
     std::getline(inFile, writtenTx);
 
-    std::string const expectedTxSerialized = "{\"nonce\":5,\"value\":\"10000000000000000000\",\"receiver\":\"erd10536tc3s886yqxtln74u6mztuwl5gy9k9gp8fttxda0klgxg979srtg5wt\",\"sender\":\"erd1sjsk3n2d0krq3pyxxtgf0q7j3t56sgusqaujj4n82l39t9h7jers6gslr4\",\"gasPrice\":1000000000,\"gasLimit\":50000,\"data\":\"dGVzdA==\",\"signature\":\"62af8fa927e4f1ebd64fb8d7cca8aac9d5d33fefa4b185d44bb16ecefc2a7214304b4654406fe76fa36207fbb91f245586f66500cc554a3eb798faab8c435706\",\"chainID\":\"T\",\"version\":1}";
-    EXPECT_EQ(txSerialized, expectedTxSerialized);
-    EXPECT_EQ(writtenTx, expectedTxSerialized);
+    EXPECT_EQ(writtenTx, "{\"nonce\":5,\"value\":\"10000000000000000000\",\"receiver\":\"erd10536tc3s886yqxtln74u6mztuwl5gy9k9gp8fttxda0klgxg979srtg5wt\",\"sender\":\"erd1sjsk3n2d0krq3pyxxtgf0q7j3t56sgusqaujj4n82l39t9h7jers6gslr4\",\"gasPrice\":1000000000,\"gasLimit\":50000,\"data\":\"dGVzdA==\",\"signature\":\"62af8fa927e4f1ebd64fb8d7cca8aac9d5d33fefa4b185d44bb16ecefc2a7214304b4654406fe76fa36207fbb91f245586f66500cc554a3eb798faab8c435706\",\"chainID\":\"T\",\"version\":1}");
 }
 
 //TODO: Create CMake function to automatically run all tests

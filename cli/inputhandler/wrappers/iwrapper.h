@@ -1,7 +1,7 @@
-#ifndef I_WRAPPER_H
-#define I_WRAPPER_H
+#ifndef ERD_CLI_I_WRAPPER_H
+#define ERD_CLI_I_WRAPPER_H
 
-#include <map>
+#include <cliparser/cxxopts.hpp>
 
 namespace ih
 {
@@ -10,17 +10,17 @@ namespace wrapper
 class IWrapper
 {
 public:
-    explicit IWrapper(std::map<uint32_t, std::string> const &inputData) :
+    explicit IWrapper(cxxopts::ParseResult const  &inputData) :
             m_inputData(inputData)
     {}
 
-    const std::map<uint32_t, std::string> &getInputData() const
+    const cxxopts::ParseResult &getInputData() const
     {
         return m_inputData;
     }
 
 private:
-    std::map<uint32_t, std::string> const m_inputData;
+    cxxopts::ParseResult const m_inputData;
 };
 }
 }

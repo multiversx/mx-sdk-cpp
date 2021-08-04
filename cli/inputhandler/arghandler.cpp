@@ -1,158 +1,116 @@
 #include "arghandler.h"
 #include "utils/params.h"
 
-#include <cstdint>
-#include <limits>
-
-
-namespace internal
+namespace
 {
-// Generic template function to check for user input value.
-// Expects input to be an unsigned long int.
-template<typename T>
-bool isUserInputValid(std::string const &arg)
+std::string parseCmd(int const &argc, char *const argv[])
 {
-    if ((arg.empty()) || (arg.size() > std::numeric_limits<uint64_t>::digits)) return false;
-
-    std::string::const_iterator it = arg.begin();
-    while (it != arg.end() && isdigit(*it)) ++it;
-    return it == arg.end();
+    return (argc > 1) ? (std::string(argv[1])) : (std::string());
 }
 
-// Specialization template function to check for user input value.
-// Expects input to be a non-empty string.
-template<>
-bool isUserInputValid<std::string>(std::string const &arg)
+std::string parseSubCmd(int const &argc, char *const argv[])
 {
-    return (!arg.empty());
+    return (argc > 2) ? (std::string(argv[2])) : (std::string());
+}
+
+void checkEmptyValues(std::vector<cxxopts::KeyValue> const &arguments)
+{
+    for (auto const &arg : arguments)
+    {
+        if (arg.value().empty())
+        {
+            throw std::invalid_argument(ERROR_MSG_EMPTY_VALUE + arg.key());
+        }
+    }
 }
 }
 
 namespace ih
 {
 
-RequestedCmd::RequestedCmd(std::map<uint32_t, std::string> const &userInputs,
-                           RequestType const &reqType, errorCode const &errCode) :
-        m_userInputs(userInputs),
-        m_requestType(reqType),
-        m_errCode(errCode)
-{}
+ArgHandler::ArgHandler() : m_options() {}
 
-const std::map<uint32_t, std::string> &RequestedCmd::getUserInputs() const
+bool ArgHandler::isCmd(std::string const& arg) const
 {
-    return m_userInputs;
+    return arg == m_cmd;
 }
 
-const RequestType &RequestedCmd::getRequestType() const
+bool ArgHandler::isSubCmd(std::string const& arg) const
 {
-    return m_requestType;
+    return arg == m_subCmd;
 }
 
-const errorCode &RequestedCmd::getErrorCode() const
+bool ArgHandler::isCmdHelp() const
 {
-    return m_errCode;
+    return isCmd("help") || isCmd("--help") || isCmd("-h");
 }
 
-
-ArgHandler::ArgHandler(int const &argc, char *const argv[]) : m_errCode(ERROR_NONE)
+bool ArgHandler::isSubCmdHelp() const
 {
-    if (argc > 1)
+    return isSubCmd("help") || isSubCmd("--help") || isSubCmd("-h");
+}
+
+bool ArgHandler::canParse(int const &argc, char *const argv[], cxxopts::Options options)
+{
+    try
     {
-        for (int ct = 1; ct < argc; ++ct)
-        {
-            m_arguments.emplace_back(argv[ct]);
-        }
+        m_result = options.parse(argc, argv);
     }
-}
-
-bool ArgHandler::isSubCmd(uint32_t const subCmdIdx, std::string const &subCmd) const
-{
-    if (argCount() <= subCmdIdx) return false;
-    return (m_arguments[subCmdIdx] == subCmd);
-}
-
-bool ArgHandler::isCmdGroup(std::string const &arg) const
-{
-    if (argCount() == 0) return false;
-    return (m_arguments[0] == arg);
-}
-
-template<typename T>
-bool ArgHandler::checkAndSetUserInput(uint32_t const &argIdx, std::string const &arg,
-                                      std::map<uint32_t, std::string> &userInputs, uint32_t userInputIdx,
-                                      errorCode errCode)
-{
-    // If user didn't provide enough arguments OR
-    // size(user arg) <= size(required arg)
-    if (argCount() <= argIdx) return false;
-    if (m_arguments[argIdx].size() <= arg.size())
+    catch (const cxxopts::OptionException& e)
     {
-        m_errCode |= errCode;
-        return false;
+        throw;
     }
 
-    bool ret = false;
-
-    std::string const userArg = m_arguments[argIdx];
-    std::string const userCmd = userArg.substr(0, arg.size());
-    bool const isCmdValid = (userCmd == arg);
-
-    if (isCmdValid)
+    if (m_result.unmatched().size() != 2)
     {
-        std::string const userInput = userArg.substr(arg.size(), userArg.size());
-        if (internal::isUserInputValid<T>(userInput))
-        {
-            userInputs[userInputIdx] = userInput;
-            ret = true;
-        }
-        else
-        {
-            m_errCode |= errCode;
-        }
+        throw std::invalid_argument("Invalid number of arguments");
     }
 
-    return ret;
+    checkEmptyValues(m_result.arguments());
+
+    return true;
 }
 
-RequestedCmd ArgHandler::getRequestedCmd()
+ArgParsedResult ArgHandler::parse(int const &argc, char *const argv[])
 {
-    m_errCode = ERROR_NONE;
     RequestType reqType = invalid;
-    std::map<uint32_t, std::string> userInputs;
+    std::string helpMsg;
 
-    // TODO: No magic numbers/strings
-    if ((argCount() == 1) && isCmdGroup("help"))
+    m_cmd = parseCmd(argc, argv);
+    m_subCmd = parseSubCmd(argc, argv);
+
+    if (isCmdHelp() && argc == 2)
     {
+        helpMsg = m_options.help();
         reqType = help;
     }
-    else if ((argCount() == 3) && isCmdGroup("pem") && isSubCmd(1U, "load") &&
-             (checkAndSetUserInput<std::string>(2U, "--file=", userInputs, ARGS_TX_IDX_PEM_INPUT_FILE, ERROR_PEM_INPUT_FILE)))
+    else if (isCmd("transaction") && isSubCmdHelp() && argc == 3)
     {
-        reqType = loadPemFile;
+        helpMsg = m_options.transaction().help();
+        reqType = help;
     }
-    else if (((argCount() == 9) || (argCount() == 10)) && isCmdGroup("transaction") && isSubCmd(1U, "new") &&
-             checkAndSetUserInput<uint64_t>(2U, "--nonce=", userInputs, ARGS_TX_IDX_NONCE, ERROR_NONCE) &&
-             checkAndSetUserInput<std::string>(3U, "--value=", userInputs, ARGS_TX_IDX_VALUE, ERROR_VALUE) &&
-             checkAndSetUserInput<std::string>(4U, "--receiver=", userInputs, ARGS_TX_IDX_RECEIVER, ERROR_RECEIVER) &&
-             checkAndSetUserInput<uint64_t>(5U, "--gas-price=", userInputs, ARGS_TX_IDX_GAS_PRICE, ERROR_GAS_PRICE) &&
-             checkAndSetUserInput<uint64_t>(6U, "--gas-limit=", userInputs, ARGS_TX_IDX_GAS_LIMIT, ERROR_GAS_LIMIT) &&
-             checkAndSetUserInput<std::string>(7U, "--pem=", userInputs, ARGS_TX_IDX_PEM_INPUT_FILE, ERROR_PEM_INPUT_FILE) &&
-             checkAndSetUserInput<std::string>(8U, "--outfile=", userInputs, ARGS_TX_IDX_JSON_OUT_FILE, ERROR_JSON_OUT_FILE))
+    else if (isCmd("esdt") && isSubCmdHelp() && argc == 3)
     {
-        reqType = createSignedTransactionWithPemFile;
-
-        if ((argCount() == 10) && (!checkAndSetUserInput<std::string>(9U, "--data=", userInputs, ARGS_TX_IDX_DATA, ERROR_DATA)))
-        {
-            reqType = invalid;
-        }
+        helpMsg = m_options.esdt().help();
+        reqType = help;
+    }
+    else if (isCmd("transaction") && isSubCmd("new") &&
+             canParse(argc, argv, m_options.transaction()))
+    {
+        reqType = createSignedTransaction;
+    }
+    else if (isCmd("esdt") && isSubCmd("issue") &&
+            canParse(argc, argv, m_options.esdt().issue()))
+    {
+        reqType = issueESDT;
+    }
+    else if (isCmd("esdt") && isSubCmd("transfer") &&
+             canParse(argc, argv, m_options.esdt().transfer()))
+    {
+        reqType = transferESDT;
     }
 
-    return RequestedCmd(userInputs, reqType, m_errCode);
-}
-
-unsigned long ArgHandler::argCount() const
-{
-    return m_arguments.size();
+    return ArgParsedResult {reqType, helpMsg, m_result};
 }
 
 }

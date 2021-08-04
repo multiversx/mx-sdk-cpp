@@ -9,9 +9,9 @@ class Signer
 public:
     explicit Signer(bytes const &seed);
 
-    std::string getSignature(std::string const &message) const;
+    virtual std::string getSignature(std::string const &message) const;
 
-    bool verify(std::string const &signature, std::string const &message) const;
+    virtual bool verify(std::string const &signature, std::string const &message) const;
 
     static bool verify(std::string const &signature, std::string const &message, bytes const &publicKey);
 

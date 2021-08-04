@@ -9,12 +9,10 @@
 #include <stdexcept>
 
 PemFileReader::PemFileReader(std::string const &filePath) :
-        IFile(filePath)
+        IFile(filePath, "pem"), ISecretKey()
 {
     try
     {
-        PemFileReader::checkFile();
-
         std::string const fileContent = getFileContent();
         if (fileContent.empty())
             throw std::invalid_argument(ERROR_MSG_FILE_EMPTY);
@@ -27,12 +25,6 @@ PemFileReader::PemFileReader(std::string const &filePath) :
     {
         throw;
     }
-}
-
-void PemFileReader::checkFile() const
-{
-    if (!IFile::fileExists()) throw std::invalid_argument(ERROR_MSG_FILE_DOES_NOT_EXIST);
-    if (!IFile::isFileExtension("pem")) throw std::invalid_argument(ERROR_MSG_FILE_EXTENSION_INVALID);
 }
 
 Address PemFileReader::getAddress() const

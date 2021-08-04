@@ -176,7 +176,7 @@ TEST(CryptoWrapper, verify)
     EXPECT_TRUE(wrapper::crypto::verify(signature, message, signerAddr.getPublicKey()));
 }
 
-#if HTTP_PRECONDITIONS
+#if GTESTS_HTTPS_PRECONDITIONS
 TEST(ClientWrapper, get_validSubDomain_validRequest)
 {
     wrapper::http::Client client("https://testnet-gateway.elrond.com");
