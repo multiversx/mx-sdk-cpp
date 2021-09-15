@@ -1,10 +1,11 @@
 #include <utility>
-#include <gmpxx.h>
 
+#include "bigint/integer.h"
 #include "internal/biguint.h"
 #include "errors.h"
 
-BigUInt::BigUInt(std::string value) : m_value(std::move(value)){}
+BigUInt::BigUInt(std::string value) : m_value(std::move(value))
+{}
 
 std::string BigUInt::getHexValue() const
 {
@@ -12,9 +13,9 @@ std::string BigUInt::getHexValue() const
 
     try
     {
-        mpz_class number(m_value);
+        integer number(m_value, 10);
         number = abs(number);
-        ret = number.get_str(16);
+        ret = number.str(16);
     }
     catch (...)
     {
@@ -29,7 +30,7 @@ std::string BigUInt::getHexValue() const
     return ret;
 }
 
-const std::string& BigUInt::getValue() const
+const std::string &BigUInt::getValue() const
 {
     return m_value;
 }
