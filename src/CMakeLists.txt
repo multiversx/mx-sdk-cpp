@@ -28,8 +28,6 @@ add_library(src ${src})
 target_link_libraries(src PUBLIC utils)
 target_link_libraries(src PUBLIC external)
 target_link_libraries(src LINK_PUBLIC ${LIBSODIUM_LIBRARY})
-target_link_libraries(src LINK_PUBLIC ${GMP_LIBRARY})
-target_link_libraries(src LINK_PUBLIC ${GMPXX_LIBRARY})
 
 target_link_libraries(src PUBLIC
         $<$<BOOL:${HTTPLIB_IS_USING_OPENSSL}>:OpenSSL::SSL>
