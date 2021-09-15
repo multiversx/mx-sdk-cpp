@@ -8,17 +8,12 @@ project(ERDCPP)
 
 set(LIBSODIUM_INCLUDE_PATH "/usr/local/include")
 set(LIBSODIUM_LIB_PATH "/usr/local/lib")
-set(GMP_INCLUDE_PATH "/usr/lib/include")
-set(GMP_LIB_PATH "/usr/lib")
 
 include_directories(${PROJECT_SOURCE_DIR}/include)
 include_directories(${PROJECT_SOURCE_DIR}/external)
 include_directories(${LIBSODIUM_INCLUDE_PATH})
-include_directories(${GMP_INCLUDE_PATH})
 
 find_library(LIBSODIUM_LIBRARY libsodium.so.23.3.0 ${LIBSODIUM_LIB_PATH} REQUIRED)
-find_library(GMP_LIBRARY libgmp.so.10.4.0 ${GMP_LIB_PATH} REQUIRED)
-find_library(GMPXX_LIBRARY libgmpxx.so.4.6.0 ${GMP_LIB_PATH} REQUIRED)
 
 find_package(OpenSSL REQUIRED)
 if(OPENSSL_FOUND)
