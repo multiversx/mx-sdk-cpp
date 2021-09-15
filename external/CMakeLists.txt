@@ -6,6 +6,7 @@ file(GLOB external
         toml/cpptoml.h
         aes_128_ctr/aes.c
         keccak/sha3.c
+        bigint/integer.h bigint/integer.cpp
         )
 
 add_library(external ${external})

@@ -19,10 +19,6 @@ git submodule update --init --recursive
 Elrond C++ SDK CLI uses:
 - Libsodium shared library. Make sure to [install](https://doc.libsodium.org/installation) the
 latest version.
-- GNU GMP. Make sure to install it:
-```bash
-sudo apt-get install libgmp3-dev
-```
 
 ### 1.3 Compile and build with CMake
 
