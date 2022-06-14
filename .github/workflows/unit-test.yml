@@ -19,4 +19,4 @@ jobs:
 
 
       - name: Unit tests
-        run: script.sh
+        run: ./script.sh
