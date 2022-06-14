@@ -17,6 +17,8 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
 
+      - name: Update submodules
+        run: git submodule update --init --recursive
 
       - name: Unit tests
         run: ./scripts.sh
