@@ -1,18 +1,10 @@
 #include "gtest/gtest.h"
 
 #include "utils/hex.h"
+#include "test_common.h"
 #include "utils/errors.h"
 #include "filehandler/pemreader.h"
 #include "filehandler/keyfilereader.h"
-
-std::string getCanonicPath(std::string const& path) {
-    // Get absolute path to executable
-    std::string canonicPath = std::string (canonicalize_file_name("/proc/self/exe"));
-
-    // Remove everything in path after test_src and concatenate it with test file data path
-    canonicPath = canonicPath.substr(0, canonicPath.find("test_src"));
-    return canonicPath += path;
-}
 
 class PemFileReaderConstructorFixture : public ::testing::Test
 {

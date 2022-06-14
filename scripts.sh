@@ -1,22 +1,19 @@
 cmake --build .
 
-cd tests
-cd test_src
+cd tests || exit
 
-#./test_apiresponse
-#find -type f -executable -exec file -i '{}' \; | grep 'x-executable; charset=binary'
+function runTests(){
+  cd "$1" || exit
 
-
-tst='test_'
-cmake='CMake'
-for d in */* ; do
-    #echo "$d"
-    if [[ "$d" == *"$tst"* ]]; then
-      if [[ -x "$d" ]]; then
-        if [[ "$d" != *"$cmake"* ]]; then
-          echo "found $d"
-          ./$d
-          fi
+  for file in */* ; do
+      #echo "$d"
+      if [[ "$file" == *"test_"* ]] && [[ -x "$file" ]] && [[ "$file" != *"CMake"* ]]; then
+        ./"$file"
       fi
-    fi
-done
+  done
+
+  cd ..
+}
+
+runTests test_cli
+runTests test_src
