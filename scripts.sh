@@ -1,3 +1,4 @@
+cmake .
 cmake --build .
 
 function runTests(){
