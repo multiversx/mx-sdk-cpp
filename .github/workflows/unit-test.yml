@@ -17,6 +17,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
 
+      - uses: ./.github/workflows/build.yml
+
       - name: Unit Tests
-        uses: ./.github/workflows/build.yml
         run: ./scripts.sh
