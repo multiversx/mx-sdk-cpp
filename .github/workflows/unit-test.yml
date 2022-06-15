@@ -12,6 +12,7 @@ jobs:
   test:
     name: Unit Tests
     runs-on: ubuntu-latest
+    needs: call-build
     steps:
       - name: Unit Tests
         run: ./scripts.sh
