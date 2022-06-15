@@ -30,6 +30,7 @@ jobs:
     name: Unit Tests
     runs-on: ubuntu-latest
     steps:
-      - name: Unit tests
+      - name: Build
         uses: Build
+      - name: Unit Tests
         run: ./scripts.sh
