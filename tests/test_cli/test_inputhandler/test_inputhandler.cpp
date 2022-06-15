@@ -1,10 +1,10 @@
-#include <filehandler/pemreader.h>
 #include <fstream>
 
 #include "gtest/gtest.h"
 #include "inputhandler/ext.h"
 #include "cli_handler.h"
 #include "utils/ext.h"
+#include "test_common.h"
 
 template <typename T>
 void EXPECT_PARSE_ERROR_MISSING_ARG(int const &argc, char *const argv[], errorMessage const &errMsg, std::string const &arg)
@@ -335,6 +335,9 @@ TEST(HandleCreateSignedTransaction, withPemFile_expectCorrectWrittenTx)
     int const argc = 11;
     char *argv[argc];
 
+    std::string keyFile = "--key=" + getCanonicPath("testData/keysValid1.pem");
+    std::string outFile = "--outfile=" + getCanonicPath("testData/outputJson.json");
+
     argv[0] = (char *) "erdcpp";
     argv[1] = (char *) "transaction";
     argv[2] = (char *) "new";
@@ -344,8 +347,8 @@ TEST(HandleCreateSignedTransaction, withPemFile_expectCorrectWrittenTx)
     argv[6] = (char *) "--gas-price=1000000000";
     argv[7] = (char *) "--gas-limit=50000";
     argv[8] = (char *) "--data=test";
-    argv[9] = (char *) "--key=..//..//testData//keysValid1.pem";
-    argv[10] = (char *) "--outfile=..//..//testData//outputJson.json";
+    argv[9] = (char *) keyFile.data();
+    argv[10] = (char *) outFile.data();
 
     ih::ArgHandler argHandler;
     auto const res = argHandler.parse(argc, argv).result;
