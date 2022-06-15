@@ -28,6 +28,7 @@ jobs:
 
   test:
     name: Unit Tests
+    needs: Build
     runs-on: ubuntu-latest
     steps:
       - name: Unit tests
