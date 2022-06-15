@@ -17,7 +17,8 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
 
-      - uses: call-build
+      - name: Call build
+        uses: call-build
 
       - name: Unit Tests
         run: ./scripts.sh
