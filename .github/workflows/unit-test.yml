@@ -1,4 +1,4 @@
-name: Build + Unit tests
+name: Unit tests
 
 on:
   push:
@@ -7,32 +7,11 @@ on:
     branches: [ development, main, feat/* ]
 
 jobs:
-  build:
-    name: Build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Install crypto library libsodium
-        run: sudo apt install libsodium-dev
-
-      - name: Check out code
-        uses: actions/checkout@v2
-
-      - name: Update submodules
-        run: git submodule update --init --recursive
-
-      - name: Cmake
-        run: cmake .
-
-      - name: Build
-        run: cmake --build .
-
+  call-build:
+    uses: ./github/workflows/build.yml
   test:
     name: Unit Tests
     runs-on: ubuntu-latest
-    needs: Build
     steps:
-      - name: Check out code
-        uses: actions/checkout@v2
-
       - name: Unit Tests
         run: ./scripts.sh

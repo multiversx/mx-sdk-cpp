@@ -1,0 +1,27 @@
+name: Build
+
+on:
+  push:
+    branches: [ development, main, feat/* ]
+  pull_request:
+    branches: [ development, main, feat/* ]
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install crypto library libsodium
+        run: sudo apt install libsodium-dev
+
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Update submodules
+        run: git submodule update --init --recursive
+
+      - name: Cmake
+        run: cmake .
+
+      - name: Build
+        run: cmake --build .
