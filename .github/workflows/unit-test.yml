@@ -15,4 +15,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Unit Tests
-        run: scripts.sh
+        run: ./scripts.sh
