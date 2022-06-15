@@ -7,8 +7,8 @@ on:
     branches: [ development, main, feat/* ]
 
 jobs:
-  call-build:
-    uses: ./.github/workflows/build.yml
+  #call-build:
+  #  uses: ./.github/workflows/build.yml
   test:
     #needs: call-build
     name: Unit Tests
@@ -18,7 +18,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Call build
-        uses: call-build
+        uses: ./.github/workflows/build.yml
 
       - name: Unit Tests
         run: ./scripts.sh
