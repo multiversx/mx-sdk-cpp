@@ -7,13 +7,12 @@ on:
     branches: [ development, main, feat/* ]
 
 jobs:
-  #call-build:
-  #  uses: ./.github/workflows/build.yml
+  call-build:
+    uses: ./.github/workflows/build.yml
   test:
+    needs: call-build
     name: Unit Tests
     runs-on: ubuntu-latest
     steps:
-      - uses: ./.github/workflows/build.yml
-
       - name: Unit Tests
-        run: ./scripts.sh
+        run: scripts.sh
