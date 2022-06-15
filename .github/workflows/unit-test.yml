@@ -14,5 +14,7 @@ jobs:
     name: Unit Tests
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
+
       - name: Unit Tests
         run: ./scripts.sh
