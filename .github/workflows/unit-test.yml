@@ -20,11 +20,5 @@ jobs:
       - name: Update submodules
         run: git submodule update --init --recursive
 
-      - name: Cmake
-        run: cmake .
-
-      - name: Build
-        run: cmake --build .
-
       - name: Unit tests
         run: ./scripts.sh

@@ -1,3 +1,6 @@
+cmake .
+cmake --build .
+
 function runTests(){
   cd "$1" || exit 1
 
