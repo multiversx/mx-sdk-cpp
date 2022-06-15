@@ -37,7 +37,7 @@ TEST(ArgHandler, parse_noArgument_expectInvalid)
 
     EXPECT_EQ(res.requestType, ih::invalid);
     EXPECT_TRUE(res.result.arguments().empty());
-    EXPECT_TRUE(res.help.empty());
+    EXPECT_FALSE(res.help.empty());
 }
 
 TEST(ArgHandler, parse_randomArgs_expectInvalid)
