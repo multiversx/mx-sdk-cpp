@@ -95,8 +95,6 @@ catch (std::length_error const &err)
 }
 ```
 
-
-
 ### 1.1.4 Transaction
 
 ```c++
