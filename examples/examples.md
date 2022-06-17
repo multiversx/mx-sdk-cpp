@@ -10,9 +10,11 @@
 | **ESDT**        | Issue, transfer, transfer with SC call                             |
 
 
-## 1.1 Examples. SDK
+# 2. Examples
 
-### 1.1.1 Address
+## 2.1 Examples. SDK
+
+### 2.1.1 Address
 
 ```c++
 try
@@ -40,7 +42,7 @@ catch (std::length_error const &err)
 }
 ```
 
-### 1.1.2 Key File (pem, json)
+### 2.1.2 Key File (pem, json)
 
 ```c++
 try
@@ -68,7 +70,7 @@ catch (std::length_error const &err)
 }
 ```
 
-### 1.1.3 Signer
+### 2.1.3 Signer
 
 ```c++
 try
@@ -95,7 +97,7 @@ catch (std::length_error const &err)
 }
 ```
 
-### 1.1.4 Transaction
+### 2.1.4 Transaction
 
 ```c++
 try
@@ -144,7 +146,7 @@ catch (std::length_error const &err)
 
 ```
 
-### 1.1.5 Proxy
+### 2.1.5 Proxy
 
 ```c++
 try
@@ -164,7 +166,7 @@ catch (std::runtime_error const &err)
 
 ```
 
-### 1.1.6 ESDT transfer with func call
+### 2.1.6 ESDT transfer with func call
 
 ```c++
 try
@@ -218,7 +220,7 @@ catch (...)
 }
 ```
 
-## 1.2 Examples. CLI
+## 2.2 Examples. CLI
 
 To see all available command line commands:
 ```bash
