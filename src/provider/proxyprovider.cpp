@@ -4,27 +4,56 @@
 
 namespace internal
 {
-    ErdGenericApiResponse parse(wrapper::http::Result const &res)
+ErdGenericApiResponse parse(wrapper::http::Result const &res)
+{
+    if (res.error)
     {
-        if (res.error)
-        {
-            throw std::runtime_error(res.statusMessage);
-        }
-
-        return ErdGenericApiResponse(res.body);
+        throw std::runtime_error(res.statusMessage);
     }
 
-    nlohmann::json getPayLoad(wrapper::http::Result const &res)
-    {
-        ErdGenericApiResponse response = parse(res);
-        response.checkSuccessfulOperation();
-
-        return response.getData<nlohmann::json>();
-    }
+    return ErdGenericApiResponse(res.body);
 }
 
-ProxyProvider::ProxyProvider(std::string url):
-    m_url(std::move(url)) {}
+nlohmann::json getPayLoad(wrapper::http::Result const &res)
+{
+    ErdGenericApiResponse response = parse(res);
+    response.checkSuccessfulOperation();
+
+    return response.getData<nlohmann::json>();
+}
+
+NetworkConfig fetchNetworkConfig(std::string const &url)
+{
+    NetworkConfig cfg;
+    try
+    {
+        wrapper::http::Client client(url);
+        wrapper::http::Result const result = client.get("/network/config");
+
+        auto data = internal::getPayLoad(result);
+
+        utility::requireAttribute(data, "config");
+
+        cfg.chainId = data["config"]["erd_chain_id"];
+        cfg.gasPerDataByte = data["config"]["erd_gas_per_data_byte"];
+        cfg.minGasLimit = data["config"]["erd_min_gas_limit"];
+        cfg.minGasPrice = data["config"]["erd_min_gas_price"];
+    }
+    catch (...)
+    {
+        cfg = DEFAULT_MAINNET_NETWORK_CONFIG
+    }
+
+    return cfg;
+}
+
+}
+
+ProxyProvider::ProxyProvider(std::string url) :
+        m_url(std::move(url))
+{
+    m_networkConfig = internal::fetchNetworkConfig(m_url);
+}
 
 Account ProxyProvider::getAccount(Address const &address)
 {
@@ -101,7 +130,7 @@ std::map<std::string, std::string> ProxyProvider::getAllESDTTokenBalances(Addres
     std::string esdt;
     std::string balance;
 
-    for (const auto& it : esdts.items())
+    for (const auto &it: esdts.items())
     {
         utility::requireAttribute(it.value(), "balance");
 
@@ -112,3 +141,9 @@ std::map<std::string, std::string> ProxyProvider::getAllESDTTokenBalances(Addres
 
     return ret;
 }
+
+NetworkConfig ProxyProvider::getNetworkConfig() const
+{
+    return m_networkConfig;
+}
+

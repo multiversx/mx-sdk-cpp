@@ -81,6 +81,27 @@ TEST(ProxyProvider, getAllESDTokenBalances_multipleTokens)
     EXPECT_FALSE(esdts.at("0009O-8742a4").empty());
 }
 
+void EXPECT_NETWORK_CONFIG_EQ(const NetworkConfig& v1, const NetworkConfig& v2)
+{
+    EXPECT_EQ(v1.chainId, v2.chainId);
+    EXPECT_EQ(v1.gasPerDataByte, v2.gasPerDataByte);
+    EXPECT_EQ(v1.minGasPrice, v2.minGasPrice);
+    EXPECT_EQ(v1.minGasLimit, v2.minGasLimit);
+
+    EXPECT_EQ(v1, v1);
+}
+
+TEST(ProxyProvider, getNetworkConfig)
+{
+    ProxyProvider proxyTestnet("https://testnet-gateway.elrond.com");
+    NetworkConfig defaultTestnet = DEFAULT_TESTNET_NETWORK_CONFIG;
+    EXPECT_NETWORK_CONFIG_EQ(proxyTestnet.getNetworkConfig(), defaultTestnet);
+
+    ProxyProvider proxyMainnet("https://mainnet-gateway.elrond.com");
+    NetworkConfig defaultMainnet = DEFAULT_MAINNET_NETWORK_CONFIG;
+    EXPECT_NETWORK_CONFIG_EQ(proxyMainnet.getNetworkConfig(), defaultMainnet);
+}
+
 class GenericProxyProviderTxFixture : public ::testing::Test
 {
 public:

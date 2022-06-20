@@ -23,8 +23,11 @@ public:
 
     std::map<std::string, std::string> getAllESDTTokenBalances(Address const &address) const;
 
+    NetworkConfig getNetworkConfig() const;
+
 private:
     std::string m_url;
+    NetworkConfig m_networkConfig;
 };
 
 #endif //ERD_PROXY_PROVIDER_H

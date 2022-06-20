@@ -18,6 +18,7 @@ file(GLOB src
         provider/apiresponse.h
         provider/proxyprovider.cpp
         provider/data/data_transaction.cpp
+        provider/data/networkconfig.cpp
         )
 
 include_directories(utils)
