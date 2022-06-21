@@ -1,3 +1,5 @@
+#include <utility>
+
 #include "gtest/gtest.h"
 
 #include "transaction/esdt.h"
@@ -81,16 +83,37 @@ TEST(ProxyProvider, getAllESDTokenBalances_multipleTokens)
     EXPECT_FALSE(esdts.at("0009O-8742a4").empty());
 }
 
+void EXPECT_NETWORK_CONFIG_EQ(const NetworkConfig& cfg1, const NetworkConfig& cfg2)
+{
+    EXPECT_EQ(cfg1.chainId, cfg2.chainId);
+    EXPECT_EQ(cfg1.gasPerDataByte, cfg2.gasPerDataByte);
+    EXPECT_EQ(cfg1.minGasPrice, cfg2.minGasPrice);
+    EXPECT_EQ(cfg1.minGasLimit, cfg2.minGasLimit);
+
+    EXPECT_EQ(cfg1, cfg2);
+}
+
+TEST(ProxyProvider, getNetworkConfig)
+{
+    ProxyProvider proxyTestnet("https://testnet-gateway.elrond.com");
+    NetworkConfig defaultTestnet = DEFAULT_TESTNET_NETWORK_CONFIG;
+    EXPECT_NETWORK_CONFIG_EQ(proxyTestnet.getNetworkConfig(), defaultTestnet);
+
+    ProxyProvider proxyMainnet("https://api.elrond.com");
+    NetworkConfig defaultMainnet = DEFAULT_MAINNET_NETWORK_CONFIG;
+    EXPECT_NETWORK_CONFIG_EQ(proxyMainnet.getNetworkConfig(), defaultMainnet);
+}
+
 class GenericProxyProviderTxFixture : public ::testing::Test
 {
 public:
     explicit GenericProxyProviderTxFixture(std::string proxyUrl):
-            m_proxy(proxyUrl),
+            m_proxy(std::move(proxyUrl)),
             m_pem("..//..//testData//keysValid1.pem"),
             m_senderAddr(m_pem.getAddress()),
             m_senderAcc(m_proxy.getAccount(m_senderAddr)){}
 
-    void signTransaction(Transaction &transaction)
+    void signTransaction(Transaction &transaction) const
     {
         Signer const signer(m_pem.getSeed());
         transaction.sign(signer);
