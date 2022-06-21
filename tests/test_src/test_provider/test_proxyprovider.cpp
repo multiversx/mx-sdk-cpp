@@ -83,14 +83,14 @@ TEST(ProxyProvider, getAllESDTokenBalances_multipleTokens)
     EXPECT_FALSE(esdts.at("0009O-8742a4").empty());
 }
 
-void EXPECT_NETWORK_CONFIG_EQ(const NetworkConfig& v1, const NetworkConfig& v2)
+void EXPECT_NETWORK_CONFIG_EQ(const NetworkConfig& cfg1, const NetworkConfig& cfg2)
 {
-    EXPECT_EQ(v1.chainId, v2.chainId);
-    EXPECT_EQ(v1.gasPerDataByte, v2.gasPerDataByte);
-    EXPECT_EQ(v1.minGasPrice, v2.minGasPrice);
-    EXPECT_EQ(v1.minGasLimit, v2.minGasLimit);
+    EXPECT_EQ(cfg1.chainId, cfg2.chainId);
+    EXPECT_EQ(cfg1.gasPerDataByte, cfg2.gasPerDataByte);
+    EXPECT_EQ(cfg1.minGasPrice, cfg2.minGasPrice);
+    EXPECT_EQ(cfg1.minGasLimit, cfg2.minGasLimit);
 
-    EXPECT_EQ(v1, v1);
+    EXPECT_EQ(cfg1, cfg2);
 }
 
 TEST(ProxyProvider, getNetworkConfig)
