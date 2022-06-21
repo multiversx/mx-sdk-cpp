@@ -27,7 +27,6 @@ public:
 
 private:
     std::string m_url;
-    NetworkConfig m_networkConfig;
 };
 
 #endif //ERD_PROXY_PROVIDER_H

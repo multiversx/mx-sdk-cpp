@@ -1,3 +1,5 @@
+#include <utility>
+
 #include "gtest/gtest.h"
 
 #include "transaction/esdt.h"
@@ -97,7 +99,7 @@ TEST(ProxyProvider, getNetworkConfig)
     NetworkConfig defaultTestnet = DEFAULT_TESTNET_NETWORK_CONFIG;
     EXPECT_NETWORK_CONFIG_EQ(proxyTestnet.getNetworkConfig(), defaultTestnet);
 
-    ProxyProvider proxyMainnet("https://mainnet-gateway.elrond.com");
+    ProxyProvider proxyMainnet("https://api.elrond.com");
     NetworkConfig defaultMainnet = DEFAULT_MAINNET_NETWORK_CONFIG;
     EXPECT_NETWORK_CONFIG_EQ(proxyMainnet.getNetworkConfig(), defaultMainnet);
 }
@@ -106,12 +108,12 @@ class GenericProxyProviderTxFixture : public ::testing::Test
 {
 public:
     explicit GenericProxyProviderTxFixture(std::string proxyUrl):
-            m_proxy(proxyUrl),
+            m_proxy(std::move(proxyUrl)),
             m_pem("..//..//testData//keysValid1.pem"),
             m_senderAddr(m_pem.getAddress()),
             m_senderAcc(m_proxy.getAccount(m_senderAddr)){}
 
-    void signTransaction(Transaction &transaction)
+    void signTransaction(Transaction &transaction) const
     {
         Signer const signer(m_pem.getSeed());
         transaction.sign(signer);
