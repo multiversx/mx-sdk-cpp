@@ -3,8 +3,9 @@
 
 #include <string>
 
-/// A "NetworkConfig" object holds the network parameters relevant to creating transactions (e.g. minimum gas limit, minimum gas price).
-/// The following fields can (should) be fetched from https://api.elrond.com/network/config.
+// A "NetworkConfig" object holds the network parameters relevant to creating transactions (e.g. minimum gas limit, minimum gas price).
+// The following fields can (should) be fetched from https://api.elrond.com/network/config.
+// Also, see https://github.com/trustwallet/wallet-core/blob/master/src/Elrond/NetworkConfig.h
 struct NetworkConfig
 {
     std::string chainId;
