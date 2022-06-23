@@ -19,6 +19,7 @@ file(GLOB src
         provider/proxyprovider.cpp
         provider/data/data_transaction.cpp
         provider/data/networkconfig.cpp
+        transaction/gas_estimator.cpp
         )
 
 include_directories(utils)
