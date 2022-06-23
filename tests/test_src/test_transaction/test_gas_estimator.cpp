@@ -4,8 +4,8 @@
 
 TEST(GasEstimator, defaultMainetNetworkConfig)
 {
-    NetworkConfig networkConfig = DEFAULT_MAINNET_NETWORK_CONFIG
-    GasEstimator gasEstimator(networkConfig);
+    NetworkConfig const networkConfig = DEFAULT_MAINNET_NETWORK_CONFIG
+    GasEstimator const gasEstimator(networkConfig);
 
     EXPECT_EQ(gasEstimator.forEGLDTransfer(0), 50000);
     EXPECT_EQ(gasEstimator.forEGLDTransfer(3), 50000 + 3 * 1500);
