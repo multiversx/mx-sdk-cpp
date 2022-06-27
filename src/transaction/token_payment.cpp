@@ -4,12 +4,15 @@
 
 namespace internal
 {
-BigUInt bigUIntFromVal(size_t value, uint32_t numDecimals)
+BigUInt bigUIntFromVal(double value, uint32_t numDecimals)
 {
-    std::string val = std::to_string(value);
-    std::string zeroes = std::string(numDecimals, '0');
 
-    return BigUInt(val + zeroes);
+    auto v = value * std::pow(10, numDecimals);
+    BigUInt val = BigUInt(std::to_string(uint64_t(v)));
+   // std::string zeroes = std::string(numDecimals, '0');
+  //  BigUInt multiplier = BigUInt("1" + zeroes);
+
+    return val;// * multiplier;
 }
 }
 
@@ -20,7 +23,7 @@ TokenPayment::TokenPayment(std::string tokenIdentifier, uint64_t nonce, BigUInt 
           m_numDecimals(numDecimals)
 {}
 
-TokenPayment TokenPayment::fungibleFromAmount(std::string tokenIdentifier, size_t value, uint32_t numDecimals)
+TokenPayment TokenPayment::fungibleFromAmount(std::string tokenIdentifier, double value, uint32_t numDecimals)
 {
     BigUInt amountBigInt = internal::bigUIntFromVal(value, numDecimals);
     return {std::move(tokenIdentifier), 0, amountBigInt, numDecimals};
@@ -37,7 +40,7 @@ TokenPayment TokenPayment::nonFungible(std::string tokenIdentifier, uint64_t non
     return {std::move(tokenIdentifier), nonce, BigUInt("1"), 0};
 }
 
-TokenPayment TokenPayment::metaESDTFromAmount(std::string tokenIdentifier, uint64_t nonce, size_t value, uint32_t numDecimals)
+TokenPayment TokenPayment::metaESDTFromAmount(std::string tokenIdentifier, uint64_t nonce, double value, uint32_t numDecimals)
 {
     BigUInt amountBigInt = internal::bigUIntFromVal(value, numDecimals);
     return {std::move(tokenIdentifier), nonce, amountBigInt, numDecimals};

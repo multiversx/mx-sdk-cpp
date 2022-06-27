@@ -10,13 +10,13 @@
 class TokenPayment
 {
 public:
-    static TokenPayment fungibleFromAmount(std::string tokenIdentifier, size_t value, uint32_t numDecimals);
+    static TokenPayment fungibleFromAmount(std::string tokenIdentifier, double value, uint32_t numDecimals);
 
     static TokenPayment fungibleFromBigUInt(std::string tokenIdentifier, BigUInt value, uint32_t numDecimals = 0);
 
     static TokenPayment nonFungible(std::string tokenIdentifier, uint64_t nonce);
 
-    static TokenPayment metaESDTFromAmount(std::string tokenIdentifier, uint64_t nonce, size_t value, uint32_t numDecimals);
+    static TokenPayment metaESDTFromAmount(std::string tokenIdentifier, uint64_t nonce, double value, uint32_t numDecimals);
 
     static TokenPayment metaESDTFromBigUInt(std::string tokenIdentifier, uint64_t nonce, BigUInt value, uint32_t numDecimals);
 

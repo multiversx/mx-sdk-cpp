@@ -50,8 +50,8 @@ std::pair<BigUInt, BigUInt> BigUInt::divmod(const BigUInt &rhs) const
     integer v2(rhs.getValue(), 10);
     std::pair<integer, integer> res = v1.divmod(v1, v2);
 
-    BigUInt retV1 = BigUInt(v1.str());
-    BigUInt retV2 = BigUInt(v2.str());
+    BigUInt retV1 = BigUInt(res.first.str());
+    BigUInt retV2 = BigUInt(res.second.str());
 
     return {retV1, retV2};
 }
