@@ -16,9 +16,13 @@ public:
 
     static TokenPayment nonFungible(std::string tokenIdentifier, uint64_t nonce);
 
-    static TokenPayment metaESDTFromAmount(std::string tokenIdentifier, uint64_t nonce, double value, uint32_t numDecimals = 0);
+    static TokenPayment metaESDTFromAmount(std::string tokenIdentifier, uint64_t nonce, std::string value, uint32_t numDecimals);
 
-    static TokenPayment metaESDTFromBigUInt(std::string tokenIdentifier, uint64_t nonce, BigUInt value, uint32_t numDecimals);
+    static TokenPayment metaESDTFromBigUInt(std::string tokenIdentifier, uint64_t nonce, BigUInt value, uint32_t numDecimals = 0);
+
+    std::string tokenIdentifier() const;
+
+    uint64_t nonce() const;
 
     std::string toString() const;
 

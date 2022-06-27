@@ -5,24 +5,6 @@
 
 namespace internal
 {
-BigUInt bigUIntFromVal(double value, uint32_t numDecimals)
-{
-    std::string valStr = std::to_string(value);
-    auto maxDoubleLen = std::to_string(std::numeric_limits<double>::max()).length();
-    if (valStr.length() >= maxDoubleLen)
-    {
-        valStr.erase(std::remove(valStr.begin(), valStr.end(), '.'), valStr.end());
-        return BigUInt(valStr);
-    }
-
-    auto v = value * std::pow(10, numDecimals);
-    auto xxx = std::numeric_limits<uint64_t>::max();
-    BigUInt val = BigUInt(std::to_string(uint64_t(v)));
-    // std::string zeroes = std::string(numDecimals, '0');
-    //  BigUInt multiplier = BigUInt("1" + zeroes);
-
-    return val;// * multiplier;
-}
 
 bool is_number(const std::string &s)
 {
@@ -31,6 +13,46 @@ bool is_number(const std::string &s)
     while (it != s.end() && std::isdigit(*it)) ++it;
     return !s.empty() && it == s.end();
 }
+
+BigUInt bigUIntFromVal(std::string value, uint32_t numDecimals)
+{
+    size_t pointCt = std::count(value.begin(), value.end(), '.');
+    if (pointCt > 1)
+    {
+        //do smth
+    }
+
+    std::string valWithoutPoint = value;
+    valWithoutPoint.erase(std::remove(valWithoutPoint.begin(), valWithoutPoint.end(), '.'), valWithoutPoint.end());
+
+    if (!is_number(valWithoutPoint))
+    {
+        // another err
+    }
+
+    if (pointCt == 1)
+    {
+        auto const dotPosition = value.find_last_of('.');
+        auto first = value.substr(0, dotPosition);
+        first = (first == "0") ? "" : first;
+        auto second = value.substr(dotPosition + 1, value.length());
+        if (second.length() > numDecimals)
+        {
+            second = second.substr(0, numDecimals);
+        }
+        else
+        {
+            int zeroesCt = int(numDecimals - second.length());
+            zeroesCt = std::max(zeroesCt, 0);
+            std::string zeroes = std::string(zeroesCt, '0');
+            second += zeroes;
+        }
+        return BigUInt(first + second);
+    }
+    std::string zeroes = std::string(numDecimals, '0');
+    return BigUInt(value + zeroes);
+}
+
 
 }
 
@@ -43,43 +65,10 @@ TokenPayment::TokenPayment(std::string tokenIdentifier, uint64_t nonce, BigUInt 
 
 TokenPayment TokenPayment::fungibleFromAmount(std::string tokenIdentifier, std::string value, uint32_t numDecimals)
 {
-    size_t pointCt = std::count(value.begin(), value.end(), '.');
-    if (pointCt > 1)
-    {
-        //do smth
-    }
+    BigUInt amountBigInt = internal::bigUIntFromVal(value, numDecimals);
+    return {std::move(tokenIdentifier), 0, amountBigInt, numDecimals};
 
-    std::string valWithoutPoint = value;
-    valWithoutPoint.erase(std::remove(valWithoutPoint.begin(), valWithoutPoint.end(), '.'), valWithoutPoint.end());
-
-    if (!internal::is_number(valWithoutPoint))
-    {
-        // another err
-    }
-
-    if (pointCt == 1)
-    {
-        auto const dotPosition = value.find_last_of('.');
-        auto first = value.substr(0, dotPosition);
-        first = (first == "0") ? "" : first;
-        auto second = value.substr(dotPosition+1, value.length());
-        if (second.length() > numDecimals)
-        {
-            second = second.substr(0, numDecimals);
-        }
-        else
-        {
-            int zeroesCt = int(numDecimals - second.length());
-            zeroesCt = std::max(zeroesCt, 0);
-            std::string zeroes = std::string(zeroesCt, '0');
-            second += zeroes;
-        }
-        return {std::move(tokenIdentifier), 0, BigUInt(first + second), numDecimals};
-    }
-    std::string zeroes = std::string(numDecimals, '0');
-    return  {std::move(tokenIdentifier), 0, BigUInt(value+ zeroes), numDecimals};
-
-   // BigUInt amountBigInt = internal::bigUIntFromVal(value, numDecimals);
+    // BigUInt amountBigInt = internal::bigUIntFromVal(value, numDecimals);
 
 }
 
@@ -94,7 +83,7 @@ TokenPayment TokenPayment::nonFungible(std::string tokenIdentifier, uint64_t non
     return {std::move(tokenIdentifier), nonce, BigUInt("1"), 0};
 }
 
-TokenPayment TokenPayment::metaESDTFromAmount(std::string tokenIdentifier, uint64_t nonce, double value, uint32_t numDecimals)
+TokenPayment TokenPayment::metaESDTFromAmount(std::string tokenIdentifier, uint64_t nonce, std::string value, uint32_t numDecimals)
 {
     BigUInt amountBigInt = internal::bigUIntFromVal(value, numDecimals);
     return {std::move(tokenIdentifier), nonce, amountBigInt, numDecimals};
@@ -105,6 +94,16 @@ TokenPayment TokenPayment::metaESDTFromBigUInt(std::string tokenIdentifier, uint
     return {std::move(tokenIdentifier), nonce, std::move(value), numDecimals};
 }
 
+std::string TokenPayment::tokenIdentifier() const
+{
+    return m_tokenIdentifier;
+}
+
+uint64_t TokenPayment::nonce() const
+{
+    return m_nonce;
+}
+
 std::string TokenPayment::toString() const
 {
     return m_value.getValue();
@@ -112,7 +111,7 @@ std::string TokenPayment::toString() const
 
 std::string TokenPayment::toPrettyString() const
 {
-    BigUInt denominator = internal::bigUIntFromVal(1, m_numDecimals);
+    BigUInt denominator = internal::bigUIntFromVal("1", m_numDecimals);
     std::pair<BigUInt, BigUInt> divMod = m_value.divmod(denominator);
 
     int zeroesCt = int(denominator.getValue().length() - divMod.second.getValue().length()) - 1;
@@ -122,5 +121,6 @@ std::string TokenPayment::toPrettyString() const
 
     return divMod.first.getValue() + "." + second + " " + m_tokenIdentifier;
 }
+
 
 
