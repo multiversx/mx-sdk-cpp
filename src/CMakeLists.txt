@@ -6,6 +6,8 @@ file(GLOB src
         transaction/messagesigner.cpp
         transaction/scarguments.cpp
         transaction/esdt.cpp
+        transaction/gas_estimator.cpp
+        transaction/token_payment.cpp
         internal/biguint.cpp
         account/account.cpp
         account/address.cpp
@@ -19,7 +21,6 @@ file(GLOB src
         provider/proxyprovider.cpp
         provider/data/data_transaction.cpp
         provider/data/networkconfig.cpp
-        transaction/gas_estimator.cpp
         )
 
 include_directories(utils)

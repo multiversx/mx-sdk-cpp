@@ -8,6 +8,8 @@ class BigUInt
 public:
     explicit BigUInt(std::string value);
 
+    BigUInt operator*(BigUInt const &rhs);
+
     std::string getHexValue() const;
 
     const std::string& getValue() const;

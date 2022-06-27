@@ -9,6 +9,7 @@
 #include "transaction/esdt.h"
 #include "transaction/scarguments.h"
 #include "transaction/gas_estimator.h"
+#include "transaction/token_payment.h"
 #include "account/account.h"
 #include "account/address.h"
 #include "filehandler/isecretkey.h"

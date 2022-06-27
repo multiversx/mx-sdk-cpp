@@ -35,3 +35,15 @@ const std::string &BigUInt::getValue() const
     return m_value;
 }
 
+BigUInt BigUInt::operator*(const BigUInt &rhs)
+{
+    integer v1(m_value, 10);
+    integer v2(rhs.getValue(), 10);
+    std::string ret = (v1 * v2).str();
+
+    return BigUInt(ret);
+}
+
+
+
+
