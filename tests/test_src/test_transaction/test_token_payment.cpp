@@ -53,3 +53,15 @@ TEST(TokenPayment, metaESDT)
     EXPECT_EQ(tokenPaymentFromBigUIntWithoutDecimals.toString(), "100004");
     EXPECT_EQ(tokenPaymentFromBigUIntWithoutDecimals.toPrettyString(), "100004.0 MEXFARML-28d646");
 }
+
+TEST(TokenPayment, NFT)
+{
+    std::string identifier = "ERDCPP-38f249";
+    uint64_t nonce = 1;
+
+    TokenPayment tokenPayment = TokenPayment::nonFungible(identifier, nonce);
+    EXPECT_EQ(tokenPayment.tokenIdentifier(), identifier);
+    EXPECT_EQ(tokenPayment.nonce(), nonce);
+    EXPECT_EQ(tokenPayment.toString(), "1");
+    EXPECT_EQ(tokenPayment.toPrettyString(), "1.0 ERDCPP-38f249");
+}
