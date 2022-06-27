@@ -44,6 +44,18 @@ BigUInt BigUInt::operator*(const BigUInt &rhs)
     return BigUInt(ret);
 }
 
+std::pair<BigUInt, BigUInt> BigUInt::divmod(const BigUInt &rhs) const
+{
+    integer v1(m_value, 10);
+    integer v2(rhs.getValue(), 10);
+    std::pair<integer, integer> res = v1.divmod(v1, v2);
+
+    BigUInt retV1 = BigUInt(v1.str());
+    BigUInt retV2 = BigUInt(v2.str());
+
+    return {retV1, retV2};
+}
+
 
 
 
