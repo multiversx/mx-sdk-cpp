@@ -1,7 +1,5 @@
 #include "gtest/gtest.h"
-
 #include "transaction/token_payment.h"
-
 
 TEST(TokenPayment, ESDT)
 {
@@ -64,4 +62,19 @@ TEST(TokenPayment, NFT)
     EXPECT_EQ(tokenPayment.nonce(), nonce);
     EXPECT_EQ(tokenPayment.toString(), "1");
     EXPECT_EQ(tokenPayment.toPrettyString(), "1.0 ERDCPP-38f249");
+}
+
+TEST(TokenPayment, invalidAmount)
+{
+    std::string identifier = "USDC-c76f1f";
+    size_t numDecimals = 6;
+
+    EXPECT_THROW(TokenPayment::fungibleFromAmount(identifier, "1.2.3", numDecimals).toPrettyString(), std::invalid_argument);
+    EXPECT_THROW(TokenPayment::fungibleFromAmount(identifier, "01.3", numDecimals).toPrettyString(), std::invalid_argument);
+    EXPECT_THROW(TokenPayment::fungibleFromAmount(identifier, "00", numDecimals).toPrettyString(), std::invalid_argument);
+    EXPECT_THROW(TokenPayment::fungibleFromAmount(identifier, "-1", numDecimals).toPrettyString(), std::invalid_argument);
+    EXPECT_THROW(TokenPayment::fungibleFromAmount(identifier, "-0.1", numDecimals).toPrettyString(), std::invalid_argument);
+    EXPECT_THROW(TokenPayment::fungibleFromAmount(identifier, "1,1", numDecimals).toPrettyString(), std::invalid_argument);
+    EXPECT_THROW(TokenPayment::fungibleFromAmount(identifier, "a", numDecimals).toPrettyString(), std::invalid_argument);
+    EXPECT_THROW(TokenPayment::fungibleFromAmount(identifier, "1.1345c6", numDecimals).toPrettyString(), std::invalid_argument);
 }

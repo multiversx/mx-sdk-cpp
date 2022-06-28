@@ -11,6 +11,10 @@ bool isZero(char c)
     return c == '0';
 }
 
+bool isPoint(char c)
+{
+    return c == '.';
+}
 
 bool hasLeadingZeroes(const std::string &s)
 {
@@ -22,7 +26,7 @@ bool hasLeadingZeroes(const std::string &s)
     std::string::const_iterator first = s.begin();
     std::string::const_iterator second = first + 1;
 
-    return isZero(*first) && isZero(*second);
+    return isZero(*first) && !isPoint(*second);
 }
 
 std::string removePoint(const std::string &s)
@@ -35,12 +39,12 @@ std::string removePoint(const std::string &s)
 
 bool isValidNumber(const std::string &s)
 {
-    std::string val = removePoint(s);
-    if (hasLeadingZeroes(val))
+    if (hasLeadingZeroes(s))
     {
         return false;
     }
 
+    std::string val = removePoint(s);
     std::string::const_iterator it = val.begin();
     while (it != val.end() && std::isdigit(*it)) ++it;
     return !val.empty() && it == val.end();
