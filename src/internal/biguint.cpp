@@ -7,8 +7,23 @@
 #define BASE_10 10
 #define BASE_16 16
 
-BigUInt::BigUInt(std::string value) : m_value(std::move(value))
-{}
+BigUInt::BigUInt(std::string value)
+{
+    try
+    {
+        integer number(value, BASE_10);
+        if (number.sign() == integer::NEGATIVE)
+        {
+            throw std::invalid_argument(ERROR_MSG_NEGATIVE_VALUE);
+        }
+    }
+    catch (const std::exception &e)
+    {
+        throw std::invalid_argument(ERROR_MSG_VALUE + value + ", reason: " + e.what());
+    }
+
+    m_value = (std::move(value));
+}
 
 std::string BigUInt::getHexValue() const
 {
@@ -17,12 +32,14 @@ std::string BigUInt::getHexValue() const
     try
     {
         integer number(m_value, BASE_10);
-        number = abs(number);
         ret = number.str(BASE_16);
     }
-    catch (...)
+    catch (const std::exception &e)
     {
-        throw std::invalid_argument(ERROR_MSG_VALUE + m_value);
+        throw std::invalid_argument(
+                ERROR_MSG_CANNOT_CONVERT_TO_BASE + std::to_string(BASE_16) +
+                ", value: " + m_value +
+                ", reason: " + e.what());
     }
 
     if (ret.size() % 2 != 0)

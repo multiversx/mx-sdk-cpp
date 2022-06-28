@@ -578,7 +578,7 @@ INSTANTIATE_TEST_CASE_P (
                 /* Function      */ ESDT_TRANSFER_NO_FUNCTION,
                 /* Params        */ ESDT_TRANSFER_NO_ARGUMENTS,
                 /* Str Params    */ std::vector<std::string>(),
-                /* Init val      */ "-12",
+                /* Init val      */ "12",
                 /* Init gas      */ 250000,
                 /* Init data     */ "foo2",
                 /* Value after   */ DEFAULT_VALUE,

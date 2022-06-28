@@ -2,10 +2,7 @@
 #define ERD_TOKEN_PAYMENT_H
 
 #include <string>
-#include <utility>
-#include "scarguments.h"
-#include "bigint/integer.h"
-#include <cmath>
+#include "internal/biguint.h"
 
 class TokenPayment
 {
