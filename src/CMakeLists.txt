@@ -8,6 +8,7 @@ file(GLOB src
         transaction/esdt.cpp
         transaction/gas_estimator.cpp
         transaction/token_payment.cpp
+        transaction/payload_builder.cpp
         internal/biguint.cpp
         account/account.cpp
         account/address.cpp

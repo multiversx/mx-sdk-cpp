@@ -17,9 +17,11 @@ public:
 
     static TokenPayment metaESDTFromBigUInt(std::string tokenIdentifier, uint64_t nonce, BigUInt value, uint32_t numDecimals = 0);
 
-    std::string tokenIdentifier() const;
+    BigUInt value() const;
 
     uint64_t nonce() const;
+
+    std::string tokenIdentifier() const;
 
     std::string toString() const;
 

@@ -126,14 +126,19 @@ TokenPayment TokenPayment::metaESDTFromBigUInt(std::string tokenIdentifier, uint
     return {std::move(tokenIdentifier), nonce, std::move(value), numDecimals};
 }
 
-std::string TokenPayment::tokenIdentifier() const
+BigUInt TokenPayment::value() const
 {
-    return m_tokenIdentifier;
+    return m_value;
 }
 
 uint64_t TokenPayment::nonce() const
 {
     return m_nonce;
+}
+
+std::string TokenPayment::tokenIdentifier() const
+{
+    return m_tokenIdentifier;
 }
 
 std::string TokenPayment::toString() const
