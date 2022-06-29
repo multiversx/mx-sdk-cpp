@@ -81,4 +81,3 @@ std::pair<BigUInt, BigUInt> BigUInt::divmod(const BigUInt &rhs) const
 
     return {retV1, retV2};
 }
-
