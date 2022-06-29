@@ -4,6 +4,8 @@
 #include "transaction.h"
 #include "scarguments.h"
 
+#define ESDT_NFT_TRANSFER_PREFIX std::string("ESDTNFTTransfer")
+
 #define ESDT_TRANSFER_PREFIX std::string("ESDTTransfer")
 #define ESDT_TRANSFER_GAS_LIMIT_NO_FUNCTION 500000
 #define ESDT_TRANSFER_NO_FUNCTION std::string()

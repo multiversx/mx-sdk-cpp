@@ -11,6 +11,8 @@ public:
 
     static TokenPayment fungibleFromBigUInt(std::string tokenIdentifier, BigUInt value, uint32_t numDecimals = 0);
 
+    static TokenPayment semiFungible(std::string tokenIdentifier, uint64_t nonce, BigUInt quantity);
+
     static TokenPayment nonFungible(std::string tokenIdentifier, uint64_t nonce);
 
     static TokenPayment metaESDTFromAmount(std::string tokenIdentifier, uint64_t nonce, std::string amount, uint32_t numDecimals);
