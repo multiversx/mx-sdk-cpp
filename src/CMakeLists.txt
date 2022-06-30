@@ -8,7 +8,7 @@ file(GLOB src
         transaction/gas_estimator.cpp
         transaction/token_payment.cpp
         transaction/payload_builder.cpp
-        smartcontracts/scarguments.cpp
+        smartcontracts/sc_arguments.cpp
         smartcontracts/contract_call.cpp
         internal/biguint.cpp
         account/account.cpp

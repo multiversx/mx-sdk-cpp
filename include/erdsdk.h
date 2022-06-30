@@ -7,7 +7,7 @@
 #include "transaction/messagesigner.h"
 #include "transaction/transaction.h"
 #include "transaction/esdt.h"
-#include "smartcontracts/scarguments.h"
+#include "smartcontracts/sc_arguments.h"
 #include "smartcontracts/contract_call.h"
 #include "transaction/gas_estimator.h"
 #include "transaction/token_payment.h"

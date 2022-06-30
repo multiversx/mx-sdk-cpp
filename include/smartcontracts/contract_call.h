@@ -1,7 +1,7 @@
 #ifndef ERD_CONTRACT_CALL_H
 #define ERD_CONTRACT_CALL_H
 
-#include "scarguments.h"
+#include "sc_arguments.h"
 
 class ContractCall
 {
