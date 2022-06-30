@@ -78,5 +78,3 @@ std::string MultiESDTNFTTransferPayloadBuilder::build() const
 
     return MULTI_ESDT_NFT_TRANSFER_PREFIX + args.asOnData();
 }
-
-
