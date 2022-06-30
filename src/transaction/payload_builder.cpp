@@ -15,7 +15,7 @@ ESDTTransferPayloadBuilder &ESDTTransferPayloadBuilder::setPayment(TokenPayment 
     return *this;
 }
 
-ESDTTransferPayloadBuilder &ESDTTransferPayloadBuilder::setContractCall(ContractCall contractCall)
+ESDTTransferPayloadBuilder &ESDTTransferPayloadBuilder::withContractCall(ContractCall contractCall)
 {
     m_contractCall = std::move(contractCall);
     return *this;
@@ -47,7 +47,7 @@ ESDTNFTTransferPayloadBuilder &ESDTNFTTransferPayloadBuilder::setDestination(Add
     return *this;
 }
 
-ESDTNFTTransferPayloadBuilder &ESDTNFTTransferPayloadBuilder::setContractCall(ContractCall contractCall)
+ESDTNFTTransferPayloadBuilder &ESDTNFTTransferPayloadBuilder::withContractCall(ContractCall contractCall)
 {
     m_contractCall = std::move(contractCall);
     return *this;
@@ -82,7 +82,7 @@ MultiESDTNFTTransferPayloadBuilder &MultiESDTNFTTransferPayloadBuilder::setDesti
 }
 
 
-MultiESDTNFTTransferPayloadBuilder &MultiESDTNFTTransferPayloadBuilder::setContractCall(ContractCall contractCall)
+MultiESDTNFTTransferPayloadBuilder &MultiESDTNFTTransferPayloadBuilder::withContractCall(ContractCall contractCall)
 {
     m_contractCall = std::move(contractCall);
     return *this;

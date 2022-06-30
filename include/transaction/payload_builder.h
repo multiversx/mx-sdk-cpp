@@ -14,7 +14,7 @@ public:
 
     ESDTTransferPayloadBuilder &setPayment(TokenPayment payment);
 
-    ESDTTransferPayloadBuilder &setContractCall(ContractCall contractCall);
+    ESDTTransferPayloadBuilder &withContractCall(ContractCall contractCall);
 
     std::string build() const;
 
@@ -32,7 +32,7 @@ public:
 
     ESDTNFTTransferPayloadBuilder &setDestination(Address const &address);
 
-    ESDTNFTTransferPayloadBuilder &setContractCall(ContractCall contractCall);
+    ESDTNFTTransferPayloadBuilder &withContractCall(ContractCall contractCall);
 
     std::string build() const;
 
@@ -51,7 +51,7 @@ public:
 
     MultiESDTNFTTransferPayloadBuilder &setDestination(Address const &address);
 
-    MultiESDTNFTTransferPayloadBuilder &setContractCall(ContractCall contractCall);
+    MultiESDTNFTTransferPayloadBuilder &withContractCall(ContractCall contractCall);
 
     std::string build() const;
 
