@@ -64,6 +64,11 @@ BigUInt BigUInt::operator*(const BigUInt &rhs)
     return BigUInt(ret);
 }
 
+bool BigUInt::operator==(const BigUInt &rhs)
+{
+    return this->m_value == rhs.m_value;
+}
+
 std::pair<BigUInt, BigUInt> BigUInt::divmod(const BigUInt &rhs) const
 {
     integer v1(m_value, BASE_10);

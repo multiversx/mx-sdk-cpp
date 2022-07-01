@@ -55,3 +55,35 @@ TEST_P(BigUIntParametrized, differentValues)
         EXPECT_THROW(BigUInt(currParam.decValue), std::invalid_argument);
     }
 }
+
+TEST(BigUInt, multiply)
+{
+    BigUInt v1("111222333444");
+    BigUInt v2("333222111000");
+    BigUInt v3 = v1 * v2;
+
+    EXPECT_EQ(v1.getValue(), "111222333444"); // v1's internal value has not change
+    EXPECT_EQ(v2.getValue(), "333222111000"); // v2's internal value has not change
+
+    EXPECT_TRUE(v3 == BigUInt("37061740740555580284000"));
+    EXPECT_TRUE(v3 * BigUInt("0") == BigUInt("0"));
+    EXPECT_EQ(v3.getValue(), "37061740740555580284000"); // v3's internal value has not change
+}
+
+TEST(BigUInt, divmod)
+{
+    BigUInt v1("123");
+    BigUInt v2("11");
+
+    std::pair<BigUInt, BigUInt> v3 = v1.divmod(v2);
+    EXPECT_EQ(v1.getValue(), "123"); // v1's internal value has not change
+    EXPECT_EQ(v2.getValue(), "11"); // v2's internal value has not change
+    EXPECT_TRUE(v3.first == BigUInt("11"));
+    EXPECT_TRUE(v3.second == BigUInt("2"));
+
+    v3 = v1.divmod(BigUInt("1000"));
+    EXPECT_TRUE(v3.first == BigUInt("0"));
+    EXPECT_TRUE(v3.second == BigUInt("123"));
+
+    EXPECT_THROW(BigUInt("123").divmod(BigUInt("0")), std::exception);
+}
