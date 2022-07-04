@@ -1,5 +1,11 @@
 #include "transaction/itransaction_builder.h"
 
+ITransactionBuilder::ITransactionBuilder() :
+        m_contractCall(""),
+        m_version(DEFAULT_VERSION),
+        m_options(DEFAULT_OPTIONS)
+{}
+
 ITransactionBuilder &ITransactionBuilder::withContractCall(ContractCall contractCall)
 {
     m_contractCall = std::move(contractCall);
@@ -25,5 +31,14 @@ Transaction ITransactionBuilder::buildSigned(const ISecretKey &wallet)
     return tx;
 }
 
-ITransactionBuilder::ITransactionBuilder() : m_contractCall("")
-{}
+ITransactionBuilder &ITransactionBuilder::withVersion(uint64_t version)
+{
+    m_version = version;
+    return *this;
+}
+
+ITransactionBuilder &ITransactionBuilder::withOptions(uint32_t options)
+{
+    m_options = std::make_shared<uint32_t>(options);
+    return *this;
+}

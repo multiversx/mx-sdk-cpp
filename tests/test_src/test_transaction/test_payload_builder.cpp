@@ -95,17 +95,17 @@ TEST(MultiESDTNFTTransferPayloadBuilder, build)
 
 TEST(TransactionFactory, createESDTTransfer)
 {
-    NetworkConfig cfg{.chainId = "dsa"};
+    NetworkConfig cfg = DEFAULT_MAINNET_NETWORK_CONFIG;
     TransactionFactory txFactory(cfg);
     TokenPayment paymentOne = TokenPayment::nonFungible("ERDJS-38f249", 1);
-    auto tx = txFactory.createESDTTransfer(
-                    paymentOne,
-                    123,
-                    Address("erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th"),
-                    Address("erd1qqqqqqqqqqqqqpgqrc4pg2xarca9z34njcxeur622qmfjp8w2jps89fxnl"),
-                    99999)
+    Transaction tx = txFactory
+            .createESDTTransfer(paymentOne,
+                                123,
+                                Address("erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th"),
+                                Address("erd1qqqqqqqqqqqqqpgqrc4pg2xarca9z34njcxeur622qmfjp8w2jps89fxnl"),
+                                99999)
             .withContractCall(generateSCCall())
             .build();
 
-    std::cerr << tx.serialize();
+    EXPECT_EQ(tx.serialize(), "{\"nonce\":123,\"value\":\"0\",\"receiver\":\"erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th\",\"sender\":\"erd1qqqqqqqqqqqqqpgqrc4pg2xarca9z34njcxeur622qmfjp8w2jps89fxnl\",\"gasPrice\":99999,\"gasLimit\":627500,\"data\":\"RVNEVFRyYW5zZmVyQDQ1NTI0NDRhNTMyZDMzMzg2NjMyMzQzOUAwMTZkNzU2Yzc0Njk1MDYxNjk3MjUzNzc2MTcwQDAwMDAwMDAwMDAwMDAwMDAwNTAwNWEzYjU4MWE3OGFlOTVkYzgxYTEzMWJiMjgxZWRlMDhmNTVmYWVkNzU0ODNANzM3NzYxNzA1NDZmNmI2NTZlNzM0NjY5Nzg2NTY0NDk2ZTcwNzU3NEA3YmE3YzQzZTJiODE=\",\"chainID\":\"1\",\"version\":1}");
 }

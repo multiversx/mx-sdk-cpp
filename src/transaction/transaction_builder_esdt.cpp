@@ -15,21 +15,21 @@ Transaction TransactionESDTBuilder::build()
             .setPayment(m_tokenPayment)
             .withContractCall(m_contractCall)
             .build();
-
-    uint64_t gasLimit = m_txInput.gasEstimator.forESDTTransfer(payload.size());
+    bytes const payloadBytes = bytes(payload.begin(), payload.end());
+    uint64_t gasLimit = m_txInput.gasEstimator.forESDTTransfer(payloadBytes.size());
 
     return Transaction(
             m_txInput.nonce,
-            "0",
+            DEFAULT_VALUE,
             m_txInput.receiver,
             m_txInput.sender,
-            nullptr,
-            nullptr,
+            DEFAULT_SENDER_NAME,
+            DEFAULT_RECEIVER_NAME,
             m_txInput.gasPrice,
             gasLimit,
-            std::make_shared<bytes>(bytes(payload.begin(), payload.end())),
-            nullptr,
+            std::make_shared<bytes>(payloadBytes),
+            DEFAULT_SIGNATURE,
             m_txInput.chainID,
-            DEFAULT_VERSION,
-            DEFAULT_OPTIONS);
+            m_version,
+            m_options);
 }

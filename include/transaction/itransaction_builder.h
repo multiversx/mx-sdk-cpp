@@ -12,6 +12,10 @@ public:
 
     virtual Transaction build() = 0;
 
+    ITransactionBuilder &withVersion(uint64_t version);
+
+    ITransactionBuilder &withOptions(uint32_t options);
+
     ITransactionBuilder &withContractCall(ContractCall contractCall);
 
     Transaction buildSigned(const bytes &seed);
@@ -20,6 +24,8 @@ public:
 
 protected:
     ContractCall m_contractCall;
+    uint64_t m_version;
+    std::shared_ptr<uint32_t> m_options;
 };
 
 #endif //ERD_ITRANSACTION_BUILDER_H
