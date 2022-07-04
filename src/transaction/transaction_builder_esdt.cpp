@@ -3,15 +3,11 @@
 #include "transaction/transaction_builder_esdt.h"
 
 
-TransactionESDTBuilder::TransactionESDTBuilder(const TransactionBuilderInput& txInput, TokenPayment payment) :
-        m_txInput(txInput), m_tokenPayment(std::move(payment)), m_contractCall("")
+TransactionESDTBuilder::TransactionESDTBuilder(const TransactionBuilderInput &txInput, TokenPayment payment) :
+        ITransactionBuilder(),
+        m_txInput(txInput),
+        m_tokenPayment(std::move(payment))
 {}
-
-TransactionESDTBuilder& TransactionESDTBuilder::withContractCall(ContractCall contractCall)
-{
-    m_contractCall = std::move(contractCall);
-    return *this;
-}
 
 Transaction TransactionESDTBuilder::build()
 {

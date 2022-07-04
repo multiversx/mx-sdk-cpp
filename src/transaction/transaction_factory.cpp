@@ -1,10 +1,10 @@
 #include "transaction/transaction_factory.h"
 
- TransactionFactory::TransactionFactory(const NetworkConfig& networkConfig) :
+TransactionFactory::TransactionFactory(const NetworkConfig &networkConfig) :
         m_gasEstimator(networkConfig), m_chainID(networkConfig.chainId)
 {}
 
-TransactionESDTBuilder TransactionFactory::createESDTTransfer(
+ITransactionBuilder &TransactionFactory::createESDTTransfer(
         TokenPayment tokenPayment,
         uint64_t nonce,
         Address receiver,
@@ -12,5 +12,6 @@ TransactionESDTBuilder TransactionFactory::createESDTTransfer(
         uint64_t gasPrice)
 {
     TransactionBuilderInput baseInput(nonce, std::move(sender), std::move(receiver), gasPrice, m_chainID, m_gasEstimator);
-    return TransactionESDTBuilder(baseInput, std::move(tokenPayment));
+    static TransactionESDTBuilder ret(baseInput, std::move(tokenPayment));
+    return ret;
 }

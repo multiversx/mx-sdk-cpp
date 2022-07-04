@@ -1,5 +1,11 @@
 #include "transaction/itransaction_builder.h"
 
+ITransactionBuilder &ITransactionBuilder::withContractCall(ContractCall contractCall)
+{
+    m_contractCall = std::move(contractCall);
+    return *this;
+}
+
 Transaction ITransactionBuilder::buildSigned(const bytes &seed)
 {
     Signer signer(seed);
@@ -18,3 +24,6 @@ Transaction ITransactionBuilder::buildSigned(const ISecretKey &wallet)
 
     return tx;
 }
+
+ITransactionBuilder::ITransactionBuilder() : m_contractCall("")
+{}

@@ -15,11 +15,11 @@ class TransactionFactory
 public:
     explicit TransactionFactory(const NetworkConfig &networkConfig);
 
-    TransactionESDTBuilder createESDTTransfer(TokenPayment tokenPayment,
-                                              uint64_t nonce,
-                                              Address receiver,
-                                              Address sender,
-                                              uint64_t gasPrice);
+    ITransactionBuilder &createESDTTransfer(TokenPayment tokenPayment,
+                                            uint64_t nonce,
+                                            Address receiver,
+                                            Address sender,
+                                            uint64_t gasPrice);
 
 private:
     std::string m_chainID;

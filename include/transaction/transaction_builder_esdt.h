@@ -14,17 +14,13 @@ class TransactionESDTBuilder : public ITransactionBuilder
     friend class TransactionFactory;
 
 public:
-
-    TransactionESDTBuilder &withContractCall(ContractCall contractCall);
-
     Transaction build() override;
 
 private:
-    explicit TransactionESDTBuilder(const TransactionBuilderInput& txInput, TokenPayment payment);
+    explicit TransactionESDTBuilder(const TransactionBuilderInput &txInput, TokenPayment payment);
 
     TransactionBuilderInput m_txInput;
     TokenPayment m_tokenPayment;
-    ContractCall m_contractCall;
 };
 
 
