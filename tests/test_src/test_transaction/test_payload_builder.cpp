@@ -1,5 +1,7 @@
 #include "gtest/gtest.h"
 #include "transaction/payload_builder.h"
+#include "transaction/transaction_factory.h"
+
 
 ContractCall generateSCCall()
 {
@@ -89,4 +91,21 @@ TEST(MultiESDTNFTTransferPayloadBuilder, build)
     ContractCall contractCall = generateSCCall();
     payload = builder.withContractCall(contractCall).build();
     EXPECT_EQ(payload, expectedPayload + contractCall.asOnData());
+}
+
+TEST(TransactionFactory, createESDTTransfer)
+{
+    NetworkConfig cfg{.chainId = "dsa"};
+    TransactionFactory txFactory(cfg);
+    TokenPayment paymentOne = TokenPayment::nonFungible("ERDJS-38f249", 1);
+    auto tx = txFactory.createESDTTransfer(
+                    paymentOne,
+                    123,
+                    Address("erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th"),
+                    Address("erd1qqqqqqqqqqqqqpgqrc4pg2xarca9z34njcxeur622qmfjp8w2jps89fxnl"),
+                    99999)
+            .withContractCall(generateSCCall())
+            .build();
+
+    std::cerr << tx.serialize();
 }
