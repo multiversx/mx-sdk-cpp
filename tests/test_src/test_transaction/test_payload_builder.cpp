@@ -93,6 +93,24 @@ TEST(MultiESDTNFTTransferPayloadBuilder, build)
     EXPECT_EQ(payload, expectedPayload + contractCall.asOnData());
 }
 
+TEST(TransactionFactory, createEGLDTransfer)
+{
+    NetworkConfig cfg = DEFAULT_MAINNET_NETWORK_CONFIG;
+    TransactionFactory txFactory(cfg);
+    TokenPayment paymentOne = TokenPayment::nonFungible("ERDJS-38f249", 1);
+    Transaction tx = txFactory
+            .createEGLDTransfer(123,
+                                BigUInt(3333),
+                                Address("erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th"),
+                                Address("erd1qqqqqqqqqqqqqpgqrc4pg2xarca9z34njcxeur622qmfjp8w2jps89fxnl"),
+                                99999,
+                                "hello")
+            .withVersion(444)
+            .build();
+
+   EXPECT_EQ(tx.serialize(), "{\"nonce\":123,\"value\":\"3333\",\"receiver\":\"erd1qqqqqqqqqqqqqpgqrc4pg2xarca9z34njcxeur622qmfjp8w2jps89fxnl\",\"sender\":\"erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th\",\"gasPrice\":99999,\"gasLimit\":57500,\"data\":\"aGVsbG8=\",\"chainID\":\"1\",\"version\":444}");
+}
+
 TEST(TransactionFactory, createESDTTransfer)
 {
     NetworkConfig cfg = DEFAULT_MAINNET_NETWORK_CONFIG;

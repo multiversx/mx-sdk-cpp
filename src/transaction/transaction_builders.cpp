@@ -1,10 +1,33 @@
 #include <utility>
 
-#include "transaction/transaction_builder_esdt.h"
+#include "transaction/transaction_builders.h"
 
+TransactionEGLDTransferBuilder::TransactionEGLDTransferBuilder(const TransactionBuilderInput &txInput) :
+        m_txInput(txInput)
+{}
+
+Transaction TransactionEGLDTransferBuilder::build()
+{
+    uint64_t gasLimit = m_txInput.gasEstimator.forEGLDTransfer(m_txInput.data.size());
+    bytes const payloadBytes = bytes(m_txInput.data.begin(), m_txInput.data.end());
+    return Transaction(
+            m_txInput.nonce,
+            m_txInput.value.getValue(),
+            m_txInput.receiver,
+            m_txInput.sender,
+            DEFAULT_SENDER_NAME,
+            DEFAULT_RECEIVER_NAME,
+            m_txInput.gasPrice,
+            gasLimit,
+            std::make_shared<bytes>(payloadBytes),
+            DEFAULT_SIGNATURE,
+            m_txInput.chainID,
+            m_version,
+            m_options);
+}
 
 TransactionESDTBuilder::TransactionESDTBuilder(const TransactionBuilderInput &txInput, TokenPayment payment) :
-        ITransactionBuilder(),
+        ITokenTransactionBuilder(),
         m_txInput(txInput),
         m_tokenPayment(std::move(payment))
 {}

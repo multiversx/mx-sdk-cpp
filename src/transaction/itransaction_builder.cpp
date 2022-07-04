@@ -1,16 +1,9 @@
 #include "transaction/itransaction_builder.h"
 
 ITransactionBuilder::ITransactionBuilder() :
-        m_contractCall(""),
         m_version(DEFAULT_VERSION),
         m_options(DEFAULT_OPTIONS)
 {}
-
-ITransactionBuilder &ITransactionBuilder::withContractCall(ContractCall contractCall)
-{
-    m_contractCall = std::move(contractCall);
-    return *this;
-}
 
 Transaction ITransactionBuilder::buildSigned(const bytes &seed)
 {
@@ -40,5 +33,16 @@ ITransactionBuilder &ITransactionBuilder::withVersion(uint64_t version)
 ITransactionBuilder &ITransactionBuilder::withOptions(uint32_t options)
 {
     m_options = std::make_shared<uint32_t>(options);
+    return *this;
+}
+
+ITokenTransactionBuilder::ITokenTransactionBuilder() :
+        ITransactionBuilder(),
+        m_contractCall("")
+{}
+
+ITokenTransactionBuilder &ITokenTransactionBuilder::withContractCall(ContractCall contractCall)
+{
+    m_contractCall = std::move(contractCall);
     return *this;
 }

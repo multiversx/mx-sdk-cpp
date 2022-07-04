@@ -9,7 +9,21 @@
 
 class TransactionFactory;
 
-class TransactionESDTBuilder : public ITransactionBuilder
+class TransactionEGLDTransferBuilder : public ITransactionBuilder
+{
+    friend class TransactionFactory;
+
+public:
+    Transaction build() override;
+
+private:
+    explicit TransactionEGLDTransferBuilder(const TransactionBuilderInput &txInput);
+
+    TransactionBuilderInput m_txInput;
+};
+
+
+class TransactionESDTBuilder : public ITokenTransactionBuilder
 {
     friend class TransactionFactory;
 

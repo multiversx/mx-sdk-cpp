@@ -16,16 +16,24 @@ public:
 
     ITransactionBuilder &withOptions(uint32_t options);
 
-    ITransactionBuilder &withContractCall(ContractCall contractCall);
-
     Transaction buildSigned(const bytes &seed);
 
     Transaction buildSigned(const ISecretKey &wallet);
 
 protected:
-    ContractCall m_contractCall;
     uint64_t m_version;
     std::shared_ptr<uint32_t> m_options;
+};
+
+class ITokenTransactionBuilder : public ITransactionBuilder
+{
+public:
+    explicit ITokenTransactionBuilder();
+
+    ITokenTransactionBuilder &withContractCall(ContractCall contractCall);
+
+protected:
+    ContractCall m_contractCall;
 };
 
 #endif //ERD_ITRANSACTION_BUILDER_H
