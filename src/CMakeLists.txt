@@ -9,7 +9,6 @@ file(GLOB src
         transaction/token_payment.cpp
         transaction/payload_builder.cpp
         transaction/itransaction_builder.cpp
-        transaction/transaction_builder_input.cpp
         transaction/transaction_builders.cpp
         transaction/transaction_factory.cpp
         smartcontracts/sc_arguments.cpp

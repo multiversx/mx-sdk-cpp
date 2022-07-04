@@ -97,7 +97,6 @@ TEST(TransactionFactory, createEGLDTransfer)
 {
     NetworkConfig cfg = DEFAULT_MAINNET_NETWORK_CONFIG;
     TransactionFactory txFactory(cfg);
-    TokenPayment paymentOne = TokenPayment::nonFungible("ERDJS-38f249", 1);
     Transaction tx = txFactory
             .createEGLDTransfer(123,
                                 BigUInt(3333),

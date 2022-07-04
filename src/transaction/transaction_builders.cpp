@@ -1,9 +1,10 @@
 #include <utility>
 
 #include "transaction/transaction_builders.h"
+#include "transaction/payload_builder.h"
 
-TransactionEGLDTransferBuilder::TransactionEGLDTransferBuilder(const TransactionBuilderInput &txInput) :
-        m_txInput(txInput)
+TransactionEGLDTransferBuilder::TransactionEGLDTransferBuilder(TransactionBuilderInput txInput) :
+        m_txInput(std::move(txInput))
 {}
 
 Transaction TransactionEGLDTransferBuilder::build()
@@ -26,9 +27,9 @@ Transaction TransactionEGLDTransferBuilder::build()
             m_options);
 }
 
-TransactionESDTBuilder::TransactionESDTBuilder(const TransactionBuilderInput &txInput, TokenPayment payment) :
+TransactionESDTBuilder::TransactionESDTBuilder(TransactionBuilderInput txInput, TokenPayment payment) :
         ITokenTransactionBuilder(),
-        m_txInput(txInput),
+        m_txInput(std::move(txInput)),
         m_tokenPayment(std::move(payment))
 {}
 

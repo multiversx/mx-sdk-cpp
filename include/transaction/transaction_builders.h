@@ -1,11 +1,10 @@
 #ifndef ERD_TRANSACTION_BUILDER_ESDT_H
 #define ERD_TRANSACTION_BUILDER_ESDT_H
 
-#include "transaction_builder_input.h"
 #include "token_payment.h"
 #include "itransaction_builder.h"
-#include "transaction/payload_builder.h"
 #include "transaction/transaction.h"
+#include "transaction_builder_input.h"
 
 class TransactionFactory;
 
@@ -17,7 +16,7 @@ public:
     Transaction build() override;
 
 private:
-    explicit TransactionEGLDTransferBuilder(const TransactionBuilderInput &txInput);
+    explicit TransactionEGLDTransferBuilder(TransactionBuilderInput txInput);
 
     TransactionBuilderInput m_txInput;
 };
@@ -31,7 +30,7 @@ public:
     Transaction build() override;
 
 private:
-    explicit TransactionESDTBuilder(const TransactionBuilderInput &txInput, TokenPayment payment);
+    explicit TransactionESDTBuilder(TransactionBuilderInput txInput, TokenPayment payment);
 
     TransactionBuilderInput m_txInput;
     TokenPayment m_tokenPayment;

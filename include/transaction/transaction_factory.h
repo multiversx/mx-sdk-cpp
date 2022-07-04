@@ -2,14 +2,8 @@
 #define ERD_TRANSACTION_FACTORY_H
 
 #include "gas_estimator.h"
-#include "transaction.h"
-#include "payload_builder.h"
-#include "filehandler/isecretkey.h"
+#include "token_payment.h"
 #include "itransaction_builder.h"
-#include "transaction_builder_input.h"
-
-#include "transaction_builders.h"
-
 
 class TransactionFactory
 {
