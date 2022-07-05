@@ -6,6 +6,8 @@
 class BigUInt
 {
 public:
+    explicit BigUInt(uint64_t value);
+
     explicit BigUInt(std::string value);
 
     BigUInt operator*(BigUInt const &rhs);
