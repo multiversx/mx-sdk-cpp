@@ -1,7 +1,7 @@
 #include <utility>
 
 #include "transaction/esdt.h"
-#include "transaction/scarguments.h"
+#include "smartcontracts/sc_arguments.h"
 #include "transaction/payload_builder.h"
 
 ESDTTransferPayloadBuilder::ESDTTransferPayloadBuilder() :

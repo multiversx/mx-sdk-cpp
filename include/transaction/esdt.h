@@ -2,7 +2,7 @@
 #define ERD_ESDT_H
 
 #include "transaction.h"
-#include "scarguments.h"
+#include "smartcontracts/sc_arguments.h"
 
 #define ESDT_NFT_TRANSFER_PREFIX std::string("ESDTNFTTransfer")
 #define MULTI_ESDT_NFT_TRANSFER_PREFIX std::string("MultiESDTNFTTransfer")

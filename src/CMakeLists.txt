@@ -4,11 +4,12 @@ file(GLOB src
         transaction/transaction.cpp
         transaction/signer.cpp
         transaction/messagesigner.cpp
-        transaction/scarguments.cpp
         transaction/esdt.cpp
         transaction/gas_estimator.cpp
         transaction/token_payment.cpp
         transaction/payload_builder.cpp
+        smartcontracts/sc_arguments.cpp
+        smartcontracts/contract_call.cpp
         internal/biguint.cpp
         account/account.cpp
         account/address.cpp
