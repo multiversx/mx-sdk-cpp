@@ -23,14 +23,14 @@ TEST(SCArguments, add_empty_asOnData)
 TEST(ContractCall, setArgs_asOnData)
 {
     ContractCall contractCall1("enterFarmProxy");
-    EXPECT_EQ(contractCall1.asOnData(), "656e7465724661726d50726f7879");
+    EXPECT_EQ(contractCall1.asOnData(), "@656e7465724661726d50726f7879");
 
     SCArguments args;
     args.add(Address("erd1qqqqqqqqqqqqqpgq7qhsw8kffad85jtt79t9ym0a4ycvan9a2jps0zkpen"));
     args.add(BigUInt(3983756));
     contractCall1.setArgs(args);
-    EXPECT_EQ(contractCall1.asOnData(), "656e7465724661726d50726f7879@00000000000000000500f02f071ec94f5a7a496bf156526dfda930ceccbd5483@3cc98c");
+    EXPECT_EQ(contractCall1.asOnData(), "@656e7465724661726d50726f7879@00000000000000000500f02f071ec94f5a7a496bf156526dfda930ceccbd5483@3cc98c");
 
     ContractCall contractCall2("enterFarmProxy", args);
-    EXPECT_EQ(contractCall2.asOnData(), "656e7465724661726d50726f7879@00000000000000000500f02f071ec94f5a7a496bf156526dfda930ceccbd5483@3cc98c");
+    EXPECT_EQ(contractCall2.asOnData(), "@656e7465724661726d50726f7879@00000000000000000500f02f071ec94f5a7a496bf156526dfda930ceccbd5483@3cc98c");
 }
