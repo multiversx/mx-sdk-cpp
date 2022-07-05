@@ -19,8 +19,8 @@ public:
 
     ITokenTransactionBuilder &createESDTTransfer(TokenPayment tokenPayment,
                                                  uint64_t nonce,
-                                                 Address receiver,
                                                  Address sender,
+                                                 Address receiver,
                                                  uint64_t gasPrice);
 
 private:

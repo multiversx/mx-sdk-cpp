@@ -28,8 +28,8 @@ ITransactionBuilder &TransactionFactory::createEGLDTransfer(uint64_t nonce,
 
 ITokenTransactionBuilder &TransactionFactory::createESDTTransfer(TokenPayment tokenPayment,
                                                                  uint64_t nonce,
-                                                                 Address receiver,
                                                                  Address sender,
+                                                                 Address receiver,
                                                                  uint64_t gasPrice)
 {
 
