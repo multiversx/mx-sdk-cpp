@@ -35,4 +35,20 @@ private:
     std::string m_destination;
 };
 
+class MultiESDTNFTTransferPayloadBuilder
+{
+public:
+    MultiESDTNFTTransferPayloadBuilder() = default;
+
+    MultiESDTNFTTransferPayloadBuilder &setPayments(std::vector<TokenPayment> payments);
+
+    MultiESDTNFTTransferPayloadBuilder &setDestination(Address const &address);
+
+    std::string build() const;
+
+private:
+    std::vector<TokenPayment> m_payments;
+    std::string m_destination;
+};
+
 #endif //ERD_PAYLOAD_BUILDER_H

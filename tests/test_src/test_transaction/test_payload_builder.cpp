@@ -36,3 +36,26 @@ TEST(ESDTNFTTransferPayloadBuilder, build)
             .build();
     EXPECT_EQ(payload, "ESDTNFTTransfer@4c4b4d45582d616162393130@3cc98c@0b7de7c1695eab800000@000000000000000005005f964241c0607e1c02777654f30072f03dd0abcd5483");
 }
+
+TEST(MultiESDTNFTTransferPayloadBuilder, build)
+{
+    TokenPayment paymentOne = TokenPayment::nonFungible("ERDJS-38f249", 1);
+    TokenPayment paymentTwo = TokenPayment::fungibleFromAmount("BAR-c80d29", "10.00", 18);
+
+    std::string payload = MultiESDTNFTTransferPayloadBuilder()
+            .setPayments({paymentOne, paymentTwo})
+            .setDestination(Address("erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th"))
+            .build();
+
+    EXPECT_EQ(payload,
+              "MultiESDTNFTTransfer@0139472eff6886771a982f3083da5d421f24c29181e63888228dc81ca60d69e1@02@4552444a532d333866323439@01@01@4241522d633830643239@00@8ac7230489e80000");
+
+    paymentOne = TokenPayment::metaESDTFromAmount("LKMEX-aab910", 4007927, "11702.951439779957981665", 18);
+    paymentTwo = TokenPayment::metaESDTFromAmount("LKFARM-9d1ea8", 8576971, "40071974.962988352918814287", 18);
+    payload = MultiESDTNFTTransferPayloadBuilder()
+            .setPayments({paymentOne, paymentTwo})
+            .setDestination(Address("erd1qqqqqqqqqqqqqpgqrc4pg2xarca9z34njcxeur622qmfjp8w2jps89fxnl"))
+            .build();
+    EXPECT_EQ(payload,
+              "MultiESDTNFTTransfer@000000000000000005001e2a1428dd1e3a5146b3960d9e0f4a50369904ee5483@02@4c4b4d45582d616162393130@3d27f7@027a6b13a995f2aa41e1@4c4b4641524d2d396431656138@82dfcb@2125921d938f56cf687e4f");
+}

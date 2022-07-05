@@ -1,3 +1,5 @@
+#include <utility>
+
 #include "transaction/esdt.h"
 #include "transaction/scarguments.h"
 #include "transaction/payload_builder.h"
@@ -46,4 +48,33 @@ std::string ESDTNFTTransferPayloadBuilder::build() const
     args.add(Address(m_destination));
 
     return ESDT_NFT_TRANSFER_PREFIX + args.asOnData();
+}
+
+
+MultiESDTNFTTransferPayloadBuilder &MultiESDTNFTTransferPayloadBuilder::setPayments(std::vector<TokenPayment> payments)
+{
+    m_payments = std::move(payments);
+    return *this;
+}
+
+MultiESDTNFTTransferPayloadBuilder &MultiESDTNFTTransferPayloadBuilder::setDestination(const Address &address)
+{
+    m_destination = address.getBech32Address();
+    return *this;
+}
+
+std::string MultiESDTNFTTransferPayloadBuilder::build() const
+{
+    SCArguments args;
+    args.add(Address(m_destination));
+    args.add(BigUInt(m_payments.size()));
+
+    for (TokenPayment const& payment : m_payments)
+    {
+        args.add(payment.tokenIdentifier());
+        args.add(BigUInt(payment.nonce()));
+        args.add(payment.value());
+    }
+
+    return MULTI_ESDT_NFT_TRANSFER_PREFIX + args.asOnData();
 }
