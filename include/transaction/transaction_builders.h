@@ -6,6 +6,10 @@
 #include "transaction/transaction.h"
 #include "transaction_builder_input.h"
 
+// Forward declaration of tx factory. This will be friend class to each
+// tx builder class, in order to access their private constructor.
+// Only TransactionFactory will be public and its users will not have access to any
+// concrete tx builders anyway, since the factory only returns pure abstract classes.
 class TransactionFactory;
 
 class TransactionEGLDTransferBuilder : public ITransactionBuilder
