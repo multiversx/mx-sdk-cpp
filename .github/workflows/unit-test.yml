@@ -27,4 +27,4 @@ jobs:
         run: cmake --build .
 
       - name: Unit Tests
-        run: ./scripts.sh
+        run: ./scripts/scripts.sh

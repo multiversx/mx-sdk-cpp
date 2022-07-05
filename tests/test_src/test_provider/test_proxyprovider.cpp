@@ -1,4 +1,5 @@
 #include <utility>
+#include <string>
 
 #include "gtest/gtest.h"
 
@@ -7,14 +8,46 @@
 #include "filehandler/pemreader.h"
 #include "utils/errors.h"
 #include "utils/cfg.h"
+#include "fstream"
 
 #if GTESTS_HTTPS_PRECONDITIONS
 
+const std::string proxyUrl = "http://127.0.0.1:7950";
+const std::string pemPath = "../../../../../testnet/testnet-local/sandbox/node/config/walletKey.pem";
+
+std::string getPKFromPem()
+{
+    std::ifstream f(pemPath);
+    if (!f.good())
+    {
+        f.close();
+        return "";
+    }
+
+    std::string firstPemLine;
+    getline(f, firstPemLine);
+    f.close();
+
+    auto startOfPk = firstPemLine.find("erd");
+    if (startOfPk == std::string::npos)
+    {
+        return "";
+    }
+
+    auto endOfPk = firstPemLine.substr(startOfPk).find("-----");
+    if (endOfPk == std::string::npos)
+    {
+        return "";
+    }
+
+    return firstPemLine.substr(startOfPk, endOfPk);
+}
+
 TEST(ProxyProvider, getAccount)
 {
-    ProxyProvider proxy("https://testnet-gateway.elrond.com");
+    ProxyProvider proxy(proxyUrl);
 
-    Address const address("erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqplllst77y4l");
+    Address const address(getPKFromPem());
     Account const account = proxy.getAccount(address);
 
     EXPECT_FALSE(account.getAddress().getBech32Address().empty());
@@ -23,9 +56,9 @@ TEST(ProxyProvider, getAccount)
     EXPECT_FALSE(account.getNonce() == 0);
 }
 
-TEST(ProxyProvider, getTransactionStatus_validHash)
+/*TEST(ProxyProvider, getTransactionStatus_validHash)
 {
-    ProxyProvider proxy("https://testnet-gateway.elrond.com");
+    ProxyProvider proxy(proxyUrl);
 
     TransactionStatus const txStatus = proxy.getTransactionStatus("5f0a94b2df847d1b74bd6f8c364602d07be77c3e66bf9b7bb1208715c8eebcb9");
     EXPECT_TRUE(txStatus.isExecuted());
@@ -33,7 +66,7 @@ TEST(ProxyProvider, getTransactionStatus_validHash)
 
 TEST(ProxyProvider, getTransactionStatus_invalidHash)
 {
-    ProxyProvider proxy("https://testnet-gateway.elrond.com");
+    ProxyProvider proxy(proxyUrl);
 
     EXPECT_THROW({
                      try
@@ -50,12 +83,12 @@ TEST(ProxyProvider, getTransactionStatus_invalidHash)
                          throw;
                      }
                  }, std::runtime_error );
-}
+}*/
 
 TEST(ProxyProvider, getESDTokenBalance)
 {
-    ProxyProvider proxy("https://testnet-gateway.elrond.com");
-    Address const address("erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqplllst77y4l");
+    ProxyProvider proxy(proxyUrl);
+    Address const address(getPKFromPem());
     auto const balance = proxy.getESDTTokenBalance(address, "this esdt does not exist");
 
     EXPECT_TRUE(balance == DEFAULT_BALANCE);
@@ -63,16 +96,16 @@ TEST(ProxyProvider, getESDTokenBalance)
 
 TEST(ProxyProvider, getAllESDTokenBalances_noTokens)
 {
-    ProxyProvider proxy("https://testnet-gateway.elrond.com");
-    Address const address("erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqplllst77y4l");
+    ProxyProvider proxy(proxyUrl);
+    Address const address(getPKFromPem());
     auto const esdts = proxy.getAllESDTTokenBalances(address);
 
     EXPECT_TRUE(esdts.empty());
 }
 
-TEST(ProxyProvider, getAllESDTokenBalances_multipleTokens)
+/*TEST(ProxyProvider, getAllESDTokenBalances_multipleTokens)
 {
-    ProxyProvider proxy("https://testnet-gateway.elrond.com");
+    ProxyProvider proxy(proxyUrl);
     Address const address("erd1nqtv8gdsf55xj9eg0wc8ar6ml46kpld2c86aq670mxgcf49sduzqaeyngx");
     auto const esdts = proxy.getAllESDTTokenBalances(address);
 
@@ -81,7 +114,7 @@ TEST(ProxyProvider, getAllESDTokenBalances_multipleTokens)
 
     EXPECT_TRUE(esdts.find("0009O-8742a4") != esdts.end());
     EXPECT_FALSE(esdts.at("0009O-8742a4").empty());
-}
+}*/
 
 void EXPECT_NETWORK_CONFIG_EQ(const NetworkConfig& cfg1, const NetworkConfig& cfg2)
 {
@@ -95,7 +128,7 @@ void EXPECT_NETWORK_CONFIG_EQ(const NetworkConfig& cfg1, const NetworkConfig& cf
 
 TEST(ProxyProvider, getNetworkConfig)
 {
-    ProxyProvider proxyTestnet("https://testnet-gateway.elrond.com");
+    ProxyProvider proxyTestnet(proxyUrl);
     NetworkConfig defaultTestnet = DEFAULT_TESTNET_NETWORK_CONFIG;
     EXPECT_NETWORK_CONFIG_EQ(proxyTestnet.getNetworkConfig(), defaultTestnet);
 
@@ -104,7 +137,7 @@ TEST(ProxyProvider, getNetworkConfig)
     EXPECT_NETWORK_CONFIG_EQ(proxyMainnet.getNetworkConfig(), defaultMainnet);
 }
 
-class GenericProxyProviderTxFixture : public ::testing::Test
+/*class GenericProxyProviderTxFixture : public ::testing::Test
 {
 public:
     explicit GenericProxyProviderTxFixture(std::string proxyUrl):
@@ -139,7 +172,7 @@ class TestnetProxyProviderTxFixture : public GenericProxyProviderTxFixture
 {
 public:
     TestnetProxyProviderTxFixture() :
-            GenericProxyProviderTxFixture("https://testnet-gateway.elrond.com") {}
+            GenericProxyProviderTxFixture(proxyUrl) {}
 };
 
 class DevnetProxyProviderTxFixture : public GenericProxyProviderTxFixture
@@ -296,6 +329,6 @@ TEST_F(DevnetProxyProviderTxFixture, send_ESDT_function_swapTokensFixedInput_noP
 
     signTransaction(transaction);
     EXPECT_TRANSACTION_SENT_SUCCESSFULLY(transaction);
-}
+}*/
 
 #endif

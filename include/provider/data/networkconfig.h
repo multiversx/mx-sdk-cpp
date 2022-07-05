@@ -26,7 +26,7 @@ bool operator!=(NetworkConfig const &lhs, NetworkConfig const &rhs);
 };
 
 #define DEFAULT_TESTNET_NETWORK_CONFIG NetworkConfig { \
-.chainId = "T",                                        \
+.chainId = "local-testnet",                            \
 .gasPerDataByte = 1500,                                \
 .minGasLimit = 50000,                                  \
 .minGasPrice = 1000000000                              \
