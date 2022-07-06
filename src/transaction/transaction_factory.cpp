@@ -16,13 +16,13 @@ ITransactionBuilder &TransactionFactory::createEGLDTransfer(uint64_t nonce,
                                                             std::string data)
 {
     static TransactionEGLDTransferBuilder builder({nonce,
-                                               std::move(value),
-                                               std::move(sender),
-                                               std::move(receiver),
-                                               std::move(data),
-                                               gasPrice,
-                                               m_chainID,
-                                               m_gasEstimator});
+                                                   std::move(value),
+                                                   std::move(sender),
+                                                   std::move(receiver),
+                                                   std::move(data),
+                                                   gasPrice,
+                                                   m_chainID,
+                                                   m_gasEstimator});
     return builder;
 }
 
@@ -34,13 +34,13 @@ ITokenTransactionBuilder &TransactionFactory::createESDTTransfer(TokenPayment to
 {
 
     static TransactionESDTBuilder builder({nonce,
-                                       BigUInt(0),
-                                       std::move(sender),
-                                       std::move(receiver),
-                                       "",
-                                       gasPrice,
-                                       m_chainID,
-                                       m_gasEstimator},
-                                      std::move(tokenPayment));
+                                           BigUInt(0),
+                                           std::move(sender),
+                                           std::move(receiver),
+                                           "",
+                                           gasPrice,
+                                           m_chainID,
+                                           m_gasEstimator},
+                                          std::move(tokenPayment));
     return builder;
 }
