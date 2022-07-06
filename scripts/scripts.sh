@@ -3,9 +3,11 @@ function runTests(){
 
   for file in */* ; do
       if [[ "$file" == *"test_"* ]] && [[ -x "$file" ]] && [[ "$file" != *"CMake"* ]]; then
-        ./"$file"
-        if [[ $? -ne 0 ]]; then
-          exit 4
+        if [[ "$file" != *"test_provider"* ]]; then 
+          ./"$file"
+          if [[ $? -ne 0 ]]; then
+            exit 4
+          fi
         fi
       fi
   done

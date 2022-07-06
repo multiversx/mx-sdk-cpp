@@ -13,9 +13,6 @@ jobs:
     name: Integration Tests
     runs-on: ubuntu-latest
     steps:
-      - name: Install elrond-go
-        run: git clone https://github.com/ElrondNetwork/elrond-go
-
       - name: Install crypto library libsodium
         run: sudo apt install libsodium-dev
 
@@ -32,7 +29,7 @@ jobs:
         run: cmake --build .
 
       - name: Integration Tests - new testnet
-        run: ./scripts/local-testnet.sh new
+        run: sudo ./scripts/local-testnet.sh new
 
       - name: Integration Tests - testnet start
         run: ./scripts/local-testnet.sh start
