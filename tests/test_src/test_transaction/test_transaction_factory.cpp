@@ -41,14 +41,6 @@ TEST(TransactionFactory, createEGLDTransfer)
             .createEGLDTransfer(nonce, value, sender, receiver, gasPrice, data)
             .withVersion(444)
             .withOptions(222)
-            .buildSigned(pem);
-    EXPECT_EQ(tx.serialize(),
-              "{\"nonce\":123,\"value\":\"3333\",\"receiver\":\"erd1qqqqqqqqqqqqqpgqrc4pg2xarca9z34njcxeur622qmfjp8w2jps89fxnl\",\"sender\":\"erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th\",\"gasPrice\":99999,\"gasLimit\":57500,\"data\":\"aGVsbG8=\",\"signature\":\"03e076e58eab1a441f28cb68ef8ab2568e3c39888396ecf86c4a375fdd8b7823ad25059791c620a22b74168248abbcf22cd2e5300e6942be1236b0244e3a7f04\",\"chainID\":\"1\",\"version\":444,\"options\":222}");
-
-    tx = txFactory
-            .createEGLDTransfer(nonce, value, sender, receiver, gasPrice, data)
-            .withVersion(444)
-            .withOptions(222)
             .buildSigned(pem.getSeed());
     EXPECT_EQ(tx.serialize(),
               "{\"nonce\":123,\"value\":\"3333\",\"receiver\":\"erd1qqqqqqqqqqqqqpgqrc4pg2xarca9z34njcxeur622qmfjp8w2jps89fxnl\",\"sender\":\"erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th\",\"gasPrice\":99999,\"gasLimit\":57500,\"data\":\"aGVsbG8=\",\"signature\":\"03e076e58eab1a441f28cb68ef8ab2568e3c39888396ecf86c4a375fdd8b7823ad25059791c620a22b74168248abbcf22cd2e5300e6942be1236b0244e3a7f04\",\"chainID\":\"1\",\"version\":444,\"options\":222}");
@@ -111,16 +103,6 @@ TEST(TransactionFactory, createESDTTransfer)
             .buildSigned(pem.getSeed());
     EXPECT_EQ(tx.serialize(),
               "{\"nonce\":123,\"value\":\"0\",\"receiver\":\"erd1qqqqqqqqqqqqqpgqrc4pg2xarca9z34njcxeur622qmfjp8w2jps89fxnl\",\"sender\":\"erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th\",\"gasPrice\":99999,\"gasLimit\":434000,\"data\":\"RVNEVFRyYW5zZmVyQDQ1NTI0NDQzNTA1MDJkMzMzODY2MzIzNDM5QDAxQDY2NmY2ZkA2MjZmNmY=\",\"signature\":\"3535898675f851241f0c211f1fd0b222d4fb06ea42056599a61233f12a088e8cbbd7ce14f3d85fd4f0691bbbde11ee49298a5fc192788da4753afe32f906ad0c\",\"chainID\":\"1\",\"version\":444,\"options\":222}");
-
-    tx = txFactory
-            .createESDTTransfer(token, nonce, sender, receiver, gasPrice)
-            .withContractCall(contractCall)
-            .withVersion(444)
-            .withOptions(222)
-            .buildSigned(pem);
-    EXPECT_EQ(tx.serialize(),
-              "{\"nonce\":123,\"value\":\"0\",\"receiver\":\"erd1qqqqqqqqqqqqqpgqrc4pg2xarca9z34njcxeur622qmfjp8w2jps89fxnl\",\"sender\":\"erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th\",\"gasPrice\":99999,\"gasLimit\":434000,\"data\":\"RVNEVFRyYW5zZmVyQDQ1NTI0NDQzNTA1MDJkMzMzODY2MzIzNDM5QDAxQDY2NmY2ZkA2MjZmNmY=\",\"signature\":\"3535898675f851241f0c211f1fd0b222d4fb06ea42056599a61233f12a088e8cbbd7ce14f3d85fd4f0691bbbde11ee49298a5fc192788da4753afe32f906ad0c\",\"chainID\":\"1\",\"version\":444,\"options\":222}");
-
 }
 
 TEST(TransactionFactory, createESDTNFTTransfer)
@@ -171,14 +153,6 @@ TEST(TransactionFactory, createESDTNFTTransfer)
             .withVersion(321)
             .withOptions(432)
             .buildSigned(pem.getSeed());
-    EXPECT_EQ(tx.serialize(), "{\"nonce\":123,\"value\":\"0\",\"receiver\":\"erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th\",\"sender\":\"erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th\",\"gasPrice\":99999,\"gasLimit\":1240500,\"data\":\"RVNEVE5GVFRyYW5zZmVyQDQ1NTI0NDQzNTA1MDJkMzMzODY2MzIzNDM5QDA0QDAxQDAwMDAwMDAwMDAwMDAwMDAwNTAwMWUyYTE0MjhkZDFlM2E1MTQ2YjM5NjBkOWUwZjRhNTAzNjk5MDRlZTU0ODNANjY2ZjZmQDYyNmY2Zg==\",\"signature\":\"1d97ab70664cb1faf52e4f212f7ae03d01d8bdab81f791cc62298bc525f2fcad7d11d2239d20c8797c7221415d6a9d711fed29129a8e5adcde8dafc2311aee08\",\"chainID\":\"1\",\"version\":321,\"options\":432}");
-
-    tx = txFactory
-            .createESDTNFTTransfer(token, nonce, sender, receiver, gasPrice)
-            .withContractCall(contractCall)
-            .withVersion(321)
-            .withOptions(432)
-            .buildSigned(pem);
     EXPECT_EQ(tx.serialize(), "{\"nonce\":123,\"value\":\"0\",\"receiver\":\"erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th\",\"sender\":\"erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th\",\"gasPrice\":99999,\"gasLimit\":1240500,\"data\":\"RVNEVE5GVFRyYW5zZmVyQDQ1NTI0NDQzNTA1MDJkMzMzODY2MzIzNDM5QDA0QDAxQDAwMDAwMDAwMDAwMDAwMDAwNTAwMWUyYTE0MjhkZDFlM2E1MTQ2YjM5NjBkOWUwZjRhNTAzNjk5MDRlZTU0ODNANjY2ZjZmQDYyNmY2Zg==\",\"signature\":\"1d97ab70664cb1faf52e4f212f7ae03d01d8bdab81f791cc62298bc525f2fcad7d11d2239d20c8797c7221415d6a9d711fed29129a8e5adcde8dafc2311aee08\",\"chainID\":\"1\",\"version\":321,\"options\":432}");
 }
 
