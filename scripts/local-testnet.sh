@@ -12,9 +12,9 @@ cloneDependencies(){
 
   mkdir "$TESTNET_DIR"
 
-  git clone https://github.com/ElrondNetwork/elrond-go "$TESTNET_DIR"
-  git clone https://github.com/ElrondNetwork/elrond-deploy-go "$TESTNET_DIR"
-  git clone https://github.com/ElrondNetwork/elrond-proxy-go "$TESTNET_DIR"
+  git clone https://github.com/ElrondNetwork/elrond-go "$TESTNET_DIR/elrond-go"
+  git clone https://github.com/ElrondNetwork/elrond-deploy-go "$TESTNET_DIR/elrond-deploy-go"
+  git clone https://github.com/ElrondNetwork/elrond-proxy-go "$TESTNET_DIR/elrond-proxy-go"
 }
 
 testnetRemove(){
@@ -37,6 +37,7 @@ testnetPrereq(){
 }
 
 testnetNew(){
+  cloneDependencies
   testnetRemove
   testnetSetup
   testnetPrereq
