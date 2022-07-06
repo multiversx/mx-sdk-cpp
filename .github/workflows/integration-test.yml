@@ -28,6 +28,9 @@ jobs:
       - name: Build
         run: cmake --build .
 
+      - name: Cd scripts
+        run: cd scripts
+
       - name: Integration Tests - new testnet
         run: sudo /bin/bash local-testnet.sh new
 
