@@ -8,46 +8,25 @@
 #include "filehandler/pemreader.h"
 #include "utils/errors.h"
 #include "utils/cfg.h"
-#include "fstream"
+#include "thread"
 
 #if GTESTS_HTTPS_PRECONDITIONS
 
-const std::string proxyUrl = "http://127.0.0.1:7950";
+const std::string localProxyUrl = "http://127.0.0.1:7950";
 const std::string pemPath = "../../../../../testnet/testnet-local/sandbox/node/config/walletKey.pem";
 
-std::string getPKFromPem()
+Address getAddressFromPem()
 {
-    std::ifstream f(pemPath);
-    if (!f.good())
-    {
-        f.close();
-        return "";
-    }
-
-    std::string firstPemLine;
-    getline(f, firstPemLine);
-    f.close();
-
-    auto startOfPk = firstPemLine.find("erd");
-    if (startOfPk == std::string::npos)
-    {
-        return "";
-    }
-
-    auto endOfPk = firstPemLine.substr(startOfPk).find("-----");
-    if (endOfPk == std::string::npos)
-    {
-        return "";
-    }
-
-    return firstPemLine.substr(startOfPk, endOfPk);
+    PemFileReader pem(pemPath);
+    auto addr = pem.getAddress();
+    return addr;
 }
 
 TEST(ProxyProvider, getAccount)
 {
-    ProxyProvider proxy(proxyUrl);
+    ProxyProvider proxy(localProxyUrl);
 
-    Address const address(getPKFromPem());
+    Address const address(getAddressFromPem());
     Account const account = proxy.getAccount(address);
 
     EXPECT_FALSE(account.getAddress().getBech32Address().empty());
@@ -56,17 +35,9 @@ TEST(ProxyProvider, getAccount)
     EXPECT_FALSE(account.getNonce() == 0);
 }
 
-/*TEST(ProxyProvider, getTransactionStatus_validHash)
-{
-    ProxyProvider proxy(proxyUrl);
-
-    TransactionStatus const txStatus = proxy.getTransactionStatus("5f0a94b2df847d1b74bd6f8c364602d07be77c3e66bf9b7bb1208715c8eebcb9");
-    EXPECT_TRUE(txStatus.isExecuted());
-}
-
 TEST(ProxyProvider, getTransactionStatus_invalidHash)
 {
-    ProxyProvider proxy(proxyUrl);
+    ProxyProvider proxy(localProxyUrl);
 
     EXPECT_THROW({
                      try
@@ -83,12 +54,12 @@ TEST(ProxyProvider, getTransactionStatus_invalidHash)
                          throw;
                      }
                  }, std::runtime_error );
-}*/
+}
 
 TEST(ProxyProvider, getESDTokenBalance)
 {
-    ProxyProvider proxy(proxyUrl);
-    Address const address(getPKFromPem());
+    ProxyProvider proxy(localProxyUrl);
+    Address const address(getAddressFromPem());
     auto const balance = proxy.getESDTTokenBalance(address, "this esdt does not exist");
 
     EXPECT_TRUE(balance == DEFAULT_BALANCE);
@@ -96,25 +67,20 @@ TEST(ProxyProvider, getESDTokenBalance)
 
 TEST(ProxyProvider, getAllESDTokenBalances_noTokens)
 {
-    ProxyProvider proxy(proxyUrl);
-    Address const address(getPKFromPem());
+    ProxyProvider proxy(localProxyUrl);
+    Address const address(getAddressFromPem());
     auto const esdts = proxy.getAllESDTTokenBalances(address);
 
     EXPECT_TRUE(esdts.empty());
 }
 
-/*TEST(ProxyProvider, getAllESDTokenBalances_multipleTokens)
+TEST(ProxyProvider, getAllESDTokenBalances_multipleTokens)
 {
-    ProxyProvider proxy(proxyUrl);
-    Address const address("erd1nqtv8gdsf55xj9eg0wc8ar6ml46kpld2c86aq670mxgcf49sduzqaeyngx");
+    ProxyProvider proxy(localProxyUrl);
+    Address const address(getAddressFromPem());
     auto const esdts = proxy.getAllESDTTokenBalances(address);
-
-    EXPECT_TRUE(esdts.find("00040-4c4d18") != esdts.end());
-    EXPECT_FALSE(esdts.at("00040-4c4d18").empty());
-
-    EXPECT_TRUE(esdts.find("0009O-8742a4") != esdts.end());
-    EXPECT_FALSE(esdts.at("0009O-8742a4").empty());
-}*/
+    EXPECT_EQ(esdts.size(), 0);
+}
 
 void EXPECT_NETWORK_CONFIG_EQ(const NetworkConfig& cfg1, const NetworkConfig& cfg2)
 {
@@ -128,7 +94,7 @@ void EXPECT_NETWORK_CONFIG_EQ(const NetworkConfig& cfg1, const NetworkConfig& cf
 
 TEST(ProxyProvider, getNetworkConfig)
 {
-    ProxyProvider proxyTestnet(proxyUrl);
+    ProxyProvider proxyTestnet(localProxyUrl);
     NetworkConfig defaultTestnet = DEFAULT_TESTNET_NETWORK_CONFIG;
     EXPECT_NETWORK_CONFIG_EQ(proxyTestnet.getNetworkConfig(), defaultTestnet);
 
@@ -137,12 +103,12 @@ TEST(ProxyProvider, getNetworkConfig)
     EXPECT_NETWORK_CONFIG_EQ(proxyMainnet.getNetworkConfig(), defaultMainnet);
 }
 
-/*class GenericProxyProviderTxFixture : public ::testing::Test
+class GenericProxyProviderTxFixture : public ::testing::Test
 {
 public:
-    explicit GenericProxyProviderTxFixture(std::string proxyUrl):
+    explicit GenericProxyProviderTxFixture(std::string proxyUrl, std::string pemSourcePath):
             m_proxy(std::move(proxyUrl)),
-            m_pem("..//..//testData//keysValid1.pem"),
+            m_pem(pemSourcePath),
             m_senderAddr(m_pem.getAddress()),
             m_senderAcc(m_proxy.getAccount(m_senderAddr)){}
 
@@ -157,7 +123,8 @@ public:
         std::string const txHash = m_proxy.send(transaction).hash;
         EXPECT_FALSE(txHash.empty());
 
-        TransactionStatus const txStatus = m_proxy.getTransactionStatus(txHash);
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        TransactionStatus txStatus = m_proxy.getTransactionStatus(txHash);
         EXPECT_TRUE(txStatus.isPending() || txStatus.isExecuted());
     }
 
@@ -168,26 +135,26 @@ public:
 };
 
 
-class TestnetProxyProviderTxFixture : public GenericProxyProviderTxFixture
+class LocalTestnetProxyProviderTxFixture : public GenericProxyProviderTxFixture
 {
 public:
-    TestnetProxyProviderTxFixture() :
-            GenericProxyProviderTxFixture(proxyUrl) {}
+    LocalTestnetProxyProviderTxFixture() :
+            GenericProxyProviderTxFixture(localProxyUrl, pemPath) {}
 };
 
 class DevnetProxyProviderTxFixture : public GenericProxyProviderTxFixture
 {
 public:
     DevnetProxyProviderTxFixture() :
-            GenericProxyProviderTxFixture("https://devnet-gateway.elrond.com") {}
+            GenericProxyProviderTxFixture("https://devnet-gateway.elrond.com", "..//..//testData//keysValid1.pem") {}
 };
 
-TEST_F(TestnetProxyProviderTxFixture, send_validTx)
+TEST_F(LocalTestnetProxyProviderTxFixture, send_validTx)
 {
     Transaction transaction;
     transaction.m_sender = std::make_shared<Address>(m_senderAddr);
     transaction.m_receiver = std::make_shared<Address>("erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqplllst77y4l");
-    transaction.m_chainID = "T";
+    transaction.m_chainID = "local-testnet";
     transaction.m_nonce = m_senderAcc.getNonce();
     transaction.m_value = "10000000000";
     transaction.m_gasPrice = 1000000000;
@@ -197,12 +164,12 @@ TEST_F(TestnetProxyProviderTxFixture, send_validTx)
     EXPECT_TRANSACTION_SENT_SUCCESSFULLY(transaction);
 }
 
-TEST_F(TestnetProxyProviderTxFixture, send_validTx_signedHashedTx)
+TEST_F(LocalTestnetProxyProviderTxFixture, send_validTx_signedHashedTx)
 {
     Transaction transaction;
     transaction.m_sender = std::make_shared<Address>(m_senderAddr);
     transaction.m_receiver = std::make_shared<Address>("erd1cux02zersde0l7hhklzhywcxk4u9n4py5tdxyx7vrvhnza2r4gmq4vw35r");
-    transaction.m_chainID = "T";
+    transaction.m_chainID = "local-testnet";
     transaction.m_nonce = m_senderAcc.getNonce();
     transaction.m_value = "1000000000000";
     transaction.m_gasPrice = 1000000000;
@@ -214,12 +181,12 @@ TEST_F(TestnetProxyProviderTxFixture, send_validTx_signedHashedTx)
     EXPECT_TRANSACTION_SENT_SUCCESSFULLY(transaction);
 }
 
-TEST_F(TestnetProxyProviderTxFixture, send_invalidTx_noSignature)
+TEST_F(LocalTestnetProxyProviderTxFixture, send_invalidTx_noSignature)
 {
     Transaction transaction;
     transaction.m_sender = std::make_shared<Address>(m_senderAddr);
     transaction.m_receiver = std::make_shared<Address>("erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqplllst77y4l");
-    transaction.m_chainID = "T";
+    transaction.m_chainID = "local-testnet";
     transaction.m_nonce = m_senderAcc.getNonce();
     transaction.m_value = "10000000000";
     transaction.m_gasPrice = 1000000000;
@@ -242,12 +209,12 @@ TEST_F(TestnetProxyProviderTxFixture, send_invalidTx_noSignature)
                  }, std::runtime_error );
 }
 
-TEST_F(TestnetProxyProviderTxFixture, send_issueESDTTransaction_noESDTProperties)
+TEST_F(LocalTestnetProxyProviderTxFixture, send_issueESDTTransaction_noESDTProperties)
 {
     Transaction transaction;
     transaction.m_sender = std::make_shared<Address>(m_senderAddr);
     transaction.m_receiver = std::make_shared<Address>("erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u");
-    transaction.m_chainID = "T";
+    transaction.m_chainID = "local-testnet";
     transaction.m_nonce = m_senderAcc.getNonce();
     transaction.m_gasPrice = 1000000000;
 
@@ -257,12 +224,12 @@ TEST_F(TestnetProxyProviderTxFixture, send_issueESDTTransaction_noESDTProperties
     EXPECT_TRANSACTION_SENT_SUCCESSFULLY(transaction);
 }
 
-TEST_F(TestnetProxyProviderTxFixture, send_issueESDTTransaction_withESDTProperties)
+TEST_F(LocalTestnetProxyProviderTxFixture, send_issueESDTTransaction_withESDTProperties)
 {
     Transaction transaction;
     transaction.m_sender = std::make_shared<Address>(m_senderAddr);
     transaction.m_receiver = std::make_shared<Address>("erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u");
-    transaction.m_chainID = "T";
+    transaction.m_chainID = "local-testnet";
     transaction.m_nonce = m_senderAcc.getNonce();
     transaction.m_gasPrice = 1000000000;
 
@@ -276,14 +243,14 @@ TEST_F(TestnetProxyProviderTxFixture, send_issueESDTTransaction_withESDTProperti
     EXPECT_TRANSACTION_SENT_SUCCESSFULLY(transaction);
 }
 
-TEST_F(TestnetProxyProviderTxFixture, send_ESDT_noFunction)
+TEST_F(LocalTestnetProxyProviderTxFixture, send_ESDT_noFunction)
 {
     Transaction transaction;
 
     transaction.m_value = "1";
     transaction.m_sender = std::make_shared<Address>(m_senderAddr);
     transaction.m_receiver = std::make_shared<Address>("erd1cux02zersde0l7hhklzhywcxk4u9n4py5tdxyx7vrvhnza2r4gmq4vw35r");
-    transaction.m_chainID = "T";
+    transaction.m_chainID = "local-testnet";
     transaction.m_nonce = m_senderAcc.getNonce();
     transaction.m_gasPrice = 1000000000;
 
@@ -293,7 +260,7 @@ TEST_F(TestnetProxyProviderTxFixture, send_ESDT_noFunction)
     EXPECT_TRANSACTION_SENT_SUCCESSFULLY(transaction);
 }
 
-TEST_F(DevnetProxyProviderTxFixture, send_ESDT_function_unWrapEgld_noParams)
+/*(TEST_F(DevnetProxyProviderTxFixture, send_ESDT_function_unWrapEgld_noParams)
 {
     Transaction transaction;
     transaction.m_value = "10000000000000000";
