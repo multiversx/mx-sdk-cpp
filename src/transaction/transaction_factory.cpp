@@ -63,3 +63,22 @@ ITokenTransactionBuilder &TransactionFactory::createESDTNFTTransfer(TokenPayment
 
     return builder;
 }
+
+ITokenTransactionBuilder &TransactionFactory::createMultiESDTNFTTransfer(std::vector<TokenPayment> tokenPayments,
+                                                                         uint64_t nonce,
+                                                                         Address sender,
+                                                                         Address destination,
+                                                                         uint64_t gasPrice)
+{
+    static TransactionMultiESDTNFTBuilder builder({nonce,
+                                                   BigUInt(0),
+                                                   std::move(sender),
+                                                   std::move(destination),
+                                                   "",
+                                                   gasPrice,
+                                                   m_chainID,
+                                                   m_gasEstimator},
+                                                  std::move(tokenPayments));
+
+    return builder;
+}

@@ -97,3 +97,35 @@ Transaction TransactionESDTNFTBuilder::build()
             m_version,
             m_options);
 }
+
+TransactionMultiESDTNFTBuilder::TransactionMultiESDTNFTBuilder(TransactionBuilderInput txInput, std::vector<TokenPayment> payments) :
+        ITokenTransactionBuilder(),
+        m_txInput(std::move(txInput)),
+        m_tokenPayments(std::move(payments))
+{}
+
+Transaction TransactionMultiESDTNFTBuilder::build()
+{
+    std::string payload = MultiESDTNFTTransferPayloadBuilder()
+            .setPayments(m_tokenPayments)
+            .setDestination(m_txInput.receiver)
+            .withContractCall(m_contractCall)
+            .build();
+    uint64_t gasLimit = m_txInput.gasEstimator.forMultiESDTNFTTransfer(payload.size(), m_tokenPayments.size());
+
+    return Transaction(
+            m_txInput.nonce,
+            DEFAULT_VALUE,
+            m_txInput.sender,
+            m_txInput.sender, // sender = receiver
+            DEFAULT_SENDER_NAME,
+            DEFAULT_RECEIVER_NAME,
+            m_txInput.gasPrice,
+            gasLimit,
+            stringToBytesPtr(payload),
+            DEFAULT_SIGNATURE,
+            m_txInput.chainID,
+            m_version,
+            m_options
+            );
+}
