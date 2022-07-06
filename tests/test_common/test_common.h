@@ -19,7 +19,8 @@ std::string getCanonicRootPath(std::string const &path)
     std::string canonicPath = std::string(canonicalize_file_name("/proc/self/exe"));
 
     // Remove everything in path until elrond-sdk-erdcpp directory and concatenate it with the path
-    canonicPath = canonicPath.substr(0, canonicPath.find("elrond-sdk-erdcpp"));
+    // Search for elrond-sdk-erdcpp/tests because github action runs into elrond-sdk-erdcpp/elrond-sdk-erdcpp folder
+    canonicPath = canonicPath.substr(0, canonicPath.find("elrond-sdk-erdcpp/build"));
     return canonicPath + path;
 }
 
