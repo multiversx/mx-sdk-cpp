@@ -10,15 +10,13 @@ class ITransactionBuilder
 public:
     explicit ITransactionBuilder();
 
-    virtual Transaction build() = 0;
-
     ITransactionBuilder &withVersion(uint64_t version);
 
     ITransactionBuilder &withOptions(uint32_t options);
 
-    Transaction buildSigned(const bytes &seed);
+    virtual Transaction build() = 0;
 
-    Transaction buildSigned(const ISecretKey &wallet);
+    Transaction buildSigned(const bytes &seed);
 
 protected:
     uint64_t m_version;
