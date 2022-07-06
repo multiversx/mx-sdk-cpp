@@ -45,7 +45,11 @@ ITokenTransactionBuilder &TransactionFactory::createESDTTransfer(TokenPayment to
     return builder;
 }
 
-ITokenTransactionBuilder &TransactionFactory::createESDTNFTTransfer(TokenPayment tokenPayment, uint64_t nonce, Address sender, Address destination, uint64_t gasPrice)
+ITokenTransactionBuilder &TransactionFactory::createESDTNFTTransfer(TokenPayment tokenPayment,
+                                                                    uint64_t nonce,
+                                                                    Address sender,
+                                                                    Address destination,
+                                                                    uint64_t gasPrice)
 {
     static TransactionESDTNFTBuilder builder({nonce,
                                               BigUInt(0),
