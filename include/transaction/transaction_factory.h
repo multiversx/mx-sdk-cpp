@@ -29,6 +29,12 @@ public:
                                                     Address sender,
                                                     uint64_t gasPrice);
 
+    ITokenTransactionBuilder &createMultiESDTNFTTransfer(std::vector<TokenPayment> tokenPayments,
+                                                         uint64_t nonce,
+                                                         Address sender,
+                                                         Address destination,
+                                                         uint64_t gasPrice);
+
 private:
     std::string m_chainID;
     GasEstimator m_gasEstimator;
