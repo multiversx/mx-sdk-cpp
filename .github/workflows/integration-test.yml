@@ -29,13 +29,13 @@ jobs:
         run: cmake --build .
 
       - name: Integration Tests - new testnet
-        run: sudo ./scripts/local-testnet.sh new
+        run: sudo /bin/bash local-testnet.sh new
 
       - name: Integration Tests - testnet start
-        run: ./scripts/local-testnet.sh start
+        run: /bin/bash local-testnet.sh start
 
       - name: IntegrationTests - run tests
-        run: ./scripts/test-with-proxy.sh
+        run: /bin/bash test-with-proxy.sh
 
       - name: Integration Tests - testnet stop
-        run: ./scripts/local-testnet.sh stop
+        run: /bin/bash local-testnet.sh stop
