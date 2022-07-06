@@ -8,10 +8,10 @@
 #include "filehandler/pemreader.h"
 #include "utils/errors.h"
 #include "thread"
-
+#include "test_common.h"
 
 const std::string localProxyUrl = "http://127.0.0.1:7950";
-const std::string pemPath =  "../../../../../testnet/testnet-local/sandbox/node/config/walletKey.pem";
+const std::string pemPath =  getCanonicRootPath("testnet/testnet-local/sandbox/node/config/walletKey.pem");
 
 Address getAddressFromPem()
 {

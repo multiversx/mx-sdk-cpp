@@ -1,4 +1,5 @@
 include_directories(${PROJECT_SOURCE_DIR}/src)
+include_directories(${PROJECT_SOURCE_DIR}/tests/test_common)
 
 add_executable(test_proxyprovider test_proxyprovider.cpp)
 add_executable(test_data_transaction test_data_transaction.cpp)

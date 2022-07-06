@@ -32,10 +32,10 @@ jobs:
         run: cd scripts && /bin/bash local-testnet.sh new
 
       - name: Integration Tests - testnet start
-        run: cd scripts && /bin/bash local-testnet.sh start
+        run: cd scripts && /bin/bash local-testnet.sh start || /bin/bash local-testnet.sh stop
 
       - name: IntegrationTests - run tests
-        run: cd scripts && /bin/bash test-with-proxy.sh
+        run: cd scripts && /bin/bash test-with-proxy.sh || /bin/bash local-testnet.sh stop
 
       - name: Integration Tests - testnet stop
         run: cd scripts && /bin/bash local-testnet.sh stop
