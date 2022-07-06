@@ -25,8 +25,8 @@ public:
 
     ITokenTransactionBuilder &createESDTNFTTransfer(TokenPayment tokenPayment,
                                                     uint64_t nonce,
-                                                    Address destination,
                                                     Address sender,
+                                                    Address destination,
                                                     uint64_t gasPrice);
 
 private:
