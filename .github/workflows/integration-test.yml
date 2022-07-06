@@ -28,17 +28,14 @@ jobs:
       - name: Build
         run: cmake --build .
 
-      - name: Cd scripts
-        run: cd scripts && pwd
-
       - name: Integration Tests - new testnet
-        run: sudo /bin/bash local-testnet.sh new
+        run: cd scripts && sudo /bin/bash local-testnet.sh new
 
       - name: Integration Tests - testnet start
-        run: /bin/bash local-testnet.sh start
+        run: cd scripts && /bin/bash local-testnet.sh start
 
       - name: IntegrationTests - run tests
-        run: /bin/bash test-with-proxy.sh
+        run: cd scripts && /bin/bash test-with-proxy.sh
 
       - name: Integration Tests - testnet stop
-        run: /bin/bash local-testnet.sh stop
+        run: cd scripts && /bin/bash local-testnet.sh stop
