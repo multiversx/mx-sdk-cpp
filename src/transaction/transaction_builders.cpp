@@ -5,11 +5,11 @@
 
 namespace
 {
-    std::shared_ptr<bytes> stringToBytesPtr(std::string const & in)
-    {
-        bytes strToBytes(in.begin(), in.end());
-        return std::make_shared<bytes>(strToBytes);
-    }
+std::shared_ptr<bytes> stringToBytesPtr(std::string const &in)
+{
+    bytes strToBytes(in.begin(), in.end());
+    return std::make_shared<bytes>(strToBytes);
+}
 }
 
 TransactionEGLDTransferBuilder::TransactionEGLDTransferBuilder(TransactionBuilderInput txInput) :
@@ -56,6 +56,37 @@ Transaction TransactionESDTBuilder::build()
             DEFAULT_VALUE,
             m_txInput.receiver,
             m_txInput.sender,
+            DEFAULT_SENDER_NAME,
+            DEFAULT_RECEIVER_NAME,
+            m_txInput.gasPrice,
+            gasLimit,
+            stringToBytesPtr(payload),
+            DEFAULT_SIGNATURE,
+            m_txInput.chainID,
+            m_version,
+            m_options);
+}
+
+TransactionESDTNFTBuilder::TransactionESDTNFTBuilder(TransactionBuilderInput txInput, TokenPayment payment) :
+        ITokenTransactionBuilder(),
+        m_txInput(std::move(txInput)),
+        m_tokenPayment(std::move(payment))
+{}
+
+Transaction TransactionESDTNFTBuilder::build()
+{
+    std::string payload = ESDTNFTTransferPayloadBuilder()
+            .setPayment(m_tokenPayment)
+            .setDestination(m_txInput.receiver)
+            .withContractCall(m_contractCall)
+            .build();
+    uint64_t gasLimit = m_txInput.gasEstimator.forESDTNFTTransfer(payload.size());
+
+    return Transaction(
+            m_txInput.nonce,
+            DEFAULT_VALUE,
+            m_txInput.sender,
+            m_txInput.sender, // sender = receiver
             DEFAULT_SENDER_NAME,
             DEFAULT_RECEIVER_NAME,
             m_txInput.gasPrice,

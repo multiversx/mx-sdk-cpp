@@ -40,5 +40,19 @@ private:
     TokenPayment m_tokenPayment;
 };
 
+class TransactionESDTNFTBuilder : public ITokenTransactionBuilder
+{
+    friend class TransactionFactory;
+
+public:
+    Transaction build() override;
+
+private:
+    explicit TransactionESDTNFTBuilder(TransactionBuilderInput txInput, TokenPayment payment);
+
+    TransactionBuilderInput m_txInput;
+    TokenPayment m_tokenPayment;
+};
+
 
 #endif //ERD_TRANSACTION_BUILDER_ESDT_H
