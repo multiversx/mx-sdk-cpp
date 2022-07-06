@@ -14,16 +14,6 @@ Transaction ITransactionBuilder::buildSigned(const bytes &seed)
     return tx;
 }
 
-Transaction ITransactionBuilder::buildSigned(const ISecretKey &wallet)
-{
-    bytes seed = wallet.getSeed();
-    Signer signer(seed);
-    Transaction tx = this->build();
-    tx.sign(signer);
-
-    return tx;
-}
-
 ITransactionBuilder &ITransactionBuilder::withVersion(uint64_t version)
 {
     m_version = version;
