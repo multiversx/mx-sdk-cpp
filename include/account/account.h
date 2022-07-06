@@ -23,6 +23,8 @@ public:
 
     const uint64_t& getNonce() const;
 
+    void update(std::string balance, uint64_t const &nonce);
+
     void incrementNonce();
 
 private:

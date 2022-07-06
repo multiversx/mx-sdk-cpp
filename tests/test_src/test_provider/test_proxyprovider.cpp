@@ -7,13 +7,11 @@
 #include "provider/proxyprovider.h"
 #include "filehandler/pemreader.h"
 #include "utils/errors.h"
-#include "utils/cfg.h"
 #include "thread"
 
-#if GTESTS_HTTPS_PRECONDITIONS
 
 const std::string localProxyUrl = "http://127.0.0.1:7950";
-const std::string pemPath = "../../../../../testnet/testnet-local/sandbox/node/config/walletKey.pem";
+const std::string pemPath =  "../../../../../testnet/testnet-local/sandbox/node/config/walletKey.pem";
 
 Address getAddressFromPem()
 {
@@ -74,14 +72,6 @@ TEST(ProxyProvider, getAllESDTokenBalances_noTokens)
     EXPECT_TRUE(esdts.empty());
 }
 
-TEST(ProxyProvider, getAllESDTokenBalances_multipleTokens)
-{
-    ProxyProvider proxy(localProxyUrl);
-    Address const address(getAddressFromPem());
-    auto const esdts = proxy.getAllESDTTokenBalances(address);
-    EXPECT_EQ(esdts.size(), 0);
-}
-
 void EXPECT_NETWORK_CONFIG_EQ(const NetworkConfig& cfg1, const NetworkConfig& cfg2)
 {
     EXPECT_EQ(cfg1.chainId, cfg2.chainId);
@@ -110,7 +100,12 @@ public:
             m_proxy(std::move(proxyUrl)),
             m_pem(pemSourcePath),
             m_senderAddr(m_pem.getAddress()),
-            m_senderAcc(m_proxy.getAccount(m_senderAddr)){}
+            m_senderAcc(m_proxy.getAccount(m_senderAddr))
+            {
+                std::this_thread::sleep_for(std::chrono::seconds(1));
+                auto updatedAccount = m_proxy.getAccount(m_senderAddr);
+                m_senderAcc.update(updatedAccount.getBalance(), updatedAccount.getNonce());
+            }
 
     void signTransaction(Transaction &transaction) const
     {
@@ -298,4 +293,3 @@ TEST_F(DevnetProxyProviderTxFixture, send_ESDT_function_swapTokensFixedInput_noP
     EXPECT_TRANSACTION_SENT_SUCCESSFULLY(transaction);
 }*/
 
-#endif
