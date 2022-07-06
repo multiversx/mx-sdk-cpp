@@ -45,6 +45,7 @@ TEST(TransactionFactory, createEGLDTransfer)
     EXPECT_EQ(tx.serialize(),
               "{\"nonce\":123,\"value\":\"3333\",\"receiver\":\"erd1qqqqqqqqqqqqqpgqrc4pg2xarca9z34njcxeur622qmfjp8w2jps89fxnl\",\"sender\":\"erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th\",\"gasPrice\":99999,\"gasLimit\":57500,\"data\":\"aGVsbG8=\",\"signature\":\"03e076e58eab1a441f28cb68ef8ab2568e3c39888396ecf86c4a375fdd8b7823ad25059791c620a22b74168248abbcf22cd2e5300e6942be1236b0244e3a7f04\",\"chainID\":\"1\",\"version\":444,\"options\":222}");
 
+    EXPECT_TRUE(tx.verify());
 }
 
 TEST(TransactionFactory, createESDTTransfer)
@@ -103,4 +104,5 @@ TEST(TransactionFactory, createESDTTransfer)
             .buildSigned(pem.getSeed());
     EXPECT_EQ(tx.serialize(),
               "{\"nonce\":123,\"value\":\"0\",\"receiver\":\"erd1qqqqqqqqqqqqqpgqrc4pg2xarca9z34njcxeur622qmfjp8w2jps89fxnl\",\"sender\":\"erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th\",\"gasPrice\":99999,\"gasLimit\":434000,\"data\":\"RVNEVFRyYW5zZmVyQDQ1NTI0NDQzNTA1MDJkMzMzODY2MzIzNDM5QDAxQDY2NmY2ZkA2MjZmNmY=\",\"signature\":\"3535898675f851241f0c211f1fd0b222d4fb06ea42056599a61233f12a088e8cbbd7ce14f3d85fd4f0691bbbde11ee49298a5fc192788da4753afe32f906ad0c\",\"chainID\":\"1\",\"version\":444,\"options\":222}");
+    EXPECT_TRUE(tx.verify());
 }
