@@ -2,11 +2,9 @@ name: Integration tests
 
 on:
   push:
-    branches:
-      - "*"
+    branches: [ development, main, feat/* ]
   pull_request:
-    branches:
-      - "*"
+    branches: [ "*" ]
 
 jobs:
   test:
