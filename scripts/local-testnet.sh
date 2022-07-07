@@ -45,12 +45,13 @@ testnetNew(){
 
 testnetStart(){
   cd "$TESTNET_DIR" && \
-  		./elrond-go/scripts/testnet/start.sh trace
+    ./elrond-go/scripts/testnet/start.sh trace \
+    sleep 3
 }
 
 testnetStop(){
   cd "$TESTNET_DIR" && \
-        ./elrond-go/scripts/testnet/stop.sh
+    ./elrond-go/scripts/testnet/stop.sh
 }
 
 echoOptions(){
@@ -62,7 +63,7 @@ echoOptions(){
 
 main(){
   if [ $# -eq 1 ]; then
-     case "$1" in
+    case "$1" in
       new)
         testnetNew ;;
       start)
