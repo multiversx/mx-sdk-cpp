@@ -1,6 +1,5 @@
-cd ..
-ls -la
-cd build || exit 1
+cd ../..
+pwd
 ls -la
 cd tests || exit 1
 ls -la
