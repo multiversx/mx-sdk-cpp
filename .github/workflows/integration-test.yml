@@ -36,7 +36,6 @@ jobs:
 
       - name: IntegrationTests - run tests
         run: cd scripts && /bin/bash test-with-proxy.sh
-        continue-on-error: true
 
       - name: Integration Tests - testnet stop
         run: cd scripts && /bin/bash local-testnet.sh stop
