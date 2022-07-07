@@ -46,7 +46,7 @@ testnetNew(){
 testnetStart(){
   cd "$TESTNET_DIR" && \
     ./elrond-go/scripts/testnet/start.sh trace \
-    sleep 3
+    sleep 5s
 }
 
 testnetStop(){
