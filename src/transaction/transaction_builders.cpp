@@ -19,7 +19,9 @@ TransactionEGLDTransferBuilder::TransactionEGLDTransferBuilder(TransactionBuilde
 
 Transaction TransactionEGLDTransferBuilder::build()
 {
-    uint64_t gasLimit = m_txInput.gasEstimator.forEGLDTransfer(m_txInput.data.size());
+    uint64_t inputGasLimit = m_txInput.gasLimit;
+    uint64_t estimatedGasLimit = m_txInput.gasEstimator.forEGLDTransfer(m_txInput.data.size());
+    uint64_t gasLimit = (inputGasLimit == DEFAULT_GAS_LIMIT) ? estimatedGasLimit : inputGasLimit;
 
     return Transaction(
             m_txInput.nonce,
@@ -127,5 +129,5 @@ Transaction TransactionMultiESDTNFTBuilder::build()
             m_txInput.chainID,
             m_version,
             m_options
-            );
+    );
 }
