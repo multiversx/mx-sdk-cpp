@@ -1,6 +1,5 @@
 #include <utility>
 
-
 #include "transaction/payload_builder.h"
 #include "transaction/transaction_factory.h"
 #include "transaction/transaction_builders.h"
@@ -10,22 +9,23 @@ TransactionFactory::TransactionFactory(const NetworkConfig &networkConfig) :
         m_gasEstimator(networkConfig), m_chainID(networkConfig.chainId)
 {}
 
-ITransactionBuilder &TransactionFactory::createEGLDTransfer(uint64_t nonce,
-                                                            BigUInt value,
-                                                            Address sender,
-                                                            Address receiver,
-                                                            uint64_t gasPrice,
-                                                            std::string data)
+std::unique_ptr<ITransactionBuilder>
+TransactionFactory::createEGLDTransfer(uint64_t nonce,
+                                       BigUInt value,
+                                       Address sender,
+                                       Address receiver,
+                                       uint64_t gasPrice,
+                                       std::string data)
 {
-    static TransactionEGLDTransferBuilder builder({nonce,
-                                                   std::move(value),
-                                                   std::move(sender),
-                                                   std::move(receiver),
-                                                   std::move(data),
-                                                   gasPrice,
-                                                   m_chainID,
-                                                   m_gasEstimator});
-    return builder;
+    TransactionEGLDTransferBuilder builder({nonce,
+                                            std::move(value),
+                                            std::move(sender),
+                                            std::move(receiver),
+                                            std::move(data),
+                                            gasPrice,
+                                            m_chainID,
+                                            m_gasEstimator});
+    return std::make_unique<TransactionEGLDTransferBuilder>(builder);
 }
 
 std::unique_ptr<ITransactionBuilder> TransactionFactory::createESDTIssue(uint64_t nonce,
@@ -44,72 +44,74 @@ std::unique_ptr<ITransactionBuilder> TransactionFactory::createESDTIssue(uint64_
             .withProperties(esdtProperties)
             .build();
 
-    auto builder = TransactionEGLDTransferBuilder({nonce,
-                                                   BigUInt(ESDT_ISSUANCE_VALUE),
-                                                   std::move(sender),
-                                                   ESDT_ISSUANCE_ADDRESS_SYSTEM_SC,
-                                                   std::move(data),
-                                                   gasPrice,
-                                                   m_chainID,
-                                                   m_gasEstimator,
-                                                   ESDT_ISSUANCE_GAS_LIMIT});
+    TransactionEGLDTransferBuilder builder({nonce,
+                                            BigUInt(ESDT_ISSUANCE_VALUE),
+                                            std::move(sender),
+                                            ESDT_ISSUANCE_ADDRESS_SYSTEM_SC,
+                                            std::move(data),
+                                            gasPrice,
+                                            m_chainID,
+                                            m_gasEstimator,
+                                            ESDT_ISSUANCE_GAS_LIMIT});
 
     return std::make_unique<TransactionEGLDTransferBuilder>(builder);
 }
 
-ITokenTransactionBuilder &TransactionFactory::createESDTTransfer(TokenPayment tokenPayment,
-                                                                 uint64_t nonce,
-                                                                 Address sender,
-                                                                 Address receiver,
-                                                                 uint64_t gasPrice)
+std::unique_ptr<ITokenTransactionBuilder>
+TransactionFactory::createESDTTransfer(TokenPayment tokenPayment,
+                                       uint64_t nonce,
+                                       Address sender,
+                                       Address receiver,
+                                       uint64_t gasPrice)
 {
-
-    static TransactionESDTBuilder builder({nonce,
-                                           BigUInt(0),
-                                           std::move(sender),
-                                           std::move(receiver),
-                                           "",
-                                           gasPrice,
-                                           m_chainID,
-                                           m_gasEstimator},
-                                          std::move(tokenPayment));
-    return builder;
+    TransactionESDTBuilder builder({nonce,
+                                    BigUInt(0),
+                                    std::move(sender),
+                                    std::move(receiver),
+                                    "",
+                                    gasPrice,
+                                    m_chainID,
+                                    m_gasEstimator},
+                                   std::move(tokenPayment));
+    return std::make_unique<TransactionESDTBuilder>(builder);
 }
 
-ITokenTransactionBuilder &TransactionFactory::createESDTNFTTransfer(TokenPayment tokenPayment,
-                                                                    uint64_t nonce,
-                                                                    Address sender,
-                                                                    Address destination,
-                                                                    uint64_t gasPrice)
+std::unique_ptr<ITokenTransactionBuilder>
+TransactionFactory::createESDTNFTTransfer(TokenPayment tokenPayment,
+                                          uint64_t nonce,
+                                          Address sender,
+                                          Address destination,
+                                          uint64_t gasPrice)
 {
-    static TransactionESDTNFTBuilder builder({nonce,
-                                              BigUInt(0),
-                                              std::move(sender),
-                                              std::move(destination),
-                                              "",
-                                              gasPrice,
-                                              m_chainID,
-                                              m_gasEstimator},
-                                             std::move(tokenPayment));
+    TransactionESDTNFTBuilder builder({nonce,
+                                       BigUInt(0),
+                                       std::move(sender),
+                                       std::move(destination),
+                                       "",
+                                       gasPrice,
+                                       m_chainID,
+                                       m_gasEstimator},
+                                      std::move(tokenPayment));
 
-    return builder;
+    return std::make_unique<TransactionESDTNFTBuilder>(builder);
 }
 
-ITokenTransactionBuilder &TransactionFactory::createMultiESDTNFTTransfer(std::vector<TokenPayment> tokenPayments,
-                                                                         uint64_t nonce,
-                                                                         Address sender,
-                                                                         Address destination,
-                                                                         uint64_t gasPrice)
+std::unique_ptr<ITokenTransactionBuilder>
+TransactionFactory::createMultiESDTNFTTransfer(std::vector<TokenPayment> tokenPayments,
+                                               uint64_t nonce,
+                                               Address sender,
+                                               Address destination,
+                                               uint64_t gasPrice)
 {
-    static TransactionMultiESDTNFTBuilder builder({nonce,
-                                                   BigUInt(0),
-                                                   std::move(sender),
-                                                   std::move(destination),
-                                                   "",
-                                                   gasPrice,
-                                                   m_chainID,
-                                                   m_gasEstimator},
-                                                  std::move(tokenPayments));
+    TransactionMultiESDTNFTBuilder builder({nonce,
+                                            BigUInt(0),
+                                            std::move(sender),
+                                            std::move(destination),
+                                            "",
+                                            gasPrice,
+                                            m_chainID,
+                                            m_gasEstimator},
+                                           std::move(tokenPayments));
 
-    return builder;
+    return std::make_unique<TransactionMultiESDTNFTBuilder>(builder);
 }
