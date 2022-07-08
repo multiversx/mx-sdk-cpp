@@ -90,3 +90,21 @@ TEST(MultiESDTNFTTransferPayloadBuilder, build)
     payload = builder.withContractCall(contractCall).build();
     EXPECT_EQ(payload, expectedPayload + contractCall.asOnData());
 }
+
+TEST(ESDTIssuePayloadBuilder, build)
+{
+    auto builder = ESDTIssuePayloadBuilder("AliceTokens");
+
+    std::string payload = builder
+            .setTicker("ALC")
+            .setInitialSupply(BigUInt(4091000000))
+            .setNumOfDecimals(6)
+            .build();
+    EXPECT_EQ(payload, "issue@416c696365546f6b656e73@414c43@f3d7b4c0@06");
+
+    ESDTProperties esdtProperties;
+    esdtProperties.canMint = true;
+    esdtProperties.canBurn = true;
+    payload = builder.withProperties(esdtProperties).build();
+    EXPECT_EQ(payload, "issue@416c696365546f6b656e73@414c43@f3d7b4c0@06@63616e467265657a65@66616c7365@63616e57697065@66616c7365@63616e5061757365@66616c7365@63616e4d696e74@74727565@63616e4275726e@74727565@63616e4368616e67654f776e6572@66616c7365@63616e55706772616465@66616c7365@63616e4164645370656369616c526f6c6573@66616c7365");
+}

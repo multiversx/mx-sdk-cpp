@@ -1,8 +1,32 @@
 #include <utility>
 
+#include "hex.h"
 #include "transaction/esdt.h"
 #include "smartcontracts/sc_arguments.h"
 #include "transaction/payload_builder.h"
+
+namespace
+{
+
+std::string ESDTPropertyField(std::string const &property, bool const &val)
+{
+    std::string const value = val ? "true" : "false";
+    return "@" + util::stringToHex(property) + "@" + util::stringToHex(value);
+}
+
+std::string ESDTPropertiesAsOnData(ESDTProperties const &esdtProperties)
+{
+    return ESDTPropertyField("canFreeze", esdtProperties.canFreeze) +
+           ESDTPropertyField("canWipe", esdtProperties.canWipe) +
+           ESDTPropertyField("canPause", esdtProperties.canPause) +
+           ESDTPropertyField("canMint", esdtProperties.canMint) +
+           ESDTPropertyField("canBurn", esdtProperties.canBurn) +
+           ESDTPropertyField("canChangeOwner", esdtProperties.canChangeOwner) +
+           ESDTPropertyField("canUpgrade", esdtProperties.canUpgrade) +
+           ESDTPropertyField("canAddSpecialRoles", esdtProperties.canAddSpecialRoles);
+}
+
+}
 
 ESDTTransferPayloadBuilder::ESDTTransferPayloadBuilder() :
         m_payment(TokenPayment::fungibleFromAmount("", "0", 0)),
@@ -102,4 +126,48 @@ std::string MultiESDTNFTTransferPayloadBuilder::build() const
     }
 
     return MULTI_ESDT_NFT_TRANSFER_PREFIX + args.asOnData() + m_contractCall.asOnData();
+}
+
+ESDTIssuePayloadBuilder::ESDTIssuePayloadBuilder(std::string token) :
+        m_token(std::move(token)),
+        m_initialSupply(0),
+        m_numOfDecimals(0)
+{}
+
+ESDTIssuePayloadBuilder &ESDTIssuePayloadBuilder::setTicker(std::string ticker)
+{
+    m_ticker = std::move(ticker);
+    return *this;
+}
+
+ESDTIssuePayloadBuilder &ESDTIssuePayloadBuilder::setInitialSupply(BigUInt initialSupply)
+{
+    m_initialSupply = std::move(initialSupply);
+    return *this;
+}
+
+ESDTIssuePayloadBuilder &ESDTIssuePayloadBuilder::setNumOfDecimals(uint32_t numOfDecimals)
+{
+    m_numOfDecimals = numOfDecimals;
+    return *this;
+}
+
+ESDTIssuePayloadBuilder &ESDTIssuePayloadBuilder::withProperties(ESDTProperties esdtProperties)
+{
+    m_esdtProperties = esdtProperties;
+    return *this;
+}
+
+std::string ESDTIssuePayloadBuilder::build() const
+{
+    SCArguments args;
+    args.add(m_token);
+    args.add(m_ticker);
+    args.add(m_initialSupply);
+    args.add(BigUInt(m_numOfDecimals));
+
+    std::string data = ESDT_ISSUANCE_PREFIX + args.asOnData();
+    data += (m_esdtProperties != ESDT_ISSUANCE_DEFAULT_PROPERTIES) ? ESDTPropertiesAsOnData(m_esdtProperties) : "";
+
+    return data;
 }

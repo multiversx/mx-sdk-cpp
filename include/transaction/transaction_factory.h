@@ -21,14 +21,14 @@ public:
                                             uint64_t gasPrice,
                                             std::string data);
 
-    ITransactionBuilder &createESDTIssue(uint64_t nonce,
-                                         Address sender,
-                                         uint64_t const &gasPrice,
-                                         std::string const &token,
-                                         std::string const &ticker,
-                                         BigUInt const &initialSupply,
-                                         uint32_t const &numOfDecimals,
-                                         ESDTProperties const &esdtProperties = ESDT_ISSUANCE_DEFAULT_PROPERTIES);
+    std::unique_ptr<ITransactionBuilder> createESDTIssue(uint64_t nonce,
+                                                         Address sender,
+                                                         uint64_t const &gasPrice,
+                                                         std::string const &token,
+                                                         std::string const &ticker,
+                                                         BigUInt const &initialSupply,
+                                                         uint32_t const &numOfDecimals,
+                                                         ESDTProperties const &esdtProperties = ESDT_ISSUANCE_DEFAULT_PROPERTIES);
 
     ITokenTransactionBuilder &createESDTTransfer(TokenPayment tokenPayment,
                                                  uint64_t nonce,
