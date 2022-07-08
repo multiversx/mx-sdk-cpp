@@ -26,6 +26,9 @@ jobs:
       - name: Build
         run: cmake --build .
 
+      - name: Update testnet variables
+        run: cd scripts && /bin/bash update-testnet-variables.sh
+
       - name: Integration Tests - new testnet
         run: cd scripts && /bin/bash local-testnet.sh new
 
