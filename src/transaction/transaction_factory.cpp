@@ -46,21 +46,22 @@ TransactionFactory::createESDTTransfer(TokenPayment tokenPayment,
     return std::make_unique<TransactionESDTBuilder>(builder);
 }
 
-ITokenTransactionBuilder &TransactionFactory::createESDTNFTTransfer(TokenPayment tokenPayment,
-                                                                    uint64_t nonce,
-                                                                    Address sender,
-                                                                    Address destination,
-                                                                    uint64_t gasPrice)
+std::unique_ptr<ITokenTransactionBuilder>
+TransactionFactory::createESDTNFTTransfer(TokenPayment tokenPayment,
+                                          uint64_t nonce,
+                                          Address sender,
+                                          Address destination,
+                                          uint64_t gasPrice)
 {
-    static TransactionESDTNFTBuilder builder({nonce,
-                                              BigUInt(0),
-                                              std::move(sender),
-                                              std::move(destination),
-                                              "",
-                                              gasPrice,
-                                              m_chainID,
-                                              m_gasEstimator},
-                                             std::move(tokenPayment));
+    TransactionESDTNFTBuilder builder({nonce,
+                                       BigUInt(0),
+                                       std::move(sender),
+                                       std::move(destination),
+                                       "",
+                                       gasPrice,
+                                       m_chainID,
+                                       m_gasEstimator},
+                                      std::move(tokenPayment));
 
-    return builder;
+    return std::make_unique<TransactionESDTNFTBuilder>(builder);
 }
