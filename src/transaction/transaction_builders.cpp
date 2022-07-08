@@ -12,6 +12,7 @@ std::shared_ptr<bytes> stringToBytesPtr(std::string const &in)
 }
 }
 
+// -------------------- EGLD Transfer --------------------
 TransactionEGLDTransferBuilder::TransactionEGLDTransferBuilder(TransactionBuilderInput txInput) :
         ITransactionBuilder(),
         m_txInput(std::move(txInput))
@@ -39,6 +40,7 @@ Transaction TransactionEGLDTransferBuilder::build()
             m_options);
 }
 
+// -------------------- ESDT Transfer --------------------
 TransactionESDTBuilder::TransactionESDTBuilder(TransactionBuilderInput txInput, TokenPayment payment) :
         ITokenTransactionBuilder(),
         m_txInput(std::move(txInput)),
@@ -69,6 +71,7 @@ Transaction TransactionESDTBuilder::build()
             m_options);
 }
 
+// -------------------- ESDT NFT Transfer --------------------
 TransactionESDTNFTBuilder::TransactionESDTNFTBuilder(TransactionBuilderInput txInput, TokenPayment payment) :
         ITokenTransactionBuilder(),
         m_txInput(std::move(txInput)),
@@ -100,6 +103,7 @@ Transaction TransactionESDTNFTBuilder::build()
             m_options);
 }
 
+// -------------------- Multi ESDT NFT Transfer --------------------
 TransactionMultiESDTNFTBuilder::TransactionMultiESDTNFTBuilder(TransactionBuilderInput txInput, std::vector<TokenPayment> payments) :
         ITokenTransactionBuilder(),
         m_txInput(std::move(txInput)),

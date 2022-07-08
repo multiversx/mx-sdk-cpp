@@ -244,31 +244,25 @@ TEST(TransactionFactory, createESDTIssue)
 
     tx = txFactory
             .createESDTIssue(3, sender, gasPrice, "Alice", "ALC", BigUInt(1000), 10, esdtProperties)
-            ->build();
+            ->withVersion(4)
+            .build();
     EXPECT_EQ(tx.serialize(),
-              "{\"nonce\":3,\"value\":\"50000000000000000\",\"receiver\":\"erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u\",\"sender\":\"erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th\",\"gasPrice\":99999,\"gasLimit\":60000000,\"data\":\"aXNzdWVANDE2YzY5NjM2NUA0MTRjNDNAMDNlOEAwYUA2MzYxNmU0NjcyNjU2NTdhNjVANjY2MTZjNzM2NUA2MzYxNmU1NzY5NzA2NUA2NjYxNmM3MzY1QDYzNjE2ZTUwNjE3NTczNjVANjY2MTZjNzM2NUA2MzYxNmU0ZDY5NmU3NEA2NjYxNmM3MzY1QDYzNjE2ZTQyNzU3MjZlQDY2NjE2YzczNjVANjM2MTZlNDM2ODYxNmU2NzY1NGY3NzZlNjU3MkA3NDcyNzU2NUA2MzYxNmU1NTcwNjc3MjYxNjQ2NUA2NjYxNmM3MzY1QDYzNjE2ZTQxNjQ2NDUzNzA2NTYzNjk2MTZjNTI2ZjZjNjU3M0A3NDcyNzU2NQ==\",\"chainID\":\"1\",\"version\":1}");
+              "{\"nonce\":3,\"value\":\"50000000000000000\",\"receiver\":\"erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u\",\"sender\":\"erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th\",\"gasPrice\":99999,\"gasLimit\":60000000,\"data\":\"aXNzdWVANDE2YzY5NjM2NUA0MTRjNDNAMDNlOEAwYUA2MzYxNmU0NjcyNjU2NTdhNjVANjY2MTZjNzM2NUA2MzYxNmU1NzY5NzA2NUA2NjYxNmM3MzY1QDYzNjE2ZTUwNjE3NTczNjVANjY2MTZjNzM2NUA2MzYxNmU0ZDY5NmU3NEA2NjYxNmM3MzY1QDYzNjE2ZTQyNzU3MjZlQDY2NjE2YzczNjVANjM2MTZlNDM2ODYxNmU2NzY1NGY3NzZlNjU3MkA3NDcyNzU2NUA2MzYxNmU1NTcwNjc3MjYxNjQ2NUA2NjYxNmM3MzY1QDYzNjE2ZTQxNjQ2NDUzNzA2NTYzNjk2MTZjNTI2ZjZjNjU3M0A3NDcyNzU2NQ==\",\"chainID\":\"1\",\"version\":4}");
 
     tx = txFactory
             .createESDTIssue(4, sender, gasPrice, "Alice", "ALC", BigUInt(1000), 10, esdtProperties)
-            ->withVersion(3)
+            ->withVersion(5)
+            .withOptions(6)
             .build();
     EXPECT_EQ(tx.serialize(),
-              "{\"nonce\":4,\"value\":\"50000000000000000\",\"receiver\":\"erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u\",\"sender\":\"erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th\",\"gasPrice\":99999,\"gasLimit\":60000000,\"data\":\"aXNzdWVANDE2YzY5NjM2NUA0MTRjNDNAMDNlOEAwYUA2MzYxNmU0NjcyNjU2NTdhNjVANjY2MTZjNzM2NUA2MzYxNmU1NzY5NzA2NUA2NjYxNmM3MzY1QDYzNjE2ZTUwNjE3NTczNjVANjY2MTZjNzM2NUA2MzYxNmU0ZDY5NmU3NEA2NjYxNmM3MzY1QDYzNjE2ZTQyNzU3MjZlQDY2NjE2YzczNjVANjM2MTZlNDM2ODYxNmU2NzY1NGY3NzZlNjU3MkA3NDcyNzU2NUA2MzYxNmU1NTcwNjc3MjYxNjQ2NUA2NjYxNmM3MzY1QDYzNjE2ZTQxNjQ2NDUzNzA2NTYzNjk2MTZjNTI2ZjZjNjU3M0A3NDcyNzU2NQ==\",\"chainID\":\"1\",\"version\":3}");
+              "{\"nonce\":4,\"value\":\"50000000000000000\",\"receiver\":\"erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u\",\"sender\":\"erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th\",\"gasPrice\":99999,\"gasLimit\":60000000,\"data\":\"aXNzdWVANDE2YzY5NjM2NUA0MTRjNDNAMDNlOEAwYUA2MzYxNmU0NjcyNjU2NTdhNjVANjY2MTZjNzM2NUA2MzYxNmU1NzY5NzA2NUA2NjYxNmM3MzY1QDYzNjE2ZTUwNjE3NTczNjVANjY2MTZjNzM2NUA2MzYxNmU0ZDY5NmU3NEA2NjYxNmM3MzY1QDYzNjE2ZTQyNzU3MjZlQDY2NjE2YzczNjVANjM2MTZlNDM2ODYxNmU2NzY1NGY3NzZlNjU3MkA3NDcyNzU2NUA2MzYxNmU1NTcwNjc3MjYxNjQ2NUA2NjYxNmM3MzY1QDYzNjE2ZTQxNjQ2NDUzNzA2NTYzNjk2MTZjNTI2ZjZjNjU3M0A3NDcyNzU2NQ==\",\"chainID\":\"1\",\"version\":5,\"options\":6}");
 
     tx = txFactory
             .createESDTIssue(5, sender, gasPrice, "Alice", "ALC", BigUInt(1000), 10, esdtProperties)
-            ->withVersion(4)
-            .withOptions(3)
-            .build();
-    EXPECT_EQ(tx.serialize(),
-              "{\"nonce\":5,\"value\":\"50000000000000000\",\"receiver\":\"erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u\",\"sender\":\"erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th\",\"gasPrice\":99999,\"gasLimit\":60000000,\"data\":\"aXNzdWVANDE2YzY5NjM2NUA0MTRjNDNAMDNlOEAwYUA2MzYxNmU0NjcyNjU2NTdhNjVANjY2MTZjNzM2NUA2MzYxNmU1NzY5NzA2NUA2NjYxNmM3MzY1QDYzNjE2ZTUwNjE3NTczNjVANjY2MTZjNzM2NUA2MzYxNmU0ZDY5NmU3NEA2NjYxNmM3MzY1QDYzNjE2ZTQyNzU3MjZlQDY2NjE2YzczNjVANjM2MTZlNDM2ODYxNmU2NzY1NGY3NzZlNjU3MkA3NDcyNzU2NUA2MzYxNmU1NTcwNjc3MjYxNjQ2NUA2NjYxNmM3MzY1QDYzNjE2ZTQxNjQ2NDUzNzA2NTYzNjk2MTZjNTI2ZjZjNjU3M0A3NDcyNzU2NQ==\",\"chainID\":\"1\",\"version\":4,\"options\":3}");
-
-    tx = txFactory
-            .createESDTIssue(6, sender, gasPrice, "Alice", "ALC", BigUInt(1000), 10, esdtProperties)
-            ->withVersion(5)
-            .withOptions(4)
+            ->withVersion(6)
+            .withOptions(7)
             .buildSigned(pem.getSeed());
     EXPECT_EQ(tx.serialize(),
-              "{\"nonce\":6,\"value\":\"50000000000000000\",\"receiver\":\"erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u\",\"sender\":\"erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th\",\"gasPrice\":99999,\"gasLimit\":60000000,\"data\":\"aXNzdWVANDE2YzY5NjM2NUA0MTRjNDNAMDNlOEAwYUA2MzYxNmU0NjcyNjU2NTdhNjVANjY2MTZjNzM2NUA2MzYxNmU1NzY5NzA2NUA2NjYxNmM3MzY1QDYzNjE2ZTUwNjE3NTczNjVANjY2MTZjNzM2NUA2MzYxNmU0ZDY5NmU3NEA2NjYxNmM3MzY1QDYzNjE2ZTQyNzU3MjZlQDY2NjE2YzczNjVANjM2MTZlNDM2ODYxNmU2NzY1NGY3NzZlNjU3MkA3NDcyNzU2NUA2MzYxNmU1NTcwNjc3MjYxNjQ2NUA2NjYxNmM3MzY1QDYzNjE2ZTQxNjQ2NDUzNzA2NTYzNjk2MTZjNTI2ZjZjNjU3M0A3NDcyNzU2NQ==\",\"signature\":\"613f51f93bfb53243596db21ede7a0cb81a9225fbe3e07f9e6f1e8ab12d89057c5b73000fa3c44f5a91373b2fce2660781077c80d084fd1ad8a5f5ba7c0a7001\",\"chainID\":\"1\",\"version\":5,\"options\":4}");
+              "{\"nonce\":5,\"value\":\"50000000000000000\",\"receiver\":\"erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u\",\"sender\":\"erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th\",\"gasPrice\":99999,\"gasLimit\":60000000,\"data\":\"aXNzdWVANDE2YzY5NjM2NUA0MTRjNDNAMDNlOEAwYUA2MzYxNmU0NjcyNjU2NTdhNjVANjY2MTZjNzM2NUA2MzYxNmU1NzY5NzA2NUA2NjYxNmM3MzY1QDYzNjE2ZTUwNjE3NTczNjVANjY2MTZjNzM2NUA2MzYxNmU0ZDY5NmU3NEA2NjYxNmM3MzY1QDYzNjE2ZTQyNzU3MjZlQDY2NjE2YzczNjVANjM2MTZlNDM2ODYxNmU2NzY1NGY3NzZlNjU3MkA3NDcyNzU2NUA2MzYxNmU1NTcwNjc3MjYxNjQ2NUA2NjYxNmM3MzY1QDYzNjE2ZTQxNjQ2NDUzNzA2NTYzNjk2MTZjNTI2ZjZjNjU3M0A3NDcyNzU2NQ==\",\"signature\":\"d90c593f359b0d4d75137508f5ffb34adc0fde03e5f6af6c7ff4053b47c07866a7bb28df3ea3d966ee2971fe900daefff0dcc2d2d985f1ea52a5a0e8c2abfe0d\",\"chainID\":\"1\",\"version\":6,\"options\":7}");
     EXPECT_TRUE(tx.verify());
 }

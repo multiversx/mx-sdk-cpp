@@ -47,7 +47,7 @@ std::unique_ptr<ITransactionBuilder> TransactionFactory::createESDTIssue(uint64_
     TransactionEGLDTransferBuilder builder({nonce,
                                             BigUInt(ESDT_ISSUANCE_VALUE),
                                             std::move(sender),
-                                            ESDT_ISSUANCE_ADDRESS_SYSTEM_SC,
+                                            ESDT_ISSUANCE_ADDRESS,
                                             std::move(data),
                                             gasPrice,
                                             m_chainID,
