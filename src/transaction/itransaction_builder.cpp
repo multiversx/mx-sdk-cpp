@@ -5,15 +5,6 @@ ITransactionBuilder::ITransactionBuilder() :
         m_options(DEFAULT_OPTIONS)
 {}
 
-Transaction ITransactionBuilder::buildSigned(const bytes &seed)
-{
-    Signer signer(seed);
-    Transaction tx = this->build();
-    tx.sign(signer);
-
-    return tx;
-}
-
 ITransactionBuilder &ITransactionBuilder::withVersion(uint64_t version)
 {
     m_version = version;
@@ -24,6 +15,16 @@ ITransactionBuilder &ITransactionBuilder::withOptions(uint32_t options)
 {
     m_options = std::make_shared<uint32_t>(options);
     return *this;
+}
+
+
+Transaction ITransactionBuilder::buildSigned(const bytes &seed)
+{
+    Signer signer(seed);
+    Transaction tx = this->build();
+    tx.sign(signer);
+
+    return tx;
 }
 
 ITokenTransactionBuilder::ITokenTransactionBuilder() :
