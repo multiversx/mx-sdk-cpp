@@ -18,6 +18,8 @@ public:
 
     Transaction buildSigned(const bytes &seed);
 
+    virtual ~ITransactionBuilder() = default;
+
 protected:
     uint64_t m_version;
     std::shared_ptr<uint32_t> m_options;
