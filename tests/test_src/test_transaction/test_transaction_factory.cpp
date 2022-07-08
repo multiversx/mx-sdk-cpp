@@ -164,7 +164,6 @@ TEST(TransactionFactory, createMultiESDTNFT)
 {
     PemFileReader pem(getCanonicPath("testData/alicePem.pem"));
 
-    uint64_t nonce = 123;
     TokenPayment token1 = TokenPayment::nonFungible("ERDCPP-38f249", 3);
     TokenPayment token2 = TokenPayment::nonFungible("ERDCPP-38f249", 4);
     std::vector<TokenPayment> tokens = {token1, token2};
@@ -175,41 +174,46 @@ TEST(TransactionFactory, createMultiESDTNFT)
     NetworkConfig cfg = DEFAULT_MAINNET_NETWORK_CONFIG;
     TransactionFactory txFactory(cfg);
     Transaction tx = txFactory
-            .createMultiESDTNFTTransfer(tokens, nonce, sender, receiver, gasPrice)
-            .build();
-    EXPECT_EQ(tx.serialize(), "{\"nonce\":123,\"value\":\"0\",\"receiver\":\"erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th\",\"sender\":\"erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th\",\"gasPrice\":99999,\"gasLimit\":2281000,\"data\":\"TXVsdGlFU0RUTkZUVHJhbnNmZXJAMDAwMDAwMDAwMDAwMDAwMDA1MDAxZTJhMTQyOGRkMWUzYTUxNDZiMzk2MGQ5ZTBmNGE1MDM2OTkwNGVlNTQ4M0AwMkA0NTUyNDQ0MzUwNTAyZDMzMzg2NjMyMzQzOUAwM0AwMUA0NTUyNDQ0MzUwNTAyZDMzMzg2NjMyMzQzOUAwNEAwMQ==\",\"chainID\":\"1\",\"version\":1}");
+            .createMultiESDTNFTTransfer(tokens, 1, sender, receiver, gasPrice)
+            ->build();
+    EXPECT_EQ(tx.serialize(),
+              "{\"nonce\":1,\"value\":\"0\",\"receiver\":\"erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th\",\"sender\":\"erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th\",\"gasPrice\":99999,\"gasLimit\":2281000,\"data\":\"TXVsdGlFU0RUTkZUVHJhbnNmZXJAMDAwMDAwMDAwMDAwMDAwMDA1MDAxZTJhMTQyOGRkMWUzYTUxNDZiMzk2MGQ5ZTBmNGE1MDM2OTkwNGVlNTQ4M0AwMkA0NTUyNDQ0MzUwNTAyZDMzMzg2NjMyMzQzOUAwM0AwMUA0NTUyNDQ0MzUwNTAyZDMzMzg2NjMyMzQzOUAwNEAwMQ==\",\"chainID\":\"1\",\"version\":1}");
 
     tx = txFactory
-            .createMultiESDTNFTTransfer(tokens, nonce, sender, receiver, gasPrice)
-            .withVersion(321)
+            .createMultiESDTNFTTransfer(tokens, 2, sender, receiver, gasPrice)
+            ->withVersion(3)
             .build();
-    EXPECT_EQ(tx.serialize(), "{\"nonce\":123,\"value\":\"0\",\"receiver\":\"erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th\",\"sender\":\"erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th\",\"gasPrice\":99999,\"gasLimit\":2281000,\"data\":\"TXVsdGlFU0RUTkZUVHJhbnNmZXJAMDAwMDAwMDAwMDAwMDAwMDA1MDAxZTJhMTQyOGRkMWUzYTUxNDZiMzk2MGQ5ZTBmNGE1MDM2OTkwNGVlNTQ4M0AwMkA0NTUyNDQ0MzUwNTAyZDMzMzg2NjMyMzQzOUAwM0AwMUA0NTUyNDQ0MzUwNTAyZDMzMzg2NjMyMzQzOUAwNEAwMQ==\",\"chainID\":\"1\",\"version\":321}");
+    EXPECT_EQ(tx.serialize(),
+              "{\"nonce\":2,\"value\":\"0\",\"receiver\":\"erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th\",\"sender\":\"erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th\",\"gasPrice\":99999,\"gasLimit\":2281000,\"data\":\"TXVsdGlFU0RUTkZUVHJhbnNmZXJAMDAwMDAwMDAwMDAwMDAwMDA1MDAxZTJhMTQyOGRkMWUzYTUxNDZiMzk2MGQ5ZTBmNGE1MDM2OTkwNGVlNTQ4M0AwMkA0NTUyNDQ0MzUwNTAyZDMzMzg2NjMyMzQzOUAwM0AwMUA0NTUyNDQ0MzUwNTAyZDMzMzg2NjMyMzQzOUAwNEAwMQ==\",\"chainID\":\"1\",\"version\":3}");
 
     tx = txFactory
-            .createMultiESDTNFTTransfer(tokens, nonce, sender, receiver, gasPrice)
-            .withVersion(321)
-            .withOptions(222)
+            .createMultiESDTNFTTransfer(tokens, 3, sender, receiver, gasPrice)
+            ->withVersion(4)
+            .withOptions(5)
             .build();
-    EXPECT_EQ(tx.serialize(), "{\"nonce\":123,\"value\":\"0\",\"receiver\":\"erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th\",\"sender\":\"erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th\",\"gasPrice\":99999,\"gasLimit\":2281000,\"data\":\"TXVsdGlFU0RUTkZUVHJhbnNmZXJAMDAwMDAwMDAwMDAwMDAwMDA1MDAxZTJhMTQyOGRkMWUzYTUxNDZiMzk2MGQ5ZTBmNGE1MDM2OTkwNGVlNTQ4M0AwMkA0NTUyNDQ0MzUwNTAyZDMzMzg2NjMyMzQzOUAwM0AwMUA0NTUyNDQ0MzUwNTAyZDMzMzg2NjMyMzQzOUAwNEAwMQ==\",\"chainID\":\"1\",\"version\":321,\"options\":222}");
+    EXPECT_EQ(tx.serialize(),
+              "{\"nonce\":3,\"value\":\"0\",\"receiver\":\"erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th\",\"sender\":\"erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th\",\"gasPrice\":99999,\"gasLimit\":2281000,\"data\":\"TXVsdGlFU0RUTkZUVHJhbnNmZXJAMDAwMDAwMDAwMDAwMDAwMDA1MDAxZTJhMTQyOGRkMWUzYTUxNDZiMzk2MGQ5ZTBmNGE1MDM2OTkwNGVlNTQ4M0AwMkA0NTUyNDQ0MzUwNTAyZDMzMzg2NjMyMzQzOUAwM0AwMUA0NTUyNDQ0MzUwNTAyZDMzMzg2NjMyMzQzOUAwNEAwMQ==\",\"chainID\":\"1\",\"version\":4,\"options\":5}");
 
     SCArguments args;
     args.add("boo");
     ContractCall contractCall("foo");
     contractCall.setArgs(args);
     tx = txFactory
-            .createMultiESDTNFTTransfer(tokens, nonce, sender, receiver, gasPrice)
-            .withContractCall(contractCall)
-            .withVersion(321)
-            .withOptions(222)
+            .createMultiESDTNFTTransfer(tokens, 4, sender, receiver, gasPrice)
+            ->withContractCall(contractCall)
+            .withVersion(5)
+            .withOptions(6)
             .build();
-    EXPECT_EQ(tx.serialize(), "{\"nonce\":123,\"value\":\"0\",\"receiver\":\"erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th\",\"sender\":\"erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th\",\"gasPrice\":99999,\"gasLimit\":2302000,\"data\":\"TXVsdGlFU0RUTkZUVHJhbnNmZXJAMDAwMDAwMDAwMDAwMDAwMDA1MDAxZTJhMTQyOGRkMWUzYTUxNDZiMzk2MGQ5ZTBmNGE1MDM2OTkwNGVlNTQ4M0AwMkA0NTUyNDQ0MzUwNTAyZDMzMzg2NjMyMzQzOUAwM0AwMUA0NTUyNDQ0MzUwNTAyZDMzMzg2NjMyMzQzOUAwNEAwMUA2NjZmNmZANjI2ZjZm\",\"chainID\":\"1\",\"version\":321,\"options\":222}");
+    EXPECT_EQ(tx.serialize(),
+              "{\"nonce\":4,\"value\":\"0\",\"receiver\":\"erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th\",\"sender\":\"erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th\",\"gasPrice\":99999,\"gasLimit\":2302000,\"data\":\"TXVsdGlFU0RUTkZUVHJhbnNmZXJAMDAwMDAwMDAwMDAwMDAwMDA1MDAxZTJhMTQyOGRkMWUzYTUxNDZiMzk2MGQ5ZTBmNGE1MDM2OTkwNGVlNTQ4M0AwMkA0NTUyNDQ0MzUwNTAyZDMzMzg2NjMyMzQzOUAwM0AwMUA0NTUyNDQ0MzUwNTAyZDMzMzg2NjMyMzQzOUAwNEAwMUA2NjZmNmZANjI2ZjZm\",\"chainID\":\"1\",\"version\":5,\"options\":6}");
 
     tx = txFactory
-            .createMultiESDTNFTTransfer(tokens, nonce, sender, receiver, gasPrice)
-            .withContractCall(contractCall)
-            .withVersion(321)
-            .withOptions(222)
+            .createMultiESDTNFTTransfer(tokens, 5, sender, receiver, gasPrice)
+            ->withContractCall(contractCall)
+            .withVersion(6)
+            .withOptions(7)
             .buildSigned(pem.getSeed());
-    EXPECT_EQ(tx.serialize(), "{\"nonce\":123,\"value\":\"0\",\"receiver\":\"erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th\",\"sender\":\"erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th\",\"gasPrice\":99999,\"gasLimit\":2302000,\"data\":\"TXVsdGlFU0RUTkZUVHJhbnNmZXJAMDAwMDAwMDAwMDAwMDAwMDA1MDAxZTJhMTQyOGRkMWUzYTUxNDZiMzk2MGQ5ZTBmNGE1MDM2OTkwNGVlNTQ4M0AwMkA0NTUyNDQ0MzUwNTAyZDMzMzg2NjMyMzQzOUAwM0AwMUA0NTUyNDQ0MzUwNTAyZDMzMzg2NjMyMzQzOUAwNEAwMUA2NjZmNmZANjI2ZjZm\",\"signature\":\"b65d9107c745a2776094f152242adac50fef50ee59a68e2472c3212cf42d8fead653cd487d8116c90a239a4e50b14a151c03019510f26fca454c2b4cfc95b006\",\"chainID\":\"1\",\"version\":321,\"options\":222}");
+    EXPECT_EQ(tx.serialize(),
+              "{\"nonce\":5,\"value\":\"0\",\"receiver\":\"erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th\",\"sender\":\"erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th\",\"gasPrice\":99999,\"gasLimit\":2302000,\"data\":\"TXVsdGlFU0RUTkZUVHJhbnNmZXJAMDAwMDAwMDAwMDAwMDAwMDA1MDAxZTJhMTQyOGRkMWUzYTUxNDZiMzk2MGQ5ZTBmNGE1MDM2OTkwNGVlNTQ4M0AwMkA0NTUyNDQ0MzUwNTAyZDMzMzg2NjMyMzQzOUAwM0AwMUA0NTUyNDQ0MzUwNTAyZDMzMzg2NjMyMzQzOUAwNEAwMUA2NjZmNmZANjI2ZjZm\",\"signature\":\"b20db92ec61c498bcfe2460c01bba12e8fce6adcdb5d7be98175d741dbf8b33e0f71b9a987eb823a085817950b265e1186114ce7a5deb5782d4baf3cbf3bf80d\",\"chainID\":\"1\",\"version\":6,\"options\":7}");
     EXPECT_TRUE(tx.verify());
 }
