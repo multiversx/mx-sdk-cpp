@@ -127,7 +127,7 @@ public:
 
     void EXPECT_TRANSACTION_SENT_SUCCESSFULLY(Transaction const &transaction)
     {
-        std::string const txHash = m_proxy.send(transaction).hash;
+        std::string const txHash = m_proxy.send(transaction);
         EXPECT_FALSE(txHash.empty());
 
         TransactionStatus const txStatus = m_proxy.getTransactionStatus(txHash);
@@ -166,7 +166,7 @@ TEST_F(TestnetProxyProviderTxFixture, send_validTx)
     transaction.m_receiver = std::make_shared<Address>("erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqplllst77y4l");
     transaction.m_chainID = "T";
     transaction.m_nonce = m_senderAcc.getNonce();
-    transaction.m_value = "10000000000";
+    transaction.m_value = BigUInt("10000000000");
     transaction.m_gasPrice = 1000000000;
     transaction.m_gasLimit = 50000;
 
@@ -181,7 +181,7 @@ TEST_F(TestnetProxyProviderTxFixture, send_validTx_signedHashedTx)
     transaction.m_receiver = std::make_shared<Address>("erd1cux02zersde0l7hhklzhywcxk4u9n4py5tdxyx7vrvhnza2r4gmq4vw35r");
     transaction.m_chainID = "T";
     transaction.m_nonce = m_senderAcc.getNonce();
-    transaction.m_value = "1000000000000";
+    transaction.m_value = BigUInt("1000000000000");
     transaction.m_gasPrice = 1000000000;
     transaction.m_gasLimit = 50000;
     transaction.m_options = std::make_shared<uint32_t>(1U);
@@ -198,7 +198,7 @@ TEST_F(TestnetProxyProviderTxFixture, send_invalidTx_noSignature)
     transaction.m_receiver = std::make_shared<Address>("erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqplllst77y4l");
     transaction.m_chainID = "T";
     transaction.m_nonce = m_senderAcc.getNonce();
-    transaction.m_value = "10000000000";
+    transaction.m_value = BigUInt("10000000000");
     transaction.m_gasPrice = 1000000000;
     transaction.m_gasLimit = 50000;
 

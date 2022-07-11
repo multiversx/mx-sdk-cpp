@@ -15,7 +15,7 @@ public:
 
     Account getAccount(Address const &address);
 
-    TransactionHash send(Transaction const &transaction);
+    std::string send(Transaction const &transaction);
 
     TransactionStatus getTransactionStatus(std::string const &txHash);
 

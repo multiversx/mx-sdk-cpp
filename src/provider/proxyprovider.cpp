@@ -44,7 +44,7 @@ Account ProxyProvider::getAccount(Address const &address)
     return Account(address, balance, nonce);
 }
 
-TransactionHash ProxyProvider::send(Transaction const &transaction)
+std::string ProxyProvider::send(Transaction const &transaction)
 {
     wrapper::http::Client client(m_url);
     wrapper::http::Result const result = client.post("/transaction/send", transaction.serialize(), wrapper::http::applicationJson);
@@ -52,10 +52,7 @@ TransactionHash ProxyProvider::send(Transaction const &transaction)
     auto data = internal::getPayLoad(result);
 
     utility::requireAttribute(data, "txHash");
-
-    std::string const txHash = data["txHash"];
-
-    return TransactionHash{txHash};
+    return data["txHash"];
 }
 
 TransactionStatus ProxyProvider::getTransactionStatus(std::string const &txHash)
