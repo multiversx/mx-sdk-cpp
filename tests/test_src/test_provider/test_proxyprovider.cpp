@@ -112,8 +112,7 @@ public:
             m_pem("..//..//testData//keysValid1.pem"),
             m_senderAddr(m_pem.getAddress()),
             m_senderAcc(m_proxy.getAccount(m_senderAddr)),
-            m_networkConfig(),
-            m_txFactory(m_networkConfig)
+            m_txFactory({"",0,0,0})
     {
         m_networkConfig = m_proxy.getNetworkConfig();
         m_txFactory = TransactionFactory(m_networkConfig);
