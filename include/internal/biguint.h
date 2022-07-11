@@ -12,6 +12,8 @@ public:
 
     BigUInt operator*(BigUInt const &rhs);
 
+    bool operator==(BigUInt const &rhs);
+
     std::pair<BigUInt, BigUInt> divmod(BigUInt const &rhs) const;
 
     std::string getHexValue() const;

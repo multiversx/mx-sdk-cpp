@@ -69,12 +69,12 @@ TEST(TokenPayment, invalidAmount)
     std::string identifier = "USDC-c76f1f";
     size_t numDecimals = 6;
 
-    EXPECT_THROW(TokenPayment::fungibleFromAmount(identifier, "1.2.3", numDecimals).toPrettyString(), std::invalid_argument);
-    EXPECT_THROW(TokenPayment::fungibleFromAmount(identifier, "01.3", numDecimals).toPrettyString(), std::invalid_argument);
-    EXPECT_THROW(TokenPayment::fungibleFromAmount(identifier, "00", numDecimals).toPrettyString(), std::invalid_argument);
-    EXPECT_THROW(TokenPayment::fungibleFromAmount(identifier, "-1", numDecimals).toPrettyString(), std::invalid_argument);
-    EXPECT_THROW(TokenPayment::fungibleFromAmount(identifier, "-0.1", numDecimals).toPrettyString(), std::invalid_argument);
-    EXPECT_THROW(TokenPayment::fungibleFromAmount(identifier, "1,1", numDecimals).toPrettyString(), std::invalid_argument);
-    EXPECT_THROW(TokenPayment::fungibleFromAmount(identifier, "a", numDecimals).toPrettyString(), std::invalid_argument);
-    EXPECT_THROW(TokenPayment::fungibleFromAmount(identifier, "1.1345c6", numDecimals).toPrettyString(), std::invalid_argument);
+    EXPECT_THROW(TokenPayment::fungibleFromAmount(identifier, "1.2.3", numDecimals), std::invalid_argument);
+    EXPECT_THROW(TokenPayment::fungibleFromAmount(identifier, "01.3", numDecimals), std::invalid_argument);
+    EXPECT_THROW(TokenPayment::fungibleFromAmount(identifier, "00", numDecimals), std::invalid_argument);
+    EXPECT_THROW(TokenPayment::fungibleFromAmount(identifier, "-1", numDecimals), std::invalid_argument);
+    EXPECT_THROW(TokenPayment::fungibleFromAmount(identifier, "-0.1", numDecimals), std::invalid_argument);
+    EXPECT_THROW(TokenPayment::fungibleFromAmount(identifier, "1,1", numDecimals), std::invalid_argument);
+    EXPECT_THROW(TokenPayment::fungibleFromAmount(identifier, "a", numDecimals), std::invalid_argument);
+    EXPECT_THROW(TokenPayment::fungibleFromAmount(identifier, "1.1345c6", numDecimals), std::invalid_argument);
 }
