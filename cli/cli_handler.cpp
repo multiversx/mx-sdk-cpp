@@ -74,15 +74,14 @@ void handleIssueESDT(cxxopts::ParseResult const &result)
     TransactionFactory txFactory(cfg);
     tx = txFactory.createESDTIssue(
             tx.m_nonce,
-            *tx.m_sender,
+            keyFile->getAddress(),
             tx.m_gasPrice,
             token,
             ticker,
             BigUInt(supply),
             decimals,
             esdtProperties
-    )->build();
-    utility::signTransaction(tx, keyFile);
+    )->buildSigned(keyFile->getSeed());
 
     auto const txHash = proxy.send(tx).hash;
     std::cerr << "Transaction hash: " << txHash << "\n";
@@ -121,7 +120,7 @@ void handleTransferESDT(cxxopts::ParseResult const &result)
         }
         *tx.m_data = bytes(txData.begin(), txData.end());
     }
-
+    tx.m_gasLimit = GasEstimator(cfg).forESDTTransfer(tx.m_data->size());
     utility::signTransaction(tx, keyFile);
 
     auto const txHash = proxy.send(tx).hash;
