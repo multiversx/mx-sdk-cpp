@@ -228,7 +228,7 @@ TEST_P(TransactionSignSerializeParametrized, getSignature_serialize)
 
     Transaction transaction;
     transaction.m_nonce =  currParam.nonce;
-    transaction.m_value =  currParam.value;
+    transaction.m_value =  BigUInt(currParam.value);
     transaction.m_receiverUserName =  getPtrBytesFrom(currParam.receiverUserName);
     transaction.m_senderUserName =  getPtrBytesFrom(currParam.senderUserName);
     transaction.m_receiver =  std::make_shared<Address>(currParam.receiver);
@@ -389,7 +389,7 @@ TEST_P(TransactionDeserializeParametrized, deserialize)
     transaction.deserialize(currParam.serializedTx);
 
     EXPECT_EQ(transaction.m_nonce,  currParam.nonce);
-    EXPECT_EQ(transaction.m_value,  currParam.value);
+    EXPECT_EQ(transaction.m_value.getValue(),  currParam.value);
     EXPECT_PTR_BYTE_EQ_STR(transaction.m_receiverUserName,  currParam.receiverUserName);
     EXPECT_PTR_BYTE_EQ_STR(transaction.m_senderUserName,  currParam.senderUserName);
     EXPECT_EQ(transaction.m_receiver->getBech32Address(),  currParam.receiver.getBech32Address());

@@ -26,7 +26,7 @@ Transaction TransactionEGLDTransferBuilder::build()
 
     return Transaction(
             m_txInput.nonce,
-            m_txInput.value.getValue(),
+            m_txInput.value,
             m_txInput.receiver,
             m_txInput.sender,
             DEFAULT_SENDER_NAME,
