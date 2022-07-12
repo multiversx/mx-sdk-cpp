@@ -102,7 +102,8 @@ public:
             m_senderAddr(m_pem.getAddress()),
             m_senderAcc(m_proxy.getAccount(m_senderAddr))
             {
-                std::this_thread::sleep_for(std::chrono::seconds(1));
+                std::this_thread::sleep_for(std::chrono::seconds(3));
+
                 auto updatedAccount = m_proxy.getAccount(m_senderAddr);
                 m_senderAcc.update(updatedAccount.getBalance(), updatedAccount.getNonce());
             }
@@ -118,7 +119,7 @@ public:
         std::string const txHash = m_proxy.send(transaction).hash;
         EXPECT_FALSE(txHash.empty());
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        std::this_thread::sleep_for(std::chrono::seconds(3));
         TransactionStatus txStatus = m_proxy.getTransactionStatus(txHash);
         EXPECT_TRUE(txStatus.isPending() || txStatus.isExecuted());
     }
