@@ -18,8 +18,8 @@ TEST(ProxyProvider, getAccount)
     Account const account = proxy.getAccount(address);
 
     EXPECT_FALSE(account.getAddress().getBech32Address().empty());
-    EXPECT_FALSE(account.getBalance().empty());
-    EXPECT_FALSE(account.getBalance() == DEFAULT_BALANCE);
+    EXPECT_FALSE(account.getBalance().getValue().empty());
+    EXPECT_FALSE(account.getBalance().getValue() == DEFAULT_BALANCE.getValue());
     EXPECT_FALSE(account.getNonce() == 0);
 }
 
@@ -56,7 +56,7 @@ TEST(ProxyProvider, getESDTokenBalance)
 {
     ProxyProvider proxy("https://testnet-gateway.elrond.com");
     Address const address("erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqplllst77y4l");
-    auto const balance = proxy.getESDTTokenBalance(address, "this esdt does not exist");
+    BigUInt balance = proxy.getESDTBalance(address, "this esdt does not exist");
 
     EXPECT_TRUE(balance == DEFAULT_BALANCE);
 }
@@ -65,7 +65,7 @@ TEST(ProxyProvider, getAllESDTokenBalances_noTokens)
 {
     ProxyProvider proxy("https://testnet-gateway.elrond.com");
     Address const address("erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqplllst77y4l");
-    auto const esdts = proxy.getAllESDTTokenBalances(address);
+    auto const esdts = proxy.getAllESDTBalances(address);
 
     EXPECT_TRUE(esdts.empty());
 }
@@ -74,13 +74,13 @@ TEST(ProxyProvider, getAllESDTokenBalances_multipleTokens)
 {
     ProxyProvider proxy("https://testnet-gateway.elrond.com");
     Address const address("erd1nqtv8gdsf55xj9eg0wc8ar6ml46kpld2c86aq670mxgcf49sduzqaeyngx");
-    auto const esdts = proxy.getAllESDTTokenBalances(address);
+    auto const esdts = proxy.getAllESDTBalances(address);
 
     EXPECT_TRUE(esdts.find("00040-4c4d18") != esdts.end());
-    EXPECT_FALSE(esdts.at("00040-4c4d18").empty());
+    EXPECT_FALSE(esdts.at("00040-4c4d18").getValue().empty());
 
     EXPECT_TRUE(esdts.find("0009O-8742a4") != esdts.end());
-    EXPECT_FALSE(esdts.at("0009O-8742a4").empty());
+    EXPECT_FALSE(esdts.at("0009O-8742a4").getValue().empty());
 }
 
 void EXPECT_NETWORK_CONFIG_EQ(const NetworkConfig &cfg1, const NetworkConfig &cfg2)

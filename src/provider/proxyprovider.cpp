@@ -41,7 +41,7 @@ Account ProxyProvider::getAccount(Address const &address)
     std::string const balance = data["account"]["balance"];
     uint64_t const nonce = data["account"]["nonce"];
 
-    return Account(address, balance, nonce);
+    return Account(address, BigUInt(balance), nonce);
 }
 
 std::string ProxyProvider::send(Transaction const &transaction)
@@ -69,7 +69,7 @@ TransactionStatus ProxyProvider::getTransactionStatus(std::string const &txHash)
     return TransactionStatus(txStatus);
 }
 
-std::string ProxyProvider::getESDTTokenBalance(Address const &address, std::string const &token) const
+BigUInt ProxyProvider::getESDTBalance(Address const &address, std::string const &token) const
 {
     wrapper::http::Client client(m_url);
     wrapper::http::Result const result = client.get("/address/" + address.getBech32Address() + "/esdt/" + token);
@@ -81,10 +81,10 @@ std::string ProxyProvider::getESDTTokenBalance(Address const &address, std::stri
 
     std::string balance = data["tokenData"]["balance"];
 
-    return balance;
+    return BigUInt(balance);
 }
 
-std::map<std::string, std::string> ProxyProvider::getAllESDTTokenBalances(Address const &address) const
+std::map<std::string, BigUInt> ProxyProvider::getAllESDTBalances(Address const &address) const
 {
     wrapper::http::Client client(m_url);
     wrapper::http::Result const result = client.get("/address/" + address.getBech32Address() + "/esdt");
@@ -95,7 +95,7 @@ std::map<std::string, std::string> ProxyProvider::getAllESDTTokenBalances(Addres
 
     auto esdts = data["esdts"];
 
-    std::map<std::string, std::string> ret;
+    std::map<std::string, BigUInt> ret;
     std::string esdt;
     std::string balance;
 
@@ -105,7 +105,7 @@ std::map<std::string, std::string> ProxyProvider::getAllESDTTokenBalances(Addres
 
         esdt = it.key();
         balance = it.value()["balance"];
-        ret[esdt] = balance;
+        ret.emplace(esdt, BigUInt(balance));
     }
 
     return ret;
