@@ -3,6 +3,14 @@
 
 #include <string>
 
+enum Network
+{
+    Devnet,
+    Mainnet,
+    Testnet,
+    Local,
+};
+
 struct Config
 {
     std::string chainID;
@@ -12,9 +20,11 @@ struct Config
 class CLIConfig
 {
 public:
-    explicit CLIConfig(std::string tomlConfigPath = "config/config.toml");
+    explicit CLIConfig(std::string const &tomlConfigPath = "elrond-sdk-erdcpp/cli/config/config.toml");
 
     Config config() const;
+
+    void setNetwork(Network const &network) const;
 
 private:
     std::string m_tomlPath;

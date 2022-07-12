@@ -1,5 +1,5 @@
 [Config]
-CLIConfig = "Testnet"
+CLIConfig = "Main"
 	
 [Testnet]
 ChainID = "T"
