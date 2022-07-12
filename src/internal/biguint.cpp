@@ -61,7 +61,7 @@ const std::string &BigUInt::getValue() const
     return m_value;
 }
 
-BigUInt BigUInt::operator*(const BigUInt &rhs)
+BigUInt BigUInt::operator*(const BigUInt &rhs) const
 {
     integer v1(m_value, BASE_10);
     integer v2(rhs.getValue(), BASE_10);
@@ -85,4 +85,9 @@ std::pair<BigUInt, BigUInt> BigUInt::divmod(const BigUInt &rhs) const
     BigUInt retV2 = BigUInt(res.second.str());
 
     return {retV1, retV2};
+}
+
+BigUInt BigUInt::operator/(const BigUInt &rhs) const
+{
+    return this->divmod(rhs).first;
 }
