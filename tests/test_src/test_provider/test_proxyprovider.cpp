@@ -11,7 +11,9 @@
 #include "test_common.h"
 
 const std::string localProxyUrl = "http://127.0.0.1:7950";
-const std::string pemPath =  getCanonicRootPath("testnet/testnet-local/sandbox/node/config/walletKey.pem");
+const std::string pemPath =  getCanonicalRootPath("testnet/testnet-local/sandbox/node/config/walletKey.pem");
+const uint8_t intra_shard_execution = 6;
+const uint8_t cross_shard_execution = 18;
 
 Address getAddressFromPem()
 {
@@ -114,14 +116,34 @@ public:
         transaction.sign(signer);
     }
 
-    void EXPECT_TRANSACTION_SENT_SUCCESSFULLY(Transaction const &transaction)
+    std::string EXPECT_TRANSACTION_SENT_SUCCESSFULLY(Transaction const &transaction)
     {
-        std::string const txHash = m_proxy.send(transaction).hash;
+        std::string txHash = m_proxy.send(transaction).hash;
         EXPECT_FALSE(txHash.empty());
 
-        std::this_thread::sleep_for(std::chrono::seconds(3));
+        return txHash;
+    }
+
+    void EXPECT_TRANSACTION_SUCCESSFUL(std::string txHash)
+    {
         TransactionStatus txStatus = m_proxy.getTransactionStatus(txHash);
-        EXPECT_TRUE(txStatus.isPending() || txStatus.isExecuted());
+        EXPECT_TRUE(txStatus.isSuccessful());
+    }
+
+    void EXPECT_ACCOUNT_NONCE(uint64_t nonce)
+    {
+        Account const updatedAccount = m_proxy.getAccount(m_senderAddr);
+        EXPECT_TRUE(updatedAccount.getNonce() == nonce);
+    }
+
+    void WAIT_INTRA_SHARD_EXECUTION()
+    {
+        std::this_thread::sleep_for(std::chrono::seconds(intra_shard_execution));
+    }
+
+    void WAIT_CROSS_SHARD_EXECUTION()
+    {
+        std::this_thread::sleep_for(std::chrono::seconds(cross_shard_execution));
     }
 
     ProxyProvider m_proxy;
@@ -149,7 +171,7 @@ TEST_F(LocalTestnetProxyProviderTxFixture, send_validTx)
 {
     Transaction transaction;
     transaction.m_sender = std::make_shared<Address>(m_senderAddr);
-    transaction.m_receiver = std::make_shared<Address>("erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqplllst77y4l");
+    transaction.m_receiver = std::make_shared<Address>("erd1cux02zersde0l7hhklzhywcxk4u9n4py5tdxyx7vrvhnza2r4gmq4vw35r");
     transaction.m_chainID = "local-testnet";
     transaction.m_nonce = m_senderAcc.getNonce();
     transaction.m_value = "10000000000";
@@ -157,7 +179,10 @@ TEST_F(LocalTestnetProxyProviderTxFixture, send_validTx)
     transaction.m_gasLimit = 50000;
 
     signTransaction(transaction);
-    EXPECT_TRANSACTION_SENT_SUCCESSFULLY(transaction);
+    std::string txHash = EXPECT_TRANSACTION_SENT_SUCCESSFULLY(transaction);
+    WAIT_INTRA_SHARD_EXECUTION();
+    EXPECT_TRANSACTION_SUCCESSFUL(txHash);
+    EXPECT_ACCOUNT_NONCE(transaction.m_nonce + 1);
 }
 
 TEST_F(LocalTestnetProxyProviderTxFixture, send_validTx_signedHashedTx)
@@ -167,21 +192,24 @@ TEST_F(LocalTestnetProxyProviderTxFixture, send_validTx_signedHashedTx)
     transaction.m_receiver = std::make_shared<Address>("erd1cux02zersde0l7hhklzhywcxk4u9n4py5tdxyx7vrvhnza2r4gmq4vw35r");
     transaction.m_chainID = "local-testnet";
     transaction.m_nonce = m_senderAcc.getNonce();
-    transaction.m_value = "1000000000000";
+    transaction.m_value = "10000000000";
     transaction.m_gasPrice = 1000000000;
     transaction.m_gasLimit = 50000;
     transaction.m_options = std::make_shared<uint32_t>(1U);
     transaction.m_version = 2U;
 
     signTransaction(transaction);
-    EXPECT_TRANSACTION_SENT_SUCCESSFULLY(transaction);
+    std::string txHash = EXPECT_TRANSACTION_SENT_SUCCESSFULLY(transaction);
+    WAIT_INTRA_SHARD_EXECUTION();
+    EXPECT_TRANSACTION_SUCCESSFUL(txHash);
+    EXPECT_ACCOUNT_NONCE(transaction.m_nonce + 1);
 }
 
 TEST_F(LocalTestnetProxyProviderTxFixture, send_invalidTx_noSignature)
 {
     Transaction transaction;
     transaction.m_sender = std::make_shared<Address>(m_senderAddr);
-    transaction.m_receiver = std::make_shared<Address>("erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqplllst77y4l");
+    transaction.m_receiver = std::make_shared<Address>("erd1cux02zersde0l7hhklzhywcxk4u9n4py5tdxyx7vrvhnza2r4gmq4vw35r");
     transaction.m_chainID = "local-testnet";
     transaction.m_nonce = m_senderAcc.getNonce();
     transaction.m_value = "10000000000";
@@ -217,7 +245,10 @@ TEST_F(LocalTestnetProxyProviderTxFixture, send_issueESDTTransaction_noESDTPrope
     prepareTransactionForESDTIssuance(transaction, "JonDoe", "JDO", "444000", "3");
 
     signTransaction(transaction);
-    EXPECT_TRANSACTION_SENT_SUCCESSFULLY(transaction);
+    std::string txHash = EXPECT_TRANSACTION_SENT_SUCCESSFULLY(transaction);
+    WAIT_CROSS_SHARD_EXECUTION();
+    EXPECT_ACCOUNT_NONCE(transaction.m_nonce + 1);
+    EXPECT_TRANSACTION_SUCCESSFUL(txHash);
 }
 
 TEST_F(LocalTestnetProxyProviderTxFixture, send_issueESDTTransaction_withESDTProperties)
@@ -236,7 +267,10 @@ TEST_F(LocalTestnetProxyProviderTxFixture, send_issueESDTTransaction_withESDTPro
     prepareTransactionForESDTIssuance(transaction, "JonDoe", "JDO", "444000", "3", esdtProperties);
 
     signTransaction(transaction);
-    EXPECT_TRANSACTION_SENT_SUCCESSFULLY(transaction);
+    std::string txHash = EXPECT_TRANSACTION_SENT_SUCCESSFULLY(transaction);
+    WAIT_CROSS_SHARD_EXECUTION();
+    EXPECT_ACCOUNT_NONCE(transaction.m_nonce + 1);
+    EXPECT_TRANSACTION_SUCCESSFUL(txHash);
 }
 
 TEST_F(LocalTestnetProxyProviderTxFixture, send_ESDT_noFunction)
@@ -253,7 +287,10 @@ TEST_F(LocalTestnetProxyProviderTxFixture, send_ESDT_noFunction)
     prepareTransactionForESDTTransfer(transaction, "JDO-8a7f9b");
 
     signTransaction(transaction);
-    EXPECT_TRANSACTION_SENT_SUCCESSFULLY(transaction);
+    std::string txHash = EXPECT_TRANSACTION_SENT_SUCCESSFULLY(transaction);
+    WAIT_INTRA_SHARD_EXECUTION();
+    EXPECT_TRANSACTION_SUCCESSFUL(txHash);
+    EXPECT_ACCOUNT_NONCE(transaction.m_nonce + 1);
 }
 
 /*(TEST_F(DevnetProxyProviderTxFixture, send_ESDT_function_unWrapEgld_noParams)

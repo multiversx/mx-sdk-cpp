@@ -13,7 +13,7 @@ std::string getCanonicPath(std::string const &path)
     return canonicPath + "tests/" + path;
 }
 
-std::string getCanonicRootPath(std::string const &path)
+std::string getCanonicalRootPath(std::string const &path)
 {
     // Get absolute path to executable
     std::string canonicPath = std::string(canonicalize_file_name("/proc/self/exe"));
