@@ -134,28 +134,33 @@ void handleSetNetworkConfig(cxxopts::ParseResult const &result)
                    [](unsigned char c)
                    { return std::tolower(c); });
 
-    auto const config = CLIConfig();
+    auto const cliConfig = CLIConfig();
     network[0] = char(toupper(network[0]));
     if (network == NETWORK_MAINNET)
     {
-        config.setNetwork(Mainnet);
+        cliConfig.setNetwork(Mainnet);
     }
     else if (network == NETWORK_DEVNET)
     {
-        config.setNetwork(Devnet);
+        cliConfig.setNetwork(Devnet);
     }
     else if (network == NETWORK_TESTNET)
     {
-        config.setNetwork(Testnet);
+        cliConfig.setNetwork(Testnet);
     }
     else if (network == NETWORK_LOCAL)
     {
-        config.setNetwork(Local);
+        cliConfig.setNetwork(Local);
     }
     else
     {
-        std::cerr << "Invalid network\n";
+        throw std::invalid_argument("Invalid network: " + network);
     }
+
+    auto cfg = cliConfig.config();
+    std::cerr << "Config changed to: " << network << "\n";
+    std::cerr << "ChainID = " << cfg.chainID << "\n";
+    std::cerr << "ProxyUrl = " << cfg.proxyUrl << "\n";
 }
 
 void handleRequest(ih::ArgParsedResult const &parsedResult)

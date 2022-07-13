@@ -61,27 +61,33 @@ Config CLIConfig::config() const
 void CLIConfig::setNetwork(Network const &network) const
 {
     std::ifstream inFile(m_tomlPath);
-
     std::stringstream strStream;
-    strStream << inFile.rdbuf(); //read the file
+
+    strStream << inFile.rdbuf();
     std::string currLine;
+    bool found = false;
     while (std::getline(strStream, currLine))
     {
         if (currLine.find("CLIConfig") != std::string::npos)
         {
             std::string newLine = std::string("CLIConfig = ") + "\"" + m_networkMap.at(network) + "\"";
-
             std::string fileContent = strStream.str();
             fileContent.replace(fileContent.find(currLine), currLine.length(), newLine);
+
+            // Rewrite file with new content
             std::ofstream ofs;
             ofs.open(m_tomlPath, std::ofstream::out | std::ofstream::trunc);
             ofs << fileContent;
             ofs.close();
 
-            std::cerr << fileContent;
+            found = true;
             break;
         }
     }
 
+    if (!found)
+    {
+        throw std::runtime_error("Could not find CLIConfig table in " + m_tomlPath);
+    }
 }
 
