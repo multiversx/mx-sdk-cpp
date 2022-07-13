@@ -32,6 +32,8 @@ public:
 
     void setNetwork(Network const &network) const;
 
+    std::string toString(Network const& network) const;
+
 private:
     std::string m_tomlPath;
     std::map<Network, std::string> m_networkMap;

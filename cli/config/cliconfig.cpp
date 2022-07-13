@@ -8,6 +8,14 @@
 #define END  "\x1B[0m"
 #define YELLOW(x) BEGIN x END
 
+namespace
+{
+inline std::string fileDoesNotContain(std::string const& filePath)
+{
+    return "File " + filePath + " does not contain ";
+}
+}
+
 std::string getCanonicRootPath(std::string const &path)
 {
     // Get absolute path to executable
@@ -36,18 +44,23 @@ Config CLIConfig::config() const
     {
         auto const data = cpptoml::parse_file(m_tomlPath);
         auto const networkConfig = *data->get_qualified_as<std::string>("Config.CLIConfig");
-        auto const config = data->get_table(networkConfig);
-
-        if (!data->contains(networkConfig))
+        if (networkConfig.empty())
         {
-            throw std::runtime_error("dsa");
+            throw std::runtime_error(fileDoesNotContain(m_tomlPath) + "[Config].CLIConfig table");
         }
+
+        auto const config = data->get_table(networkConfig);
+        if (!config->contains("ChainID") || !config->contains("ProxyUrl"))
+        {
+            throw std::runtime_error(fileDoesNotContain(m_tomlPath) + "ChainID/ProxyUrl field in [" + networkConfig +"] table");
+        }
+
         ret.chainID = *config->get_as<std::string>("ChainID");
         ret.proxyUrl = *config->get_as<std::string>("ProxyUrl");
     }
-    catch (...)
+    catch (std::exception const &exception)
     {
-        std::cerr << YELLOW("Warning: Could not load configuration, using default config.");
+        std::cerr << YELLOW("Warning: Could not load configuration, got exception: <" + std::string(exception.what()) + ">, using default config.");
         std::cerr << "\nChain ID: " << NETWORK_CONFIG_DEFAULT_CHAIN_ID;
         std::cerr << "\nProxy url: " << NETWORK_CONFIG_DEFAULT_PROXY_URL;
 
@@ -89,5 +102,10 @@ void CLIConfig::setNetwork(Network const &network) const
     {
         throw std::runtime_error("Could not find CLIConfig table in " + m_tomlPath);
     }
+}
+
+std::string CLIConfig::toString(const Network &network) const
+{
+    return m_networkMap.at(network);
 }
 

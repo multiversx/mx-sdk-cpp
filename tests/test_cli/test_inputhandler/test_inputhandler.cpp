@@ -5,8 +5,9 @@
 #include "cli_handler.h"
 #include "utils/ext.h"
 #include "test_common.h"
+#include "config/cliconfig.h"
 
-template <typename T>
+template<typename T>
 void EXPECT_PARSE_ERROR_MISSING_ARG(int const &argc, char *const argv[], errorMessage const &errMsg, std::string const &arg)
 {
     EXPECT_THROW({
@@ -16,14 +17,31 @@ void EXPECT_PARSE_ERROR_MISSING_ARG(int const &argc, char *const argv[], errorMe
 
                          handler.parse(argc, argv);
                      }
-                     catch(const T &e)
+                     catch (const T &e)
                      {
                          std::string const err = e.what();
-                         EXPECT_TRUE(err.find(errMsg) != std::string::npos );
-                         EXPECT_TRUE(err.find(arg) != std::string::npos );
+                         EXPECT_TRUE(err.find(errMsg) != std::string::npos);
+                         EXPECT_TRUE(err.find(arg) != std::string::npos);
                          throw;
                      }
-                 }, T );
+                 }, T);
+}
+
+void setCLIConfig(Network const &network, std::string const &tomlPath = "elrond-sdk-erdcpp/cli/config/config.toml")
+{
+    int const argc = 4;
+    char *argv[argc];
+    std::string config = "--config=" + CLIConfig(tomlPath).toString(network);
+
+    argv[0] = (char *) "erdcpp";
+    argv[1] = (char *) "network";
+    argv[2] = (char *) "set";
+    argv[3] = (char *) &config[0];
+
+    ih::ArgHandler argHandler;
+    auto const res = argHandler.parse(argc, argv).result;
+
+    cli::handleSetNetworkConfig(res);
 }
 
 TEST(ArgHandler, parse_noArgument_expectInvalid)
@@ -182,7 +200,7 @@ TEST(ArgHandler, parse_transaction_new_invalidNonce_expectErrorNonce)
 
     ih::ArgHandler argHandler;
 
-    EXPECT_THROW(argHandler.parse(argc, argv),cxxopts::OptionException);
+    EXPECT_THROW(argHandler.parse(argc, argv), cxxopts::OptionException);
 }
 
 TEST(ArgHandler, parse_transaction_new_invalidValue_expectErrorValue)
@@ -243,7 +261,7 @@ TEST(ArgHandler, parse_transaction_new_invalidGasPrice_expectErrorGasPrice)
 
     ih::ArgHandler argHandler;
 
-    EXPECT_THROW(argHandler.parse(argc, argv),cxxopts::OptionException);
+    EXPECT_THROW(argHandler.parse(argc, argv), cxxopts::OptionException);
 }
 
 TEST(ArgHandler, parse_transaction_new_invalidGasLimit_expectErrorGasLimit)
@@ -265,7 +283,7 @@ TEST(ArgHandler, parse_transaction_new_invalidGasLimit_expectErrorGasLimit)
 
     ih::ArgHandler argHandler;
 
-    EXPECT_THROW(argHandler.parse(argc, argv),cxxopts::OptionException);
+    EXPECT_THROW(argHandler.parse(argc, argv), cxxopts::OptionException);
 }
 
 TEST(ArgHandler, parse_transaction_new_invalidPemInput_expectErrorPem)
@@ -328,15 +346,15 @@ TEST(ArgHandler, parse_transaction_new_invalidData_expectErrorData)
     EXPECT_PARSE_ERROR_MISSING_ARG<std::invalid_argument>(argc, argv, ERROR_MSG_EMPTY_VALUE, "data");
 }
 
-// Warning: This test only passes if default config network chainID is set to Testnet
-// Reason: Expected signature is for a serialized transaction which has chainID = "T"
 TEST(HandleCreateSignedTransaction, withPemFile_expectCorrectWrittenTx)
 {
+    setCLIConfig(Testnet);
+
     int const argc = 11;
     char *argv[argc];
 
-    std::string keyFile = "--key=" + getCanonicPath("testData/keysValid1.pem");
-    std::string outFile = "--outfile=" + getCanonicPath("testData/outputJson.json");
+    std::string keyFile = "--key=" + getCanonicalRootPath("elrond-sdk-erdcpp/tests/testData/keysValid1.pem");
+    std::string outFile = "--outfile=" + getCanonicalRootPath("elrond-sdk-erdcpp/tests/testData/outputJson.json");
 
     argv[0] = (char *) "erdcpp";
     argv[1] = (char *) "transaction";
@@ -359,15 +377,32 @@ TEST(HandleCreateSignedTransaction, withPemFile_expectCorrectWrittenTx)
     std::ifstream inFile(res["outfile"].as<std::string>());
     std::getline(inFile, writtenTx);
 
-    EXPECT_EQ(writtenTx, "{\"nonce\":5,\"value\":\"10000000000000000000\",\"receiver\":\"erd10536tc3s886yqxtln74u6mztuwl5gy9k9gp8fttxda0klgxg979srtg5wt\",\"sender\":\"erd1sjsk3n2d0krq3pyxxtgf0q7j3t56sgusqaujj4n82l39t9h7jers6gslr4\",\"gasPrice\":1000000000,\"gasLimit\":50000,\"data\":\"dGVzdA==\",\"signature\":\"62af8fa927e4f1ebd64fb8d7cca8aac9d5d33fefa4b185d44bb16ecefc2a7214304b4654406fe76fa36207fbb91f245586f66500cc554a3eb798faab8c435706\",\"chainID\":\"T\",\"version\":1}");
+    EXPECT_EQ(writtenTx,
+              "{\"nonce\":5,\"value\":\"10000000000000000000\",\"receiver\":\"erd10536tc3s886yqxtln74u6mztuwl5gy9k9gp8fttxda0klgxg979srtg5wt\",\"sender\":\"erd1sjsk3n2d0krq3pyxxtgf0q7j3t56sgusqaujj4n82l39t9h7jers6gslr4\",\"gasPrice\":1000000000,\"gasLimit\":50000,\"data\":\"dGVzdA==\",\"signature\":\"62af8fa927e4f1ebd64fb8d7cca8aac9d5d33fefa4b185d44bb16ecefc2a7214304b4654406fe76fa36207fbb91f245586f66500cc554a3eb798faab8c435706\",\"chainID\":\"T\",\"version\":1}");
 }
 
-#include "config/cliconfig.h"
-
-TEST(dsada,daaa)
+TEST(HandleSetNetworkConfig, setCLIConfig)
 {
-    CLIConfig().setNetwork(Devnet);
+    CLIConfig cliConfig;
+
+    setCLIConfig(Mainnet);
+    EXPECT_EQ(cliConfig.config().chainID, "1");
+    EXPECT_EQ(cliConfig.config().proxyUrl, "https://gateway.elrond.com");
+
+    setCLIConfig(Devnet);
+    EXPECT_EQ(cliConfig.config().chainID, "D");
+    EXPECT_EQ(cliConfig.config().proxyUrl, "https://devnet-gateway.elrond.com");
+
+    setCLIConfig(Local);
+    EXPECT_EQ(cliConfig.config().chainID, "local-testnet");
+    EXPECT_TRUE(cliConfig.config().proxyUrl.find("127.0.0.1") != std::string::npos); // If someone changes port, allow this test to pass
+
+    // A bit hackish: set Testnet last one, leaving config.toml as it is, so it doesn't show as changed file in git
+    setCLIConfig(Testnet);
+    EXPECT_EQ(cliConfig.config().chainID, "T");
+    EXPECT_EQ(cliConfig.config().proxyUrl, "https://testnet-gateway.elrond.com");
 }
+
 //TODO: Create CMake function to automatically run all tests
 //TODO: Design CMake to automatically ->link all libraries + include all directories<- for every newly added test file
 //TODO: Split tests file in headers + CPP
