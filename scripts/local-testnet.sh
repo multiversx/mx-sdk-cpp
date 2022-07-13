@@ -23,6 +23,8 @@ testnetRemove(){
 }
 
 testnetSetup(){
+  sed -i 's/TransactionSignedWithTxHashEnableEpoch =.*/TransactionSignedWithTxHashEnableEpoch = 0/' "$TESTNET_DIR/elrond-go/cmd/node/config/enableEpochs.toml"
+
   mkdir "$TESTNET_OUTPUT_DIR"
   cd "$TESTNET_OUTPUT_DIR" && \
     (ln -s "$TESTNET_DIR"/elrond-go elrond-go && \

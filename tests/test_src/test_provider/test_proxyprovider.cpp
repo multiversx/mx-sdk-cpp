@@ -12,8 +12,8 @@
 
 const std::string localProxyUrl = "http://127.0.0.1:7950";
 const std::string pemPath =  getCanonicalRootPath("testnet/testnet-local/sandbox/node/config/walletKey.pem");
-const uint8_t intra_shard_execution = 8;
-const uint8_t cross_shard_execution = 20;
+const uint8_t intra_shard_execution = 6;
+const uint8_t cross_shard_execution = 18;
 
 Address getAddressFromPem()
 {
