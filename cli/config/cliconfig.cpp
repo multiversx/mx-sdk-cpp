@@ -21,7 +21,11 @@ std::string getCanonicRootPath(std::string const &path)
 }
 
 CLIConfig::CLIConfig(std::string const &tomlConfigPath) :
-        m_tomlPath(getCanonicRootPath(tomlConfigPath))
+        m_tomlPath(getCanonicRootPath(tomlConfigPath)),
+        m_networkMap({{Mainnet, NETWORK_MAINNET},
+                      {Devnet,  NETWORK_DEVNET},
+                      {Testnet, NETWORK_TESTNET},
+                      {Local,   NETWORK_LOCAL}})
 {}
 
 Config CLIConfig::config() const
@@ -44,7 +48,6 @@ Config CLIConfig::config() const
     catch (...)
     {
         std::cerr << YELLOW("Warning: Could not load configuration, using default config.");
-
         std::cerr << "\nChain ID: " << NETWORK_CONFIG_DEFAULT_CHAIN_ID;
         std::cerr << "\nProxy url: " << NETWORK_CONFIG_DEFAULT_PROXY_URL;
 
@@ -55,35 +58,27 @@ Config CLIConfig::config() const
     return ret;
 }
 
-void CLIConfig::setNetwork(const Network &network) const
+void CLIConfig::setNetwork(Network const &network) const
 {
-
-
-    std::ifstream inFile;
-    inFile.open(m_tomlPath); //open the input file
-
-
+    std::ifstream inFile(m_tomlPath);
 
     std::stringstream strStream;
     strStream << inFile.rdbuf(); //read the file
-    std::string allFile = strStream.str();
-
-    std::string line;
-
-    while (std::getline(strStream, line))
+    std::string currLine;
+    while (std::getline(strStream, currLine))
     {
-
-        if (line.find("CLIConfig") != std::string::npos)
+        if (currLine.find("CLIConfig") != std::string::npos)
         {
-            std::string newLine = std::string( "CLIConfig = ") + "\"Main\"";
+            std::string newLine = std::string("CLIConfig = ") + "\"" + m_networkMap.at(network) + "\"";
 
-            allFile.replace(allFile.find(line), line.length(), newLine);
+            std::string fileContent = strStream.str();
+            fileContent.replace(fileContent.find(currLine), currLine.length(), newLine);
             std::ofstream ofs;
             ofs.open(m_tomlPath, std::ofstream::out | std::ofstream::trunc);
-            ofs << allFile;
+            ofs << fileContent;
             ofs.close();
 
-            std::cerr<<allFile;
+            std::cerr << fileContent;
             break;
         }
     }

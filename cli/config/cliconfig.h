@@ -2,11 +2,17 @@
 #define ERD_CLI_CONFIG_H
 
 #include <string>
+#include <map>
+
+#define NETWORK_MAINNET std::string("Mainnet")
+#define NETWORK_DEVNET std::string("Devnet")
+#define NETWORK_TESTNET std::string("Testnet")
+#define NETWORK_LOCAL std::string("Local")
 
 enum Network
 {
-    Devnet,
     Mainnet,
+    Devnet,
     Testnet,
     Local,
 };
@@ -28,6 +34,7 @@ public:
 
 private:
     std::string m_tomlPath;
+    std::map<Network, std::string> m_networkMap;
 };
 
 #endif

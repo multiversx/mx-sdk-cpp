@@ -2,6 +2,7 @@
 
 CLIOptions::CLIOptions() :
         m_optionsTx("erdcpp transaction new", "Create signed transactions\n[command]: transaction\n[subcommand]: new"),
+        m_optionsNetwork("erdcpp network set", "Set network\n[command]: network\n[subcommand]: set"),
         m_optionsESDT()
 {
     initOptions();
@@ -12,6 +13,12 @@ cxxopts::Options CLIOptions::transaction() const
     return m_optionsTx;
 }
 
+
+cxxopts::Options CLIOptions::network() const
+{
+    return m_optionsNetwork;
+}
+
 OptionsESDT CLIOptions::esdt() const
 {
     return m_optionsESDT;
@@ -20,17 +27,19 @@ OptionsESDT CLIOptions::esdt() const
 std::string CLIOptions::help() const
 {
     return transaction().help() + "\n" +
-           esdt().help();
+           esdt().help() + "\n" +
+           m_optionsNetwork.help();
 }
 
 void CLIOptions::initOptions()
 {
     initOptionsTx();
+    initOptionsNetwork();
 }
 
 void CLIOptions::initOptionsTx()
 {
-    m_optionsTx.add_options("new") // transaction new group
+    m_optionsTx.add_options("set") // transaction new group
             ("nonce", "Transaction nonce", cxxopts::value<uint64_t>())
             ("value", "Transaction value", cxxopts::value<std::string>())
             ("receiver", "Receiver's address", cxxopts::value<std::string>())
@@ -46,3 +55,8 @@ void CLIOptions::initOptionsTx()
             ("outfile", "Json file where the output will be stored", cxxopts::value<std::string>());
 }
 
+void CLIOptions::initOptionsNetwork()
+{
+    m_optionsNetwork.add_options("set") // network config set
+            ("config", "Set network config used to interact with ERDCPP CLI. Valid: mainnet, testnet, devnet, local", cxxopts::value<std::string>());
+}
