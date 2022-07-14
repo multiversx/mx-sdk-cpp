@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <utility>
 
 #include "errors.h"
 #include "transaction/token_payment.h"
@@ -113,6 +114,11 @@ TokenPayment TokenPayment::fungibleFromBigUInt(std::string tokenIdentifier, BigU
 TokenPayment TokenPayment::nonFungible(std::string tokenIdentifier, uint64_t nonce)
 {
     return {std::move(tokenIdentifier), nonce, BigUInt("1"), 0};
+}
+
+TokenPayment TokenPayment::semiFungible(std::string tokenIdentifier, uint64_t nonce, BigUInt quantity)
+{
+    return {std::move(tokenIdentifier), nonce, std::move(quantity), 0};
 }
 
 TokenPayment TokenPayment::metaESDTFromAmount(std::string tokenIdentifier, uint64_t nonce, std::string amount, uint32_t numDecimals)

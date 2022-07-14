@@ -7,6 +7,12 @@
 #define BASE_10 10
 #define BASE_16 16
 
+BigUInt::BigUInt(uint64_t value)
+{
+    std::string valueStr = std::to_string(value);
+    m_value = std::move(valueStr);
+}
+
 BigUInt::BigUInt(std::string value)
 {
     try
