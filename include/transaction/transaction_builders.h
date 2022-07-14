@@ -54,5 +54,18 @@ private:
     TokenPayment m_tokenPayment;
 };
 
+class TransactionMultiESDTNFTBuilder : public ITokenTransactionBuilder
+{
+    friend class TransactionFactory;
+
+public:
+    Transaction build() override;
+
+private:
+    explicit TransactionMultiESDTNFTBuilder(TransactionBuilderInput txInput, std::vector<TokenPayment> payments);
+
+    TransactionBuilderInput m_txInput;
+    std::vector<TokenPayment> m_tokenPayments;
+};
 
 #endif //ERD_TRANSACTION_BUILDER_ESDT_H
