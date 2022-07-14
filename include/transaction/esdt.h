@@ -28,6 +28,7 @@ struct ESDTProperties
     bool canChangeOwner = false;
     bool canUpgrade = false;
     bool canAddSpecialRoles = false;
+    bool canTransferNFTCreateRole = false;
 };
 
 bool operator==(ESDTProperties const &lhs, ESDTProperties const &rhs);

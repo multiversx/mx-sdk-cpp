@@ -23,7 +23,8 @@ std::string ESDTPropertiesAsOnData(ESDTProperties const &esdtProperties)
            ESDTPropertyField("canBurn", esdtProperties.canBurn) +
            ESDTPropertyField("canChangeOwner", esdtProperties.canChangeOwner) +
            ESDTPropertyField("canUpgrade", esdtProperties.canUpgrade) +
-           ESDTPropertyField("canAddSpecialRoles", esdtProperties.canAddSpecialRoles);
+           ESDTPropertyField("canAddSpecialRoles", esdtProperties.canAddSpecialRoles) +
+           ESDTPropertyField("canTransferNFTCreateRole", esdtProperties.canTransferNFTCreateRole);
 }
 
 }
