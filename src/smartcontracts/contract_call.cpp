@@ -18,5 +18,6 @@ void ContractCall::setArgs(SCArguments args)
 
 std::string ContractCall::asOnData() const
 {
-    return util::stringToHex(m_function) + m_args.asOnData();
+    return (m_function.empty()) ?
+           ("") : ("@" + util::stringToHex(m_function) + m_args.asOnData());
 }
