@@ -173,14 +173,21 @@ TEST(TransactionFactory, createMultiESDTNFT)
     NetworkConfig cfg = DEFAULT_MAINNET_NETWORK_CONFIG;
     TransactionFactory txFactory(cfg);
     Transaction tx = txFactory
-            .createMultiESDTNFTTransfer({token1}, 1, sender, receiver, gasPrice)
+            .createMultiESDTNFTTransfer({}, 1, sender, receiver, gasPrice) // no payment
+            ->build();
+    EXPECT_EQ(tx.serialize(),
+              "{\"nonce\":1,\"value\":\"0\",\"receiver\":\"erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th\",\"sender\":\"erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th\",\"gasPrice\":99999,\"gasLimit\":182000,\"data\":\"TXVsdGlFU0RUTkZUVHJhbnNmZXJAMDAwMDAwMDAwMDAwMDAwMDA1MDAxZTJhMTQyOGRkMWUzYTUxNDZiMzk2MGQ5ZTBmNGE1MDM2OTkwNGVlNTQ4M0AwMA==\",\"chainID\":\"1\",\"version\":1}");
+
+    tx = txFactory
+            .createMultiESDTNFTTransfer({token1}, 1, sender, receiver, gasPrice) // one token payment
             ->build();
     EXPECT_EQ(tx.serialize(),
               "{\"nonce\":1,\"value\":\"0\",\"receiver\":\"erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th\",\"sender\":\"erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th\",\"gasPrice\":99999,\"gasLimit\":1231500,\"data\":\"TXVsdGlFU0RUTkZUVHJhbnNmZXJAMDAwMDAwMDAwMDAwMDAwMDA1MDAxZTJhMTQyOGRkMWUzYTUxNDZiMzk2MGQ5ZTBmNGE1MDM2OTkwNGVlNTQ4M0AwMUA0NTUyNDQ0MzUwNTAyZDMzMzg2NjMyMzQzOUAwM0AwMQ==\",\"chainID\":\"1\",\"version\":1}");
 
+
     std::vector<TokenPayment> tokens = {token1, token2};
     tx = txFactory
-            .createMultiESDTNFTTransfer(tokens, 1, sender, receiver, gasPrice)
+            .createMultiESDTNFTTransfer(tokens, 1, sender, receiver, gasPrice) // two token payments
             ->build();
     EXPECT_EQ(tx.serialize(),
               "{\"nonce\":1,\"value\":\"0\",\"receiver\":\"erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th\",\"sender\":\"erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th\",\"gasPrice\":99999,\"gasLimit\":2281000,\"data\":\"TXVsdGlFU0RUTkZUVHJhbnNmZXJAMDAwMDAwMDAwMDAwMDAwMDA1MDAxZTJhMTQyOGRkMWUzYTUxNDZiMzk2MGQ5ZTBmNGE1MDM2OTkwNGVlNTQ4M0AwMkA0NTUyNDQ0MzUwNTAyZDMzMzg2NjMyMzQzOUAwM0AwMUA0NTUyNDQ0MzUwNTAyZDMzMzg2NjMyMzQzOUAwNEAwMQ==\",\"chainID\":\"1\",\"version\":1}");
