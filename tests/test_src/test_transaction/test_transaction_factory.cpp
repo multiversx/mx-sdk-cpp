@@ -166,7 +166,6 @@ TEST(TransactionFactory, createMultiESDTNFT)
 
     TokenPayment token1 = TokenPayment::nonFungible("ERDCPP-38f249", 3);
     TokenPayment token2 = TokenPayment::nonFungible("ERDCPP-38f249", 4);
-    std::vector<TokenPayment> tokens = {token1, token2};
     Address sender = pem.getAddress();
     Address receiver("erd1qqqqqqqqqqqqqpgqrc4pg2xarca9z34njcxeur622qmfjp8w2jps89fxnl");
     uint64_t gasPrice = 99999;
@@ -174,6 +173,13 @@ TEST(TransactionFactory, createMultiESDTNFT)
     NetworkConfig cfg = DEFAULT_MAINNET_NETWORK_CONFIG;
     TransactionFactory txFactory(cfg);
     Transaction tx = txFactory
+            .createMultiESDTNFTTransfer({token1}, 1, sender, receiver, gasPrice)
+            ->build();
+    EXPECT_EQ(tx.serialize(),
+              "{\"nonce\":1,\"value\":\"0\",\"receiver\":\"erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th\",\"sender\":\"erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th\",\"gasPrice\":99999,\"gasLimit\":1231500,\"data\":\"TXVsdGlFU0RUTkZUVHJhbnNmZXJAMDAwMDAwMDAwMDAwMDAwMDA1MDAxZTJhMTQyOGRkMWUzYTUxNDZiMzk2MGQ5ZTBmNGE1MDM2OTkwNGVlNTQ4M0AwMUA0NTUyNDQ0MzUwNTAyZDMzMzg2NjMyMzQzOUAwM0AwMQ==\",\"chainID\":\"1\",\"version\":1}");
+
+    std::vector<TokenPayment> tokens = {token1, token2};
+    tx = txFactory
             .createMultiESDTNFTTransfer(tokens, 1, sender, receiver, gasPrice)
             ->build();
     EXPECT_EQ(tx.serialize(),
