@@ -39,7 +39,7 @@ void CLIOptions::initOptions()
 
 void CLIOptions::initOptionsTx()
 {
-    m_optionsTx.add_options("set") // transaction new group
+    m_optionsTx.add_options("new") // transaction new group
             ("nonce", "Transaction nonce", cxxopts::value<uint64_t>())
             ("value", "Transaction value", cxxopts::value<std::string>())
             ("receiver", "Receiver's address", cxxopts::value<std::string>())

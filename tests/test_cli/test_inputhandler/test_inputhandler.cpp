@@ -3,7 +3,7 @@
 #include "gtest/gtest.h"
 #include "inputhandler/ext.h"
 #include "cli_handler.h"
-#include "utils/ext.h"
+#include "utils/common.h"
 #include "test_common.h"
 #include "config/cliconfig.h"
 
@@ -27,11 +27,11 @@ void EXPECT_PARSE_ERROR_MISSING_ARG(int const &argc, char *const argv[], errorMe
                  }, T);
 }
 
-void setCLIConfig(Network const &network, std::string const &tomlPath = "elrond-sdk-erdcpp/cli/config/config.toml")
+void setCLIConfig(Network const &network)
 {
     int const argc = 4;
     char *argv[argc];
-    std::string config = "--config=" + CLIConfig(tomlPath).toString(network);
+    std::string config = "--config=" + CLIConfig().toString(network);
 
     argv[0] = (char *) "erdcpp";
     argv[1] = (char *) "network";
@@ -353,8 +353,8 @@ TEST(HandleCreateSignedTransaction, withPemFile_expectCorrectWrittenTx)
     int const argc = 11;
     char *argv[argc];
 
-    std::string keyFile = "--key=" + getCanonicalRootPath("elrond-sdk-erdcpp/tests/testData/keysValid1.pem");
-    std::string outFile = "--outfile=" + getCanonicalRootPath("elrond-sdk-erdcpp/tests/testData/outputJson.json");
+    std::string keyFile = "--key=" + util::getCanonicalRootPath("elrond-sdk-erdcpp/tests/testData/keysValid1.pem");
+    std::string outFile = "--outfile=" + util::getCanonicalRootPath("elrond-sdk-erdcpp/tests/testData/outputJson.json");
 
     argv[0] = (char *) "erdcpp";
     argv[1] = (char *) "transaction";
