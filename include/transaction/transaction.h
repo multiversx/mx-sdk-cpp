@@ -1,6 +1,7 @@
 #ifndef ERD_TRANSACTION_H
 #define ERD_TRANSACTION_H
 
+#include "internal/biguint.h"
 #include "account/address.h"
 #include "transaction/signer.h"
 
@@ -9,7 +10,7 @@
 #include <memory>
 
 #define DEFAULT_NONCE 0U
-#define DEFAULT_VALUE "0"
+#define DEFAULT_VALUE BigUInt(0)
 #define DEFAULT_RECEIVER nullptr
 #define DEFAULT_SENDER nullptr
 #define DEFAULT_RECEIVER_NAME nullptr
@@ -27,7 +28,7 @@ class Transaction
 public:
     explicit Transaction(
             uint64_t const &nonce,
-            std::string value,
+            BigUInt value,
             Address const &receiver,
             Address const &sender,
             std::shared_ptr<bytes> receiverUserName,
@@ -51,7 +52,7 @@ public:
     void deserialize(std::string const& serializedTransaction);
 
     uint64_t m_nonce;
-    std::string m_value;
+    BigUInt m_value;
     std::shared_ptr<bytes> m_receiverUserName;
     std::shared_ptr<bytes> m_senderUserName;
     std::shared_ptr<Address> m_receiver;

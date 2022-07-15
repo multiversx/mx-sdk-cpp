@@ -15,13 +15,13 @@ public:
 
     Account getAccount(Address const &address);
 
-    TransactionHash send(Transaction const &transaction);
+    std::string send(Transaction const &transaction);
 
     TransactionStatus getTransactionStatus(std::string const &txHash);
 
-    std::string getESDTTokenBalance(Address const &address, std::string const &token) const;
+    BigUInt getESDTBalance(Address const &address, std::string const &token) const;
 
-    std::map<std::string, std::string> getAllESDTTokenBalances(Address const &address) const;
+    std::map<std::string, BigUInt> getAllESDTBalances(Address const &address) const;
 
     NetworkConfig getNetworkConfig() const;
 

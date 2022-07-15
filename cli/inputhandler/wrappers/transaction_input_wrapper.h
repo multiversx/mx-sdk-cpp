@@ -3,6 +3,7 @@
 
 #include "iwrapper.h"
 #include "account/address.h"
+#include "internal/biguint.h"
 
 namespace ih
 {
@@ -15,7 +16,7 @@ public:
 
     uint64_t getNonce() const;
 
-    std::string getValue() const;
+    BigUInt getValue() const;
 
     std::shared_ptr<Address> getReceiver() const;
 
