@@ -1,5 +1,6 @@
 #include <utility>
 
+#include "transaction/payload_builder.h"
 #include "transaction/transaction_factory.h"
 #include "transaction/transaction_builders.h"
 #include "transaction/transaction_builder_input.h"
@@ -24,6 +25,35 @@ TransactionFactory::createEGLDTransfer(uint64_t nonce,
                                             gasPrice,
                                             m_chainID,
                                             m_gasEstimator});
+    return std::make_unique<TransactionEGLDTransferBuilder>(builder);
+}
+
+std::unique_ptr<ITransactionBuilder> TransactionFactory::createESDTIssue(uint64_t nonce,
+                                                                         Address sender,
+                                                                         uint64_t const &gasPrice,
+                                                                         std::string const &token,
+                                                                         std::string const &ticker,
+                                                                         BigUInt const &initialSupply,
+                                                                         uint32_t const &numOfDecimals,
+                                                                         ESDTProperties const &esdtProperties)
+{
+    std::string data = ESDTIssuePayloadBuilder(token)
+            .setTicker(ticker)
+            .setInitialSupply(initialSupply)
+            .setNumOfDecimals(numOfDecimals)
+            .withProperties(esdtProperties)
+            .build();
+
+    TransactionEGLDTransferBuilder builder({nonce,
+                                            BigUInt(ESDT_ISSUANCE_VALUE),
+                                            std::move(sender),
+                                            ESDT_ISSUANCE_ADDRESS,
+                                            std::move(data),
+                                            gasPrice,
+                                            m_chainID,
+                                            m_gasEstimator,
+                                            ESDT_ISSUANCE_GAS_LIMIT});
+
     return std::make_unique<TransactionEGLDTransferBuilder>(builder);
 }
 

@@ -14,6 +14,7 @@
 
 #define ESDT_ISSUANCE_PREFIX std::string("issue")
 #define ESDT_ISSUANCE_VALUE "50000000000000000" //(0.05 EGLD)
+#define ESDT_ISSUANCE_ADDRESS Address("erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u")
 #define ESDT_ISSUANCE_GAS_LIMIT 60000000
 #define ESDT_ISSUANCE_DEFAULT_PROPERTIES ESDTProperties{}
 
@@ -27,6 +28,7 @@ struct ESDTProperties
     bool canChangeOwner = false;
     bool canUpgrade = false;
     bool canAddSpecialRoles = false;
+    bool canTransferNFTCreateRole = false;
 };
 
 bool operator==(ESDTProperties const &lhs, ESDTProperties const &rhs);
