@@ -309,8 +309,8 @@ TEST_F(LocalTestnetProxyProviderTxFixture, send_ESDT_noFunction)
     EXPECT_ACCOUNT_NONCE(transaction.m_nonce + 1);
 }
 
-/*
-TEST_F(DevnetProxyProviderTxFixture, send_ESDT_function_unWrapEgld_noParams)
+
+TEST_F(DevnetProxyProviderTxFixture, DISABLED_send_ESDT_function_unWrapEgld_noParams)
 {
     ContractCall contractCall("unwrapEgld");
     TokenPayment tokenPayment = TokenPayment::fungibleFromBigUInt("WEGLD-b9cba1", BigUInt("10000000000000000"));
@@ -326,7 +326,7 @@ TEST_F(DevnetProxyProviderTxFixture, send_ESDT_function_unWrapEgld_noParams)
     EXPECT_TRANSACTION_SENT_SUCCESSFULLY(transaction);
 }
 
-TEST_F(DevnetProxyProviderTxFixture, send_ESDT_function_swapTokensFixedInput_noParams)
+TEST_F(DevnetProxyProviderTxFixture, DISABLED_send_ESDT_function_swapTokensFixedInput_noParams)
 {
     ContractCall contractCall("swapTokensFixedInput");
     SCArguments args;
@@ -346,5 +346,4 @@ TEST_F(DevnetProxyProviderTxFixture, send_ESDT_function_swapTokensFixedInput_noP
 
     EXPECT_TRANSACTION_SENT_SUCCESSFULLY(transaction);
 }
-*/
-#endif
+
