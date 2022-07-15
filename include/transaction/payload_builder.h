@@ -3,6 +3,7 @@
 
 // This file is an adaptation from https://github.com/ElrondNetwork/elrond-sdk-erdjs/blob/main/src/tokenTransferBuilders.ts
 
+#include "esdt.h"
 #include "account/address.h"
 #include "transaction/token_payment.h"
 #include "smartcontracts/contract_call.h"
@@ -59,6 +60,28 @@ private:
     std::vector<TokenPayment> m_payments;
     std::string m_destination;
     ContractCall m_contractCall;
+};
+
+class ESDTIssuePayloadBuilder
+{
+public:
+    explicit ESDTIssuePayloadBuilder(std::string token);
+
+    ESDTIssuePayloadBuilder &setTicker(std::string ticker);
+
+    ESDTIssuePayloadBuilder &setInitialSupply(BigUInt initialSupply);
+
+    ESDTIssuePayloadBuilder &setNumOfDecimals(uint32_t numOfDecimals);
+
+    ESDTIssuePayloadBuilder &withProperties(ESDTProperties esdtProperties);
+
+    std::string build() const;
+private:
+    std::string m_token;
+    std::string m_ticker;
+    BigUInt m_initialSupply;
+    uint32_t m_numOfDecimals;
+    ESDTProperties m_esdtProperties;
 };
 
 #endif //ERD_PAYLOAD_BUILDER_H

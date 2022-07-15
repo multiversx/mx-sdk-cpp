@@ -12,6 +12,7 @@ std::shared_ptr<bytes> stringToBytesPtr(std::string const &in)
 }
 }
 
+// -------------------- EGLD Transfer --------------------
 TransactionEGLDTransferBuilder::TransactionEGLDTransferBuilder(TransactionBuilderInput txInput) :
         ITransactionBuilder(),
         m_txInput(std::move(txInput))
@@ -19,7 +20,9 @@ TransactionEGLDTransferBuilder::TransactionEGLDTransferBuilder(TransactionBuilde
 
 Transaction TransactionEGLDTransferBuilder::build()
 {
-    uint64_t gasLimit = m_txInput.gasEstimator.forEGLDTransfer(m_txInput.data.size());
+    uint64_t inputGasLimit = m_txInput.gasLimit;
+    uint64_t estimatedGasLimit = m_txInput.gasEstimator.forEGLDTransfer(m_txInput.data.size());
+    uint64_t gasLimit = (inputGasLimit == DEFAULT_GAS_LIMIT) ? estimatedGasLimit : inputGasLimit;
 
     return Transaction(
             m_txInput.nonce,
@@ -37,6 +40,7 @@ Transaction TransactionEGLDTransferBuilder::build()
             m_options);
 }
 
+// -------------------- ESDT Transfer --------------------
 TransactionESDTBuilder::TransactionESDTBuilder(TransactionBuilderInput txInput, TokenPayment payment) :
         ITokenTransactionBuilder(),
         m_txInput(std::move(txInput)),
@@ -67,6 +71,7 @@ Transaction TransactionESDTBuilder::build()
             m_options);
 }
 
+// -------------------- ESDT NFT Transfer --------------------
 TransactionESDTNFTBuilder::TransactionESDTNFTBuilder(TransactionBuilderInput txInput, TokenPayment payment) :
         ITokenTransactionBuilder(),
         m_txInput(std::move(txInput)),
@@ -98,6 +103,7 @@ Transaction TransactionESDTNFTBuilder::build()
             m_options);
 }
 
+// -------------------- Multi ESDT NFT Transfer --------------------
 TransactionMultiESDTNFTBuilder::TransactionMultiESDTNFTBuilder(TransactionBuilderInput txInput, std::vector<TokenPayment> payments) :
         ITokenTransactionBuilder(),
         m_txInput(std::move(txInput)),
@@ -127,5 +133,5 @@ Transaction TransactionMultiESDTNFTBuilder::build()
             m_txInput.chainID,
             m_version,
             m_options
-            );
+    );
 }

@@ -7,7 +7,6 @@ struct Config
 {
     std::string chainID;
     std::string proxyUrl;
-    std::string issueESDTSCAddress;
 };
 
 class CLIConfig

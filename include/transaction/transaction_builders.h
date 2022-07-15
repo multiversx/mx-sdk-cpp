@@ -12,6 +12,7 @@
 // concrete tx builders anyway, since the factory only returns pure abstract classes.
 class TransactionFactory;
 
+// -------------------- EGLD Transfer --------------------
 class TransactionEGLDTransferBuilder : public ITransactionBuilder
 {
     friend class TransactionFactory;
@@ -25,7 +26,7 @@ private:
     TransactionBuilderInput m_txInput;
 };
 
-
+// -------------------- ESDT Transfer --------------------
 class TransactionESDTBuilder : public ITokenTransactionBuilder
 {
     friend class TransactionFactory;
@@ -40,6 +41,7 @@ private:
     TokenPayment m_tokenPayment;
 };
 
+// -------------------- ESDT NFT Transfer --------------------
 class TransactionESDTNFTBuilder : public ITokenTransactionBuilder
 {
     friend class TransactionFactory;
@@ -54,6 +56,7 @@ private:
     TokenPayment m_tokenPayment;
 };
 
+// -------------------- Multi ESDT NFT Transfer --------------------
 class TransactionMultiESDTNFTBuilder : public ITokenTransactionBuilder
 {
     friend class TransactionFactory;
