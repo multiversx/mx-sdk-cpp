@@ -120,7 +120,6 @@ public:
                 std::this_thread::sleep_for(std::chrono::seconds(3));
 
                 auto updatedAccount = m_proxy.getAccount(m_senderAddr);
-                m_senderAcc.update(updatedAccount.getBalance(), updatedAccount.getNonce());
                 m_networkConfig = m_proxy.getNetworkConfig();
                 m_txFactory = TransactionFactory(m_networkConfig);
             }

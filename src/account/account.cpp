@@ -29,12 +29,6 @@ const uint64_t& Account::getNonce() const
     return m_nonce;
 }
 
-void Account::update(std::string balance, uint64_t const &nonce)
-{
-    m_balance = balance;
-    m_nonce = nonce;
-}
-
 void Account::incrementNonce()
 {
     ++m_nonce;
