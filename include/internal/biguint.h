@@ -10,7 +10,9 @@ public:
 
     explicit BigUInt(std::string value);
 
-    BigUInt operator*(BigUInt const &rhs);
+    BigUInt operator*(BigUInt const &rhs) const;
+
+    BigUInt operator/(BigUInt const &rhs) const;
 
     bool operator==(BigUInt const &rhs);
 

@@ -83,7 +83,7 @@ void handleIssueESDT(cxxopts::ParseResult const &result)
             esdtProperties
     )->buildSigned(keyFile->getSeed());
 
-    auto const txHash = proxy.send(tx).hash;
+    auto const txHash = proxy.send(tx);
     std::cerr << "Transaction hash: " << txHash << "\n";
 }
 
@@ -123,7 +123,7 @@ void handleTransferESDT(cxxopts::ParseResult const &result)
     tx.m_gasLimit = GasEstimator(cfg).forESDTTransfer(tx.m_data->size());
     utility::signTransaction(tx, keyFile);
 
-    auto const txHash = proxy.send(tx).hash;
+    auto const txHash = proxy.send(tx);
     std::cerr << "Transaction hash: " << txHash << "\n";
 }
 

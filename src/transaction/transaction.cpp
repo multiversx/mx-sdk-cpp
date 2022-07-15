@@ -55,7 +55,7 @@ std::string getSerializedTxMsg(Transaction tx, bool const withSignature)
 
 Transaction::Transaction(
         uint64_t const &nonce,
-        std::string value,
+        BigUInt value,
         Address const &receiver,
         Address const &sender,
         std::shared_ptr<bytes> receiverUserName,
@@ -125,7 +125,7 @@ std::string Transaction::serialize() const
     wrapper::json::OrderedJson json;
 
     json.set(TX_NONCE, m_nonce);
-    json.set(TX_VALUE, m_value);
+    json.set(TX_VALUE, m_value.getValue());
     json.set(TX_RECEIVER, (*m_receiver).getBech32Address());
     json.set(TX_SENDER, (*m_sender).getBech32Address());
     internal::setJsonValueIfNotNull(json, TX_RECEIVER_NAME, m_receiverUserName);
@@ -164,7 +164,7 @@ void Transaction::deserialize(std::string const &serializedTransaction)
     if (!json.contains(TX_VERSION)) throw std::invalid_argument(ERROR_MSG_VERSION);
 
     m_nonce = json.at<uint64_t>(TX_NONCE);
-    m_value = json.at<std::string>(TX_VALUE);
+    m_value = BigUInt(json.at<std::string>(TX_VALUE));
     m_receiver.reset(new Address(json.at<std::string>(TX_RECEIVER)));
     m_sender.reset(new Address(json.at<std::string>(TX_SENDER)));
     m_gasPrice = json.at<uint64_t>(TX_GAS_PRICE);

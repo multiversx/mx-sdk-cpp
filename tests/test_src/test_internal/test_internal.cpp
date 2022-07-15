@@ -87,3 +87,17 @@ TEST(BigUInt, divmod)
 
     EXPECT_THROW(BigUInt("123").divmod(BigUInt("0")), std::exception);
 }
+
+TEST(BigUInt, div)
+{
+    BigUInt v1(145);
+    BigUInt v2(12);
+
+    BigUInt v3 = v1 / (v2);
+    EXPECT_EQ(v1.getValue(), "145"); // v1's internal value has not change
+    EXPECT_EQ(v2.getValue(), "12"); // v2's internal value has not change
+    EXPECT_TRUE(v3 == BigUInt(12));
+
+    EXPECT_TRUE(BigUInt(4) / BigUInt(4) == BigUInt(1));
+    EXPECT_THROW(BigUInt(4) / BigUInt(0), std::exception);
+}
