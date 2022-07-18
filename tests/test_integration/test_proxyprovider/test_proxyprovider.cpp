@@ -9,7 +9,7 @@
 #include "thread"
 #include "test_common.h"
 
-const std::string localProxyUrl = "http://127.0.0.1:7950";
+const std::string localProxyUrl("http://127.0.0.1:7950");
 const std::string pemPath = getCanonicalRootPath("testnet/testnet-local/sandbox/node/config/walletKey.pem");
 const uint8_t intra_shard_execution = 6;
 const uint8_t cross_shard_execution = 18;
@@ -73,19 +73,6 @@ TEST(ProxyProvider, getAllESDTokenBalances_noTokens)
     EXPECT_TRUE(esdts.empty());
 }
 
-TEST(ProxyProvider, getAllESDTokenBalances_multipleTokens)
-{
-    ProxyProvider proxy("https://testnet-gateway.elrond.com");
-    Address const address("erd1nqtv8gdsf55xj9eg0wc8ar6ml46kpld2c86aq670mxgcf49sduzqaeyngx");
-    auto const esdts = proxy.getAllESDTBalances(address);
-
-    EXPECT_TRUE(esdts.find("00040-4c4d18") != esdts.end());
-    EXPECT_FALSE(esdts.at("00040-4c4d18").getValue().empty());
-
-    EXPECT_TRUE(esdts.find("0009O-8742a4") != esdts.end());
-    EXPECT_FALSE(esdts.at("0009O-8742a4").getValue().empty());
-}
-
 void EXPECT_NETWORK_CONFIG_EQ(const NetworkConfig &cfg1, const NetworkConfig &cfg2)
 {
     EXPECT_EQ(cfg1.chainId, cfg2.chainId);
@@ -98,7 +85,7 @@ void EXPECT_NETWORK_CONFIG_EQ(const NetworkConfig &cfg1, const NetworkConfig &cf
 
 TEST(ProxyProvider, getNetworkConfig)
 {
-    ProxyProvider proxyTestnet(localProxyUrl);
+    ProxyProvider proxyTestnet("https://testnet-gateway.elrond.com");
     NetworkConfig defaultTestnet = DEFAULT_TESTNET_NETWORK_CONFIG;
     EXPECT_NETWORK_CONFIG_EQ(proxyTestnet.getNetworkConfig(), defaultTestnet);
 
@@ -110,19 +97,19 @@ TEST(ProxyProvider, getNetworkConfig)
 class GenericProxyProviderTxFixture : public ::testing::Test
 {
 public:
-    explicit GenericProxyProviderTxFixture(std::string proxyUrl, std::string pemSourcePath):
+    explicit GenericProxyProviderTxFixture(std::string proxyUrl, std::string pemSourcePath) :
             m_proxy(std::move(proxyUrl)),
             m_pem(pemSourcePath),
             m_senderAddr(m_pem.getAddress()),
             m_senderAcc(m_proxy.getAccount(m_senderAddr)),
             m_txFactory({"", 0, 0, 0})
-            {
-                std::this_thread::sleep_for(std::chrono::seconds(3));
+    {
+        std::this_thread::sleep_for(std::chrono::seconds(3));
 
-                auto updatedAccount = m_proxy.getAccount(m_senderAddr);
-                m_networkConfig = m_proxy.getNetworkConfig();
-                m_txFactory = TransactionFactory(m_networkConfig);
-            }
+        auto updatedAccount = m_proxy.getAccount(m_senderAddr);
+        m_networkConfig = m_proxy.getNetworkConfig();
+        m_txFactory = TransactionFactory(m_networkConfig);
+    }
 
     void signTransaction(Transaction &transaction) const
     {
@@ -173,14 +160,16 @@ class LocalTestnetProxyProviderTxFixture : public GenericProxyProviderTxFixture
 {
 public:
     LocalTestnetProxyProviderTxFixture() :
-            GenericProxyProviderTxFixture(localProxyUrl, pemPath) {}
+            GenericProxyProviderTxFixture(localProxyUrl, pemPath)
+    {}
 };
 
 class DevnetProxyProviderTxFixture : public GenericProxyProviderTxFixture
 {
 public:
     DevnetProxyProviderTxFixture() :
-            GenericProxyProviderTxFixture("https://devnet-gateway.elrond.com", "..//..//testData//keysValid1.pem") {}
+            GenericProxyProviderTxFixture("https://devnet-gateway.elrond.com", "..//..//testData//keysValid1.pem")
+    {}
 };
 
 TEST_F(LocalTestnetProxyProviderTxFixture, send_validTx)
@@ -207,7 +196,7 @@ TEST_F(LocalTestnetProxyProviderTxFixture, send_validTx_signedHashedTx)
     transaction.m_sender = std::make_shared<Address>(m_senderAddr);
     transaction.m_receiver = std::make_shared<Address>("erd1cux02zersde0l7hhklzhywcxk4u9n4py5tdxyx7vrvhnza2r4gmq4vw35r");
     transaction.m_chainID = "local-testnet";
-    transaction.m_nonce = m_senderAcc.getNonce();
+    transaction.m_nonce = m_senderAcc.getNonce()+1;
     transaction.m_value = BigUInt("1000000000000");
     transaction.m_gasPrice = 1000000000;
     transaction.m_gasLimit = 50000;
@@ -309,6 +298,61 @@ TEST_F(LocalTestnetProxyProviderTxFixture, send_ESDT_noFunction)
 }
 
 
+TEST_F(LocalTestnetProxyProviderTxFixture, getAllESDTokenBalances_multipleTokens)
+{
+    Transaction transaction = m_txFactory.createESDTIssue(
+                    m_senderAcc.getNonce(),
+                    m_senderAddr,
+                    1000000000,
+                    "Alice",
+                    "ALC",
+                    BigUInt(123),
+                    0)
+            ->buildSigned(m_pem.getSeed());
+
+    std::string txHash = EXPECT_TRANSACTION_SENT_SUCCESSFULLY(transaction);
+    WAIT_CROSS_SHARD_EXECUTION();
+    EXPECT_ACCOUNT_NONCE(transaction.m_nonce + 1);
+    EXPECT_TRANSACTION_SUCCESSFUL(txHash);
+
+    transaction = m_txFactory.createESDTIssue(
+                    m_senderAcc.getNonce() + 1,
+                    m_senderAddr,
+                    1000000000,
+                    "Bob",
+                    "BOB",
+                    BigUInt(321),
+                    0)
+            ->buildSigned(m_pem.getSeed());
+
+    txHash = EXPECT_TRANSACTION_SENT_SUCCESSFULLY(transaction);
+    WAIT_CROSS_SHARD_EXECUTION();
+    EXPECT_ACCOUNT_NONCE(transaction.m_nonce + 1);
+    EXPECT_TRANSACTION_SUCCESSFUL(txHash);
+
+    WAIT_CROSS_SHARD_EXECUTION();
+
+    auto esdts = m_proxy.getAllESDTBalances(getAddressFromPem());
+    EXPECT_GE(esdts.size(), 2);
+    bool foundALC = false;
+    bool foundBOB = false;
+    for (const auto &esdtBalance: esdts)
+    {
+        if (esdtBalance.first.find("ALC") != std::string::npos)
+        {
+            foundALC = true;
+            EXPECT_EQ(esdtBalance.second.getValue(), BigUInt(123).getValue());
+        }
+        if (esdtBalance.first.find("BOB") != std::string::npos)
+        {
+            foundBOB = true;
+            EXPECT_EQ(esdtBalance.second.getValue(), BigUInt(321).getValue());
+        }
+    }
+
+    EXPECT_TRUE(foundALC && foundBOB);
+}
+
 TEST_F(DevnetProxyProviderTxFixture, DISABLED_send_ESDT_function_unWrapEgld_noParams)
 {
     ContractCall contractCall("unwrapEgld");
@@ -345,4 +389,3 @@ TEST_F(DevnetProxyProviderTxFixture, DISABLED_send_ESDT_function_swapTokensFixed
 
     EXPECT_TRANSACTION_SENT_SUCCESSFULLY(transaction);
 }
-

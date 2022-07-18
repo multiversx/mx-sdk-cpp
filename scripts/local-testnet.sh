@@ -4,6 +4,8 @@ TESTNET_DIR=$WORKING_DIR/testnet
 TESTNET_OUTPUT_DIR=$TESTNET_DIR/testnet-local
 SCRIPTS_DIR=elrond-go/scripts/testnet
 VARIABLES_PATH=$SCRIPTS_DIR/variables.sh
+ENABLE_EPOCH_DIR=$TESTNET_DIR/elrond-go/cmd/node/config/enableEpochs.toml
+SYSTEM_SC_CONFIG_DIR=$TESTNET_DIR/elrond-go/cmd/node/config/systemSmartContractsConfig.toml
 SANDBOX_NAME=sandbox
 
 cloneDependencies(){
@@ -23,7 +25,15 @@ testnetRemove(){
 }
 
 testnetSetup(){
-  sed -i 's/TransactionSignedWithTxHashEnableEpoch =.*/TransactionSignedWithTxHashEnableEpoch = 0/' "$TESTNET_DIR/elrond-go/cmd/node/config/enableEpochs.toml"
+  sed -i 's/TransactionSignedWithTxHashEnableEpoch =.*/TransactionSignedWithTxHashEnableEpoch = 0/' "$ENABLE_EPOCH_DIR"
+  sed -i 's/ESDTEnableEpoch =.*/ESDTEnableEpoch = 0/' "$ENABLE_EPOCH_DIR"
+  sed -i 's/ESDTMultiTransferEnableEpoch =.*/ESDTMultiTransferEnableEpoch = 0/' "$ENABLE_EPOCH_DIR"
+  sed -i 's/ESDTTransferRoleEnableEpoch =.*/ESDTTransferRoleEnableEpoch = 0/' "$ENABLE_EPOCH_DIR"
+  sed -i 's/MetaESDTSetEnableEpoch =.*/MetaESDTSetEnableEpoch = 0/' "$ENABLE_EPOCH_DIR"
+  sed -i 's/ESDTRegisterAndSetAllRolesEnableEpoch =.*/ESDTRegisterAndSetAllRolesEnableEpoch = 0/' "$ENABLE_EPOCH_DIR"
+  sed -i 's/ESDTNFTCreateOnMultiShard =.*/ESDTNFTCreateOnMultiShard = 0/' "$ENABLE_EPOCH_DIR"
+  sed -i 's/ESDTRegisterAndSetAllRolesEnableEpoch =.*/ESDTRegisterAndSetAllRolesEnableEpoch = 0/' "$ENABLE_EPOCH_DIR"
+  sed -i 's/BaseIssuingCost =.*/BaseIssuingCost = "50000000000000000"/' "$SYSTEM_SC_CONFIG_DIR"
 
   mkdir "$TESTNET_OUTPUT_DIR"
   cd "$TESTNET_OUTPUT_DIR" && \

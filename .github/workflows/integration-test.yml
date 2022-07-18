@@ -33,7 +33,7 @@ jobs:
         run: cd scripts && /bin/bash local-testnet.sh start
 
       - name: IntegrationTests - run tests
-        run: cd scripts && /bin/bash test-with-proxy.sh
+        run: cd scripts && /bin/bash integration-tests.sh
 
       - name: Integration Tests - testnet stop
         run: cd scripts && /bin/bash local-testnet.sh stop
