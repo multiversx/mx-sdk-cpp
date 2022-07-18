@@ -196,7 +196,7 @@ TEST_F(LocalTestnetProxyProviderTxFixture, send_validTx_signedHashedTx)
     transaction.m_sender = std::make_shared<Address>(m_senderAddr);
     transaction.m_receiver = std::make_shared<Address>("erd1cux02zersde0l7hhklzhywcxk4u9n4py5tdxyx7vrvhnza2r4gmq4vw35r");
     transaction.m_chainID = "local-testnet";
-    transaction.m_nonce = m_senderAcc.getNonce()+1;
+    transaction.m_nonce = m_senderAcc.getNonce();
     transaction.m_value = BigUInt("1000000000000");
     transaction.m_gasPrice = 1000000000;
     transaction.m_gasLimit = 50000;
