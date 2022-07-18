@@ -147,6 +147,92 @@ public:
         std::this_thread::sleep_for(std::chrono::seconds(cross_shard_execution));
     }
 
+    void issueESDT(std::string const &token,
+                   std::string const &ticker,
+                   BigUInt const &initialSupply,
+                   uint32_t const &numOfDecimals,
+                   ESDTProperties const &esdtProperties = ESDT_ISSUANCE_DEFAULT_PROPERTIES)
+    {
+        Transaction transaction = m_txFactory.createESDTIssue(
+                        m_senderAcc.getNonce(),
+                        m_senderAddr,
+                        1000000000,
+                        token,
+                        ticker,
+                        initialSupply,
+                        numOfDecimals,
+                        esdtProperties)
+                ->buildSigned(m_pem.getSeed());
+
+        std::string txHash = EXPECT_TRANSACTION_SENT_SUCCESSFULLY(transaction);
+        WAIT_CROSS_SHARD_EXECUTION();
+        EXPECT_ACCOUNT_NONCE(transaction.m_nonce + 1);
+        EXPECT_TRANSACTION_SUCCESSFUL(txHash);
+
+        m_senderAcc.incrementNonce();
+    }
+
+    void transferESDT(TokenPayment const &tokenPayment, Address const &receiver)
+    {
+        Transaction transaction = m_txFactory.createESDTTransfer(
+                tokenPayment,
+                m_senderAcc.getNonce(),
+                m_senderAddr,
+                receiver,
+                1000000000)->buildSigned(m_pem.getSeed());
+
+        std::string txHash = EXPECT_TRANSACTION_SENT_SUCCESSFULLY(transaction);
+        WAIT_INTRA_SHARD_EXECUTION();
+        EXPECT_TRANSACTION_SUCCESSFUL(txHash);
+        EXPECT_ACCOUNT_NONCE(transaction.m_nonce + 1);
+    }
+
+    void EXPECT_ACCOUNT_HAS_ESDTS(Address const &address, const std::map<std::string, BigUInt> &expectedESDTs) const
+    {
+        auto esdts = m_proxy.getAllESDTBalances(address);
+        EXPECT_GE(esdts.size(), expectedESDTs.size());
+
+        for (const auto &esdtBalance: expectedESDTs)
+        {
+            checkMapContainsESDTBalance(esdts, esdtBalance.first, esdtBalance.second);
+        }
+    }
+
+    static void checkMapContainsESDTBalance(const std::map<std::string, BigUInt> &esdts, const std::string &ticker, const BigUInt &balance)
+    {
+        bool found = false;
+        for (const auto &esdtBalance: esdts)
+        {
+            if (esdtBalance.first.find(ticker) != std::string::npos)
+            {
+                EXPECT_EQ(esdtBalance.second.getValue(), balance.getValue());
+                found = true;
+                break;
+            }
+        }
+
+        EXPECT_TRUE(found);
+    }
+
+    std::string getTokenID(std::string const &ticker) const
+    {
+        auto esdts = m_proxy.getAllESDTBalances(m_senderAddr);
+        EXPECT_GE(esdts.size(), 1);
+
+        std::string ret;
+        for (const auto &esdtBalance: esdts)
+        {
+            if (esdtBalance.first.find(ticker) != std::string::npos)
+            {
+                ret = esdtBalance.first;
+                break;
+            }
+        }
+
+        EXPECT_FALSE(ret.empty());
+        return ret;
+    }
+
     TransactionFactory m_txFactory;
     NetworkConfig m_networkConfig;
     ProxyProvider m_proxy;
@@ -234,119 +320,32 @@ TEST_F(LocalTestnetProxyProviderTxFixture, send_invalidTx_noSignature)
                  }, std::runtime_error);
 }
 
-TEST_F(LocalTestnetProxyProviderTxFixture, send_issueESDTTransaction_noESDTProperties)
+TEST_F(LocalTestnetProxyProviderTxFixture, esdt_issue_and_transfer)
 {
-    Transaction transaction = m_txFactory.createESDTIssue(
-                    m_senderAcc.getNonce(),
-                    m_senderAddr,
-                    1000000000,
-                    "JonDoe",
-                    "JDO",
-                    BigUInt(444000),
-                    3)
-            ->buildSigned(m_pem.getSeed());
+    issueESDT("Alice", "ALC", BigUInt(123), 0);
+    issueESDT("Bob", "BOB", BigUInt(321), 0, ESDTProperties{
+            .canFreeze = true,
+            .canWipe = true,
+            .canMint = true});
 
-    std::string txHash = EXPECT_TRANSACTION_SENT_SUCCESSFULLY(transaction);
-    WAIT_CROSS_SHARD_EXECUTION();
-    EXPECT_ACCOUNT_NONCE(transaction.m_nonce + 1);
-    EXPECT_TRANSACTION_SUCCESSFUL(txHash);
-}
-
-TEST_F(LocalTestnetProxyProviderTxFixture, send_issueESDTTransaction_withESDTProperties)
-{
-    ESDTProperties esdtProperties;
-    esdtProperties.canMint = true;
-    esdtProperties.canBurn = true;
-    esdtProperties.canFreeze = true;
-
-    Transaction transaction = m_txFactory.createESDTIssue(
-                    m_senderAcc.getNonce(),
-                    m_senderAddr,
-                    1000000000,
-                    "JonDoe",
-                    "JDO",
-                    BigUInt(444000),
-                    3,
-                    esdtProperties)
-            ->buildSigned(m_pem.getSeed());
-
-    std::string txHash = EXPECT_TRANSACTION_SENT_SUCCESSFULLY(transaction);
-    WAIT_CROSS_SHARD_EXECUTION();
-    EXPECT_ACCOUNT_NONCE(transaction.m_nonce + 1);
-    EXPECT_TRANSACTION_SUCCESSFUL(txHash);
-}
-
-TEST_F(LocalTestnetProxyProviderTxFixture, send_ESDT_noFunction)
-{
-    TokenPayment tokenPayment = TokenPayment::fungibleFromBigUInt("JDO-8a7f9b", BigUInt(1));
-    Transaction transaction = m_txFactory.createESDTTransfer(
-                    tokenPayment,
-                    m_senderAcc.getNonce(),
-                    m_senderAddr,
-                    Address("erd1cux02zersde0l7hhklzhywcxk4u9n4py5tdxyx7vrvhnza2r4gmq4vw35r"),
-                    1000000000)
-            ->buildSigned(m_pem.getSeed());
-
-    std::string txHash = EXPECT_TRANSACTION_SENT_SUCCESSFULLY(transaction);
-    WAIT_INTRA_SHARD_EXECUTION();
-    EXPECT_TRANSACTION_SUCCESSFUL(txHash);
-    EXPECT_ACCOUNT_NONCE(transaction.m_nonce + 1);
-}
-
-
-TEST_F(LocalTestnetProxyProviderTxFixture, getAllESDTokenBalances_multipleTokens)
-{
-    Transaction transaction = m_txFactory.createESDTIssue(
-                    m_senderAcc.getNonce(),
-                    m_senderAddr,
-                    1000000000,
-                    "Alice",
-                    "ALC",
-                    BigUInt(123),
-                    0)
-            ->buildSigned(m_pem.getSeed());
-
-    std::string txHash = EXPECT_TRANSACTION_SENT_SUCCESSFULLY(transaction);
-    WAIT_CROSS_SHARD_EXECUTION();
-    EXPECT_ACCOUNT_NONCE(transaction.m_nonce + 1);
-    EXPECT_TRANSACTION_SUCCESSFUL(txHash);
-
-    transaction = m_txFactory.createESDTIssue(
-                    m_senderAcc.getNonce() + 1,
-                    m_senderAddr,
-                    1000000000,
-                    "Bob",
-                    "BOB",
-                    BigUInt(321),
-                    0)
-            ->buildSigned(m_pem.getSeed());
-
-    txHash = EXPECT_TRANSACTION_SENT_SUCCESSFULLY(transaction);
-    WAIT_CROSS_SHARD_EXECUTION();
-    EXPECT_ACCOUNT_NONCE(transaction.m_nonce + 1);
-    EXPECT_TRANSACTION_SUCCESSFUL(txHash);
-
+    // Wait for meta to transfer esdt to account in shard
     WAIT_CROSS_SHARD_EXECUTION();
 
-    auto esdts = m_proxy.getAllESDTBalances(getAddressFromPem());
-    EXPECT_GE(esdts.size(), 2);
-    bool foundALC = false;
-    bool foundBOB = false;
-    for (const auto &esdtBalance: esdts)
-    {
-        if (esdtBalance.first.find("ALC") != std::string::npos)
-        {
-            foundALC = true;
-            EXPECT_EQ(esdtBalance.second.getValue(), BigUInt(123).getValue());
-        }
-        if (esdtBalance.first.find("BOB") != std::string::npos)
-        {
-            foundBOB = true;
-            EXPECT_EQ(esdtBalance.second.getValue(), BigUInt(321).getValue());
-        }
-    }
+    std::string aliceTokenID = getTokenID("ALC");
+    std::string bobTokenID = getTokenID("BOB");
 
-    EXPECT_TRUE(foundALC && foundBOB);
+    EXPECT_ACCOUNT_HAS_ESDTS(m_senderAddr,
+                             {{aliceTokenID, BigUInt(123)},
+                              {bobTokenID,   BigUInt(321)}});
+
+    TokenPayment alicePayment = TokenPayment::fungibleFromAmount(aliceTokenID, "23", 0);
+    Address receiver("erd1cux02zersde0l7hhklzhywcxk4u9n4py5tdxyx7vrvhnza2r4gmq4vw35r");
+    transferESDT(alicePayment, receiver);
+
+    EXPECT_ACCOUNT_HAS_ESDTS(m_senderAddr,
+                             {{aliceTokenID, BigUInt(100)},
+                              {bobTokenID,   BigUInt(321)}});
+    EXPECT_ACCOUNT_HAS_ESDTS(receiver, {{aliceTokenID, BigUInt(23)}});
 }
 
 TEST_F(DevnetProxyProviderTxFixture, DISABLED_send_ESDT_function_unWrapEgld_noParams)
