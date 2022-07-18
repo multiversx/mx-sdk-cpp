@@ -16,7 +16,7 @@ public:
                                                             Address sender,
                                                             Address receiver,
                                                             uint64_t gasPrice,
-                                                            std::string data);
+                                                            std::string data = "");
 
     std::unique_ptr<ITransactionBuilder> createESDTIssue(uint64_t nonce,
                                                          Address sender,

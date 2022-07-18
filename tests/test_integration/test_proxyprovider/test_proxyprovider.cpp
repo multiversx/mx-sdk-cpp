@@ -174,16 +174,14 @@ public:
 
 TEST_F(LocalTestnetProxyProviderTxFixture, send_validTx)
 {
-    Transaction transaction;
-    transaction.m_sender = std::make_shared<Address>(m_senderAddr);
-    transaction.m_receiver = std::make_shared<Address>("erd1cux02zersde0l7hhklzhywcxk4u9n4py5tdxyx7vrvhnza2r4gmq4vw35r");
-    transaction.m_chainID = "local-testnet";
-    transaction.m_nonce = m_senderAcc.getNonce();
-    transaction.m_value = BigUInt("10000000000");
-    transaction.m_gasPrice = 1000000000;
-    transaction.m_gasLimit = 50000;
+    Transaction transaction = m_txFactory.createEGLDTransfer(
+                    m_senderAcc.getNonce(),
+                    BigUInt("1000000000000"),
+                    m_senderAddr,
+                    Address("erd1cux02zersde0l7hhklzhywcxk4u9n4py5tdxyx7vrvhnza2r4gmq4vw35r"),
+                    1000000000)
+            ->buildSigned(m_pem.getSeed());
 
-    signTransaction(transaction);
     std::string txHash = EXPECT_TRANSACTION_SENT_SUCCESSFULLY(transaction);
     WAIT_INTRA_SHARD_EXECUTION();
     EXPECT_TRANSACTION_SUCCESSFUL(txHash);
@@ -192,18 +190,16 @@ TEST_F(LocalTestnetProxyProviderTxFixture, send_validTx)
 
 TEST_F(LocalTestnetProxyProviderTxFixture, send_validTx_signedHashedTx)
 {
-    Transaction transaction;
-    transaction.m_sender = std::make_shared<Address>(m_senderAddr);
-    transaction.m_receiver = std::make_shared<Address>("erd1cux02zersde0l7hhklzhywcxk4u9n4py5tdxyx7vrvhnza2r4gmq4vw35r");
-    transaction.m_chainID = "local-testnet";
-    transaction.m_nonce = m_senderAcc.getNonce();
-    transaction.m_value = BigUInt("1000000000000");
-    transaction.m_gasPrice = 1000000000;
-    transaction.m_gasLimit = 50000;
-    transaction.m_options = std::make_shared<uint32_t>(1U);
-    transaction.m_version = 2U;
+    Transaction transaction = m_txFactory.createEGLDTransfer(
+                    m_senderAcc.getNonce(),
+                    BigUInt("1000000000000"),
+                    m_senderAddr,
+                    Address("erd1cux02zersde0l7hhklzhywcxk4u9n4py5tdxyx7vrvhnza2r4gmq4vw35r"),
+                    1000000000)
+            ->withOptions(1)
+            .withVersion(2)
+            .buildSigned(m_pem.getSeed());
 
-    signTransaction(transaction);
     std::string txHash = EXPECT_TRANSACTION_SENT_SUCCESSFULLY(transaction);
     WAIT_INTRA_SHARD_EXECUTION();
     EXPECT_TRANSACTION_SUCCESSFUL(txHash);

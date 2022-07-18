@@ -7,6 +7,11 @@ namespace
 {
 std::shared_ptr<bytes> stringToBytesPtr(std::string const &in)
 {
+    if (in.empty())
+    {
+        return DEFAULT_DATA;
+    }
+
     bytes strToBytes(in.begin(), in.end());
     return std::make_shared<bytes>(strToBytes);
 }
