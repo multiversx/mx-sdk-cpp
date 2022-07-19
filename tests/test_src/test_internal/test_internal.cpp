@@ -119,3 +119,19 @@ TEST(BigUInt, greater_less)
     EXPECT_EQ(v1.getValue(), "145"); // v1's internal value has not change
     EXPECT_EQ(v2.getValue(), "12"); // v2's internal value has not change
 }
+
+TEST(BigUInt, add_substract)
+{
+    BigUInt v1(145);
+    BigUInt v2(12);
+
+    EXPECT_EQ(v1 + BigUInt(0), BigUInt(145));
+    EXPECT_EQ(v1 + v2, BigUInt(157));
+
+    EXPECT_EQ(v1 - BigUInt(0), BigUInt(145));
+    EXPECT_EQ(v1 - v2, BigUInt(133));
+    EXPECT_THROW(v2 - v1, std::exception); // underflow
+
+    EXPECT_EQ(v1.getValue(), "145"); // v1's internal value has not change
+    EXPECT_EQ(v2.getValue(), "12"); // v2's internal value has not change
+}

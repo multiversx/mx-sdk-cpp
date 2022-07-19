@@ -1,13 +1,11 @@
-#include <utility>
-
 #include "gtest/gtest.h"
 
-#include "transaction/transaction_factory.h"
-#include "provider/proxyprovider.h"
-#include "filehandler/pemreader.h"
-#include "utils/errors.h"
 #include "thread"
 #include "test_common.h"
+#include "utils/errors.h"
+#include "filehandler/pemreader.h"
+#include "provider/proxyprovider.h"
+#include "transaction/transaction_factory.h"
 
 #define LOCAL_PROXY_URL std::string("http://127.0.0.1:7950")
 #define PEM_PATH getCanonicalRootPath("testnet/testnet-local/sandbox/node/config/walletKey.pem")
@@ -37,27 +35,6 @@ void checkMapContainsESDTBalance(const std::map<std::string, BigUInt> &esdts, co
     EXPECT_TRUE(found);
 }
 
-void EXPECT_NETWORK_CONFIG_EQ(const NetworkConfig &cfg1, const NetworkConfig &cfg2)
-{
-    EXPECT_EQ(cfg1.chainId, cfg2.chainId);
-    EXPECT_EQ(cfg1.gasPerDataByte, cfg2.gasPerDataByte);
-    EXPECT_EQ(cfg1.minGasPrice, cfg2.minGasPrice);
-    EXPECT_EQ(cfg1.minGasLimit, cfg2.minGasLimit);
-
-    EXPECT_EQ(cfg1, cfg2);
-}
-
-TEST(ProxyProvider, getNetworkConfig)
-{
-    ProxyProvider proxyTestnet("https://testnet-gateway.elrond.com");
-    NetworkConfig defaultTestnet = DEFAULT_TESTNET_NETWORK_CONFIG;
-    EXPECT_NETWORK_CONFIG_EQ(proxyTestnet.getNetworkConfig(), defaultTestnet);
-
-    ProxyProvider proxyMainnet("https://api.elrond.com");
-    NetworkConfig defaultMainnet = DEFAULT_MAINNET_NETWORK_CONFIG;
-    EXPECT_NETWORK_CONFIG_EQ(proxyMainnet.getNetworkConfig(), defaultMainnet);
-}
-
 class GenericProxyProviderTxFixture : public ::testing::Test
 {
 public:
@@ -85,6 +62,17 @@ public:
 
         m_senderAcc = m_proxy.getAccount(m_senderAddr);
         EXPECT_TRUE(m_senderAcc.getNonce() == transaction.m_nonce + 1);
+    }
+
+    void EXPECT_ACCOUNT_HAS_ESDTS(Address const &address, const std::map<std::string, BigUInt> &expectedESDTs) const
+    {
+        auto esdts = m_proxy.getAllESDTBalances(address);
+        EXPECT_GE(esdts.size(), expectedESDTs.size());
+
+        for (const auto &esdtBalance: expectedESDTs)
+        {
+            checkMapContainsESDTBalance(esdts, esdtBalance.first, esdtBalance.second);
+        }
     }
 
     void issueESDT(std::string const &token,
@@ -119,17 +107,6 @@ public:
         EXPECT_TRANSACTION_SENT_SUCCESSFULLY(transaction, INTRA_SHARD);
     }
 
-    void EXPECT_ACCOUNT_HAS_ESDTS(Address const &address, const std::map<std::string, BigUInt> &expectedESDTs) const
-    {
-        auto esdts = m_proxy.getAllESDTBalances(address);
-        EXPECT_GE(esdts.size(), expectedESDTs.size());
-
-        for (const auto &esdtBalance: expectedESDTs)
-        {
-            checkMapContainsESDTBalance(esdts, esdtBalance.first, esdtBalance.second);
-        }
-    }
-
     std::string getTokenID(std::string const &ticker) const
     {
         auto esdts = m_proxy.getAllESDTBalances(m_senderAddr);
@@ -157,7 +134,6 @@ public:
     Account m_senderAcc;
 };
 
-
 class LocalTestnetProxyProviderTxFixture : public GenericProxyProviderTxFixture
 {
 public:
@@ -166,14 +142,22 @@ public:
     {}
 };
 
-class DevnetProxyProviderTxFixture : public GenericProxyProviderTxFixture
+TEST_F(LocalTestnetProxyProviderTxFixture, getNetworkConfig)
 {
-public:
-    DevnetProxyProviderTxFixture() :
-            GenericProxyProviderTxFixture("https://devnet-gateway.elrond.com", "..//..//testData//keysValid1.pem")
-    {}
-};
+    NetworkConfig expectedConfig{
+            .chainId = "local-testnet",
+            .gasPerDataByte = 1500,
+            .minGasLimit = 50000,
+            .minGasPrice = 1000000000,
+    };
+    NetworkConfig config = m_proxy.getNetworkConfig();
 
+    EXPECT_EQ(config.chainId, expectedConfig.chainId);
+    EXPECT_EQ(config.gasPerDataByte, expectedConfig.gasPerDataByte);
+    EXPECT_EQ(config.minGasPrice, expectedConfig.minGasPrice);
+    EXPECT_EQ(config.minGasLimit, expectedConfig.minGasLimit);
+    EXPECT_EQ(config, expectedConfig);
+}
 
 TEST_F(LocalTestnetProxyProviderTxFixture, getAccount)
 {
@@ -244,7 +228,7 @@ TEST_F(LocalTestnetProxyProviderTxFixture, send_invalidTx_noSignature)
                      }
                  }, std::runtime_error);
 
-    EXPECT_EQ(m_senderAcc.getBalance(), initialBalanceSender);
+    EXPECT_EQ(m_proxy.getAccount(m_senderAddr).getBalance(), initialBalanceSender);
     EXPECT_EQ(m_proxy.getAccount(receiver).getBalance(), initialBalanceReceiver);
 }
 
@@ -325,7 +309,7 @@ TEST_F(LocalTestnetProxyProviderTxFixture, esdt_issue_transfer_getESDTBalance)
 }
 
 // Following tests are disabled, since they interact with a SC which is not deployed on local testnet.
-TEST_F(DevnetProxyProviderTxFixture, DISABLED_send_ESDT_function_unWrapEgld_noParams)
+TEST_F(LocalTestnetProxyProviderTxFixture, DISABLED_send_ESDT_function_unWrapEgld_noParams)
 {
     ContractCall contractCall("unwrapEgld");
     TokenPayment tokenPayment = TokenPayment::fungibleFromBigUInt("WEGLD-b9cba1", BigUInt("10000000000000000"));
@@ -341,7 +325,7 @@ TEST_F(DevnetProxyProviderTxFixture, DISABLED_send_ESDT_function_unWrapEgld_noPa
     EXPECT_TRANSACTION_SENT_SUCCESSFULLY(transaction, INTRA_SHARD);
 }
 
-TEST_F(DevnetProxyProviderTxFixture, DISABLED_send_ESDT_function_swapTokensFixedInput_noParams)
+TEST_F(LocalTestnetProxyProviderTxFixture, DISABLED_send_ESDT_function_swapTokensFixedInput_noParams)
 {
     ContractCall contractCall("swapTokensFixedInput");
     SCArguments args;
