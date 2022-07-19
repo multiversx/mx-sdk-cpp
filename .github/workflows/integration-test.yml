@@ -29,11 +29,11 @@ jobs:
       - name: Integration Tests - new testnet
         run: cd scripts && /bin/bash local-testnet.sh new
 
-      - name: Integration Tests - testnet start
+      - name: Integration Tests - start testnet
         run: cd scripts && /bin/bash local-testnet.sh start
 
       - name: IntegrationTests - run tests
         run: ./scripts/integration-tests.sh
 
-      - name: Integration Tests - testnet stop
+      - name: Integration Tests - stop testnet
         run: cd scripts && /bin/bash local-testnet.sh stop
