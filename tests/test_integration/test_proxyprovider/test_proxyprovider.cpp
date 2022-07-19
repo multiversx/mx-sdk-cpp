@@ -9,68 +9,32 @@
 #include "thread"
 #include "test_common.h"
 
-const std::string localProxyUrl("http://127.0.0.1:7950");
-const std::string pemPath = getCanonicalRootPath("testnet/testnet-local/sandbox/node/config/walletKey.pem");
-const uint8_t intra_shard_execution = 6;
-const uint8_t cross_shard_execution = 18;
+#define LOCAL_PROXY_URL std::string("http://127.0.0.1:7950")
+#define PEM_PATH getCanonicalRootPath("testnet/testnet-local/sandbox/node/config/walletKey.pem")
+#define TIME_INTRA_SHARD_EXECUTION 6
+#define TIME_CROSS_SHARD_EXECUTION 18
+#define INTRA_SHARD true
+#define CROSS_SHARD !INTRA_SHARD
 
-Address getAddressFromPem()
+void wait(uint8_t const &seconds)
 {
-    PemFileReader pem(pemPath);
-    auto addr = pem.getAddress();
-    return addr;
+    std::this_thread::sleep_for(std::chrono::seconds(seconds));
 }
 
-TEST(ProxyProvider, getAccount)
+void checkMapContainsESDTBalance(const std::map<std::string, BigUInt> &esdts, const std::string &ticker, const BigUInt &balance)
 {
-    ProxyProvider proxy(localProxyUrl);
+    bool found = false;
+    for (const auto &esdtBalance: esdts)
+    {
+        if (esdtBalance.first.find(ticker) != std::string::npos)
+        {
+            EXPECT_EQ(esdtBalance.second.getValue(), balance.getValue());
+            found = true;
+            break;
+        }
+    }
 
-    Address const address(getAddressFromPem());
-    Account const account = proxy.getAccount(address);
-
-    EXPECT_FALSE(account.getAddress().getBech32Address().empty());
-    EXPECT_FALSE(account.getBalance().getValue().empty());
-    EXPECT_FALSE(account.getBalance().getValue() == DEFAULT_BALANCE.getValue());
-    EXPECT_FALSE(account.getNonce() == 0);
-}
-
-TEST(ProxyProvider, getTransactionStatus_invalidHash)
-{
-    ProxyProvider proxy(localProxyUrl);
-
-    EXPECT_THROW({
-                     try
-                     {
-                         proxy.getTransactionStatus("test");
-                     }
-                     catch (const std::runtime_error &e)
-                     {
-                         std::string const errDescription = e.what();
-
-                         EXPECT_TRUE(errDescription.find(ERROR_MSG_HTTP_REQUEST_FAILED) != std::string::npos);
-                         EXPECT_TRUE(errDescription.find(ERROR_MSG_REASON) != std::string::npos);
-                         EXPECT_TRUE(errDescription.find("not found") != std::string::npos);
-                         throw;
-                     }
-                 }, std::runtime_error);
-}
-
-TEST(ProxyProvider, getESDTokenBalance)
-{
-    ProxyProvider proxy(localProxyUrl);
-    Address const address(getAddressFromPem());
-    BigUInt balance = proxy.getESDTBalance(address, "this esdt does not exist");
-
-    EXPECT_TRUE(balance == DEFAULT_BALANCE);
-}
-
-TEST(ProxyProvider, getAllESDTokenBalances_noTokens)
-{
-    ProxyProvider proxy(localProxyUrl);
-    Address const address("erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqplllst77y4l");
-    auto const esdts = proxy.getAllESDTBalances(address);
-
-    EXPECT_TRUE(esdts.empty());
+    EXPECT_TRUE(found);
 }
 
 void EXPECT_NETWORK_CONFIG_EQ(const NetworkConfig &cfg1, const NetworkConfig &cfg2)
@@ -97,54 +61,30 @@ TEST(ProxyProvider, getNetworkConfig)
 class GenericProxyProviderTxFixture : public ::testing::Test
 {
 public:
-    explicit GenericProxyProviderTxFixture(std::string proxyUrl, std::string pemSourcePath) :
+    explicit GenericProxyProviderTxFixture(std::string proxyUrl, std::string const &pemSourcePath) :
             m_proxy(std::move(proxyUrl)),
             m_pem(pemSourcePath),
             m_senderAddr(m_pem.getAddress()),
             m_senderAcc(m_proxy.getAccount(m_senderAddr)),
             m_txFactory({"", 0, 0, 0})
     {
-        std::this_thread::sleep_for(std::chrono::seconds(3));
-
-        auto updatedAccount = m_proxy.getAccount(m_senderAddr);
         m_networkConfig = m_proxy.getNetworkConfig();
         m_txFactory = TransactionFactory(m_networkConfig);
     }
 
-    void signTransaction(Transaction &transaction) const
-    {
-        Signer const signer(m_pem.getSeed());
-        transaction.sign(signer);
-    }
-
-    std::string EXPECT_TRANSACTION_SENT_SUCCESSFULLY(Transaction const &transaction)
+    void EXPECT_TRANSACTION_SENT_SUCCESSFULLY(Transaction const &transaction, bool const intraShard)
     {
         std::string txHash = m_proxy.send(transaction);
         EXPECT_FALSE(txHash.empty());
 
-        return txHash;
-    }
+        uint8_t waitTime = intraShard ? TIME_INTRA_SHARD_EXECUTION : TIME_CROSS_SHARD_EXECUTION;
+        wait(waitTime);
 
-    void EXPECT_TRANSACTION_SUCCESSFUL(std::string txHash)
-    {
         TransactionStatus txStatus = m_proxy.getTransactionStatus(txHash);
         EXPECT_TRUE(txStatus.isSuccessful());
-    }
 
-    void EXPECT_ACCOUNT_NONCE(uint64_t nonce)
-    {
-        Account const updatedAccount = m_proxy.getAccount(m_senderAddr);
-        EXPECT_TRUE(updatedAccount.getNonce() == nonce);
-    }
-
-    void WAIT_INTRA_SHARD_EXECUTION()
-    {
-        std::this_thread::sleep_for(std::chrono::seconds(intra_shard_execution));
-    }
-
-    void WAIT_CROSS_SHARD_EXECUTION()
-    {
-        std::this_thread::sleep_for(std::chrono::seconds(cross_shard_execution));
+        m_senderAcc = m_proxy.getAccount(m_senderAddr);
+        EXPECT_TRUE(m_senderAcc.getNonce() == transaction.m_nonce + 1);
     }
 
     void issueESDT(std::string const &token,
@@ -164,12 +104,7 @@ public:
                         esdtProperties)
                 ->buildSigned(m_pem.getSeed());
 
-        std::string txHash = EXPECT_TRANSACTION_SENT_SUCCESSFULLY(transaction);
-        WAIT_CROSS_SHARD_EXECUTION();
-        EXPECT_ACCOUNT_NONCE(transaction.m_nonce + 1);
-        EXPECT_TRANSACTION_SUCCESSFUL(txHash);
-
-        m_senderAcc.incrementNonce();
+        EXPECT_TRANSACTION_SENT_SUCCESSFULLY(transaction, CROSS_SHARD);
     }
 
     void transferESDT(TokenPayment const &tokenPayment, Address const &receiver)
@@ -181,10 +116,7 @@ public:
                 receiver,
                 1000000000)->buildSigned(m_pem.getSeed());
 
-        std::string txHash = EXPECT_TRANSACTION_SENT_SUCCESSFULLY(transaction);
-        WAIT_INTRA_SHARD_EXECUTION();
-        EXPECT_TRANSACTION_SUCCESSFUL(txHash);
-        EXPECT_ACCOUNT_NONCE(transaction.m_nonce + 1);
+        EXPECT_TRANSACTION_SENT_SUCCESSFULLY(transaction, INTRA_SHARD);
     }
 
     void EXPECT_ACCOUNT_HAS_ESDTS(Address const &address, const std::map<std::string, BigUInt> &expectedESDTs) const
@@ -196,22 +128,6 @@ public:
         {
             checkMapContainsESDTBalance(esdts, esdtBalance.first, esdtBalance.second);
         }
-    }
-
-    static void checkMapContainsESDTBalance(const std::map<std::string, BigUInt> &esdts, const std::string &ticker, const BigUInt &balance)
-    {
-        bool found = false;
-        for (const auto &esdtBalance: esdts)
-        {
-            if (esdtBalance.first.find(ticker) != std::string::npos)
-            {
-                EXPECT_EQ(esdtBalance.second.getValue(), balance.getValue());
-                found = true;
-                break;
-            }
-        }
-
-        EXPECT_TRUE(found);
     }
 
     std::string getTokenID(std::string const &ticker) const
@@ -246,7 +162,7 @@ class LocalTestnetProxyProviderTxFixture : public GenericProxyProviderTxFixture
 {
 public:
     LocalTestnetProxyProviderTxFixture() :
-            GenericProxyProviderTxFixture(localProxyUrl, pemPath)
+            GenericProxyProviderTxFixture(LOCAL_PROXY_URL, PEM_PATH)
     {}
 };
 
@@ -258,50 +174,59 @@ public:
     {}
 };
 
-TEST_F(LocalTestnetProxyProviderTxFixture, send_validTx)
-{
-    Transaction transaction = m_txFactory.createEGLDTransfer(
-                    m_senderAcc.getNonce(),
-                    BigUInt("1000000000000"),
-                    m_senderAddr,
-                    Address("erd1cux02zersde0l7hhklzhywcxk4u9n4py5tdxyx7vrvhnza2r4gmq4vw35r"),
-                    1000000000)
-            ->buildSigned(m_pem.getSeed());
 
-    std::string txHash = EXPECT_TRANSACTION_SENT_SUCCESSFULLY(transaction);
-    WAIT_INTRA_SHARD_EXECUTION();
-    EXPECT_TRANSACTION_SUCCESSFUL(txHash);
-    EXPECT_ACCOUNT_NONCE(transaction.m_nonce + 1);
+TEST_F(LocalTestnetProxyProviderTxFixture, getAccount)
+{
+    EXPECT_FALSE(m_senderAcc.getAddress().getBech32Address().empty());
+    EXPECT_FALSE(m_senderAcc.getBalance().getValue().empty());
+    EXPECT_FALSE(m_senderAcc.getBalance().getValue() == DEFAULT_BALANCE.getValue());
 }
 
-TEST_F(LocalTestnetProxyProviderTxFixture, send_validTx_signedHashedTx)
+TEST_F(LocalTestnetProxyProviderTxFixture, getESDTokenBalance_invalidToken)
 {
-    Transaction transaction = m_txFactory.createEGLDTransfer(
-                    m_senderAcc.getNonce(),
-                    BigUInt("1000000000000"),
-                    m_senderAddr,
-                    Address("erd1cux02zersde0l7hhklzhywcxk4u9n4py5tdxyx7vrvhnza2r4gmq4vw35r"),
-                    1000000000)
-            ->withOptions(1)
-            .withVersion(2)
-            .buildSigned(m_pem.getSeed());
+    BigUInt balance = m_proxy.getESDTBalance(m_senderAddr, "this esdt does not exist");
+    EXPECT_TRUE(balance == DEFAULT_BALANCE);
+}
 
-    std::string txHash = EXPECT_TRANSACTION_SENT_SUCCESSFULLY(transaction);
-    WAIT_INTRA_SHARD_EXECUTION();
-    EXPECT_TRANSACTION_SUCCESSFUL(txHash);
-    EXPECT_ACCOUNT_NONCE(transaction.m_nonce + 1);
+TEST_F(LocalTestnetProxyProviderTxFixture, getAllESDTokenBalances_noTokens)
+{
+    Address const address("erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqplllst77y4l");
+    auto const esdts = m_proxy.getAllESDTBalances(address);
+    EXPECT_TRUE(esdts.empty());
+}
+
+TEST_F(LocalTestnetProxyProviderTxFixture, getTransactionStatus_invalidHash)
+{
+    EXPECT_THROW({
+                     try
+                     {
+                         m_proxy.getTransactionStatus("invalid hash");
+                     }
+                     catch (const std::runtime_error &e)
+                     {
+                         std::string const errDescription = e.what();
+
+                         EXPECT_TRUE(errDescription.find(ERROR_MSG_HTTP_REQUEST_FAILED) != std::string::npos);
+                         EXPECT_TRUE(errDescription.find(ERROR_MSG_REASON) != std::string::npos);
+                         EXPECT_TRUE(errDescription.find("not found") != std::string::npos);
+                         throw;
+                     }
+                 }, std::runtime_error);
 }
 
 TEST_F(LocalTestnetProxyProviderTxFixture, send_invalidTx_noSignature)
 {
-    Transaction transaction;
-    transaction.m_sender = std::make_shared<Address>(m_senderAddr);
-    transaction.m_receiver = std::make_shared<Address>("erd1cux02zersde0l7hhklzhywcxk4u9n4py5tdxyx7vrvhnza2r4gmq4vw35r");
-    transaction.m_chainID = "local-testnet";
-    transaction.m_nonce = m_senderAcc.getNonce();
-    transaction.m_value = BigUInt("10000000000");
-    transaction.m_gasPrice = 1000000000;
-    transaction.m_gasLimit = 50000;
+    Address receiver("erd1cux02zersde0l7hhklzhywcxk4u9n4py5tdxyx7vrvhnza2r4gmq4vw35r");
+    BigUInt initialBalanceSender = m_senderAcc.getBalance();
+    BigUInt initialBalanceReceiver = m_proxy.getAccount(receiver).getBalance();
+
+    Transaction transaction = m_txFactory.createEGLDTransfer(
+                    m_senderAcc.getNonce(),
+                    BigUInt(12356789),
+                    m_senderAddr,
+                    receiver,
+                    1000000000)
+            ->build();
 
     EXPECT_THROW({
                      try
@@ -318,9 +243,62 @@ TEST_F(LocalTestnetProxyProviderTxFixture, send_invalidTx_noSignature)
                          throw;
                      }
                  }, std::runtime_error);
+
+    EXPECT_EQ(m_senderAcc.getBalance(), initialBalanceSender);
+    EXPECT_EQ(m_proxy.getAccount(receiver).getBalance(), initialBalanceReceiver);
 }
 
-TEST_F(LocalTestnetProxyProviderTxFixture, esdt_issue_and_transfer)
+TEST_F(LocalTestnetProxyProviderTxFixture, send_validTx_moveBalance)
+{
+    Address receiver("erd1cux02zersde0l7hhklzhywcxk4u9n4py5tdxyx7vrvhnza2r4gmq4vw35r");
+    BigUInt value("1000000000000");
+
+    BigUInt initialBalanceSender = m_senderAcc.getBalance();
+    BigUInt initialBalanceReceiver = m_proxy.getAccount(receiver).getBalance();
+
+    Transaction transaction = m_txFactory.createEGLDTransfer(
+                    m_senderAcc.getNonce(),
+                    value,
+                    m_senderAddr,
+                    receiver,
+                    1000000000)
+            ->buildSigned(m_pem.getSeed());
+
+    EXPECT_TRANSACTION_SENT_SUCCESSFULLY(transaction, INTRA_SHARD);
+
+    BigUInt finalBalanceSender = m_senderAcc.getBalance();
+    BigUInt finalBalanceReceiver = m_proxy.getAccount(receiver).getBalance();
+    EXPECT_TRUE(finalBalanceSender < initialBalanceSender - value); // less, because transfer includes fees
+    EXPECT_TRUE(finalBalanceReceiver == initialBalanceReceiver + value);
+}
+
+TEST_F(LocalTestnetProxyProviderTxFixture, send_validTx_signedHashedTx_moveBalance)
+{
+    Address receiver("erd1cux02zersde0l7hhklzhywcxk4u9n4py5tdxyx7vrvhnza2r4gmq4vw35r");
+    BigUInt value("1234567890000");
+
+    BigUInt initialBalanceSender = m_senderAcc.getBalance();
+    BigUInt initialBalanceReceiver = m_proxy.getAccount(receiver).getBalance();
+
+    Transaction transaction = m_txFactory.createEGLDTransfer(
+                    m_senderAcc.getNonce(),
+                    value,
+                    m_senderAddr,
+                    receiver,
+                    1000000000)
+            ->withOptions(1)
+            .withVersion(2)
+            .buildSigned(m_pem.getSeed());
+
+    EXPECT_TRANSACTION_SENT_SUCCESSFULLY(transaction, INTRA_SHARD);
+
+    BigUInt finalBalanceSender = m_senderAcc.getBalance();
+    BigUInt finalBalanceReceiver = m_proxy.getAccount(receiver).getBalance();
+    EXPECT_TRUE(finalBalanceSender < initialBalanceSender - value); // less, because transfer includes fees
+    EXPECT_TRUE(finalBalanceReceiver == initialBalanceReceiver + value);
+}
+
+TEST_F(LocalTestnetProxyProviderTxFixture, esdt_issue_transfer_getESDTBalance)
 {
     issueESDT("Alice", "ALC", BigUInt(123), 0);
     issueESDT("Bob", "BOB", BigUInt(321), 0, ESDTProperties{
@@ -329,25 +307,24 @@ TEST_F(LocalTestnetProxyProviderTxFixture, esdt_issue_and_transfer)
             .canMint = true});
 
     // Wait for meta to transfer esdt to account in shard
-    WAIT_CROSS_SHARD_EXECUTION();
+    wait(TIME_CROSS_SHARD_EXECUTION);
 
     std::string aliceTokenID = getTokenID("ALC");
     std::string bobTokenID = getTokenID("BOB");
 
-    EXPECT_ACCOUNT_HAS_ESDTS(m_senderAddr,
-                             {{aliceTokenID, BigUInt(123)},
-                              {bobTokenID,   BigUInt(321)}});
+    EXPECT_ACCOUNT_HAS_ESDTS(m_senderAddr, {{aliceTokenID, BigUInt(123)},
+                                            {bobTokenID,   BigUInt(321)}});
 
-    TokenPayment alicePayment = TokenPayment::fungibleFromAmount(aliceTokenID, "23", 0);
+    TokenPayment aliceTokens = TokenPayment::fungibleFromAmount(aliceTokenID, "23", 0);
     Address receiver("erd1cux02zersde0l7hhklzhywcxk4u9n4py5tdxyx7vrvhnza2r4gmq4vw35r");
-    transferESDT(alicePayment, receiver);
+    transferESDT(aliceTokens, receiver);
 
-    EXPECT_ACCOUNT_HAS_ESDTS(m_senderAddr,
-                             {{aliceTokenID, BigUInt(100)},
-                              {bobTokenID,   BigUInt(321)}});
-    EXPECT_ACCOUNT_HAS_ESDTS(receiver, {{aliceTokenID, BigUInt(23)}});
+    EXPECT_EQ(m_proxy.getESDTBalance(receiver, aliceTokenID), BigUInt(23));
+    EXPECT_ACCOUNT_HAS_ESDTS(m_senderAddr, {{aliceTokenID, BigUInt(100)},
+                                            {bobTokenID,   BigUInt(321)}});
 }
 
+// Following tests are disabled, since they interact with a SC which is not deployed on local testnet.
 TEST_F(DevnetProxyProviderTxFixture, DISABLED_send_ESDT_function_unWrapEgld_noParams)
 {
     ContractCall contractCall("unwrapEgld");
@@ -361,7 +338,7 @@ TEST_F(DevnetProxyProviderTxFixture, DISABLED_send_ESDT_function_unWrapEgld_noPa
             ->withContractCall(contractCall)
             .buildSigned(m_pem.getSeed());
 
-    EXPECT_TRANSACTION_SENT_SUCCESSFULLY(transaction);
+    EXPECT_TRANSACTION_SENT_SUCCESSFULLY(transaction, INTRA_SHARD);
 }
 
 TEST_F(DevnetProxyProviderTxFixture, DISABLED_send_ESDT_function_swapTokensFixedInput_noParams)
@@ -382,5 +359,5 @@ TEST_F(DevnetProxyProviderTxFixture, DISABLED_send_ESDT_function_swapTokensFixed
             ->withContractCall(contractCall)
             .buildSigned(m_pem.getSeed());
 
-    EXPECT_TRANSACTION_SENT_SUCCESSFULLY(transaction);
+    EXPECT_TRANSACTION_SENT_SUCCESSFULLY(transaction, INTRA_SHARD);
 }

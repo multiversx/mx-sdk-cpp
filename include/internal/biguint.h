@@ -14,13 +14,21 @@ public:
 
     BigUInt operator/(BigUInt const &rhs) const;
 
-    bool operator==(BigUInt const &rhs);
+    bool operator==(BigUInt const &rhs) const;
+
+    bool operator>(BigUInt const &rhs) const;
+
+    bool operator<(BigUInt const &rhs) const;
+
+    BigUInt operator-(BigUInt const &rhs) const;
+
+    BigUInt operator+(BigUInt const &rhs) const;
 
     std::pair<BigUInt, BigUInt> divmod(BigUInt const &rhs) const;
 
     std::string getHexValue() const;
 
-    const std::string& getValue() const;
+    const std::string &getValue() const;
 
 private:
     std::string m_value;

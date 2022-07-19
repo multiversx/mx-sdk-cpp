@@ -101,3 +101,21 @@ TEST(BigUInt, div)
     EXPECT_TRUE(BigUInt(4) / BigUInt(4) == BigUInt(1));
     EXPECT_THROW(BigUInt(4) / BigUInt(0), std::exception);
 }
+
+TEST(BigUInt, greater_less)
+{
+    BigUInt v1(145);
+    BigUInt v2(12);
+
+    EXPECT_TRUE(v1 > v2);
+    EXPECT_FALSE(v1 < v2);
+
+    EXPECT_FALSE(v2 > v1);
+    EXPECT_TRUE(v2 < v1);
+
+    EXPECT_FALSE(v1 > v1);
+    EXPECT_FALSE(v1 < v1);
+
+    EXPECT_EQ(v1.getValue(), "145"); // v1's internal value has not change
+    EXPECT_EQ(v2.getValue(), "12"); // v2's internal value has not change
+}
