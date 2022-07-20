@@ -11,7 +11,7 @@
 
 namespace
 {
-inline std::string fileDoesNotContain(std::string const& filePath)
+inline std::string formatMessageFileDoesNotContain(std::string const& filePath)
 {
     return "File " + filePath + " does not contain ";
 }
@@ -35,13 +35,13 @@ Config CLIConfig::config() const
         auto const networkConfig = *data->get_qualified_as<std::string>("Config.CLIConfig");
         if (networkConfig.empty())
         {
-            throw std::runtime_error(fileDoesNotContain(m_tomlPath) + "[Config].CLIConfig table");
+            throw std::runtime_error(formatMessageFileDoesNotContain(m_tomlPath) + "[Config].CLIConfig table");
         }
 
         auto const config = data->get_table(networkConfig);
         if (!config->contains("ChainID") || !config->contains("ProxyUrl"))
         {
-            throw std::runtime_error(fileDoesNotContain(m_tomlPath) + "ChainID/ProxyUrl field in [" + networkConfig +"] table");
+            throw std::runtime_error(formatMessageFileDoesNotContain(m_tomlPath) + "ChainID/ProxyUrl field in [" + networkConfig + "] table");
         }
 
         ret.chainID = *config->get_as<std::string>("ChainID");
