@@ -8,7 +8,7 @@
 class AddressConstructorFixture : public ::testing::Test
 {
 public:
-    template <typename ConstrInputType, typename ErrorType>
+    template<typename ConstrInputType, typename ErrorType>
     void expectException(ConstrInputType const &input, errorMessage const &errMsg)
     {
         EXPECT_THROW({
@@ -16,13 +16,14 @@ public:
                          {
                              Address address(input);
                          }
-                         catch(const ErrorType &e)
+                         catch (const ErrorType &e)
                          {
-                             EXPECT_EQ( errMsg, e.what() );
+                             EXPECT_EQ(errMsg, e.what());
                              throw;
                          }
-                     }, ErrorType );
+                     }, ErrorType);
     }
+
     std::string bech32Address = "erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th";
     bytes pkBytes = util::hexToBytes("0139472eff6886771a982f3083da5d421f24c29181e63888228dc81ca60d69e1");
 };
@@ -108,6 +109,17 @@ TEST(Address, comparsionOperator_bech32Address_pubKey)
 
     EXPECT_TRUE(adr1 == adr2);
     EXPECT_FALSE(adr1 == adr3);
+}
+
+TEST(Address, assignmentOperator)
+{
+    Address adr1("erd1sjsk3n2d0krq3pyxxtgf0q7j3t56sgusqaujj4n82l39t9h7jers6gslr4");
+    Address const adr2("erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th");
+
+    adr1 = adr2;
+    EXPECT_EQ(adr1.getBech32Address(), "erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th");
+    EXPECT_EQ(adr1.getPublicKey(), util::hexToBytes("0139472eff6886771a982f3083da5d421f24c29181e63888228dc81ca60d69e1"));
+    EXPECT_EQ(adr1, adr2);
 }
 
 TEST(Account, constructor_defaultValues)

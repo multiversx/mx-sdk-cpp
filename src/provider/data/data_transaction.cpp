@@ -15,12 +15,12 @@ bool TransactionStatus::isPending() const
 
 bool TransactionStatus::isExecuted() const
 {
-    return isSuccessful() || isInvalid();
+    return (m_status == "executed") || isSuccessful() || isInvalid();
 }
 
 bool TransactionStatus::isSuccessful() const
 {
-    return (m_status == "executed") || (m_status == "success") || (m_status == "successful");
+    return (m_status == "success") || (m_status == "successful");
 }
 
 bool TransactionStatus::isFailed() const
