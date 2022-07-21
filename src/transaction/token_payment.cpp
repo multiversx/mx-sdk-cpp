@@ -2,6 +2,7 @@
 #include <utility>
 
 #include "errors.h"
+#include "stdexcept"
 #include "transaction/token_payment.h"
 
 namespace internal
