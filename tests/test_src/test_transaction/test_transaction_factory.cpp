@@ -44,6 +44,15 @@ TEST(TransactionFactory, createEGLDTransfer)
     EXPECT_EQ(tx.serialize(),
               "{\"nonce\":4,\"value\":\"3333\",\"receiver\":\"erd1qqqqqqqqqqqqqpgqrc4pg2xarca9z34njcxeur622qmfjp8w2jps89fxnl\",\"sender\":\"erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th\",\"gasPrice\":99999,\"gasLimit\":57500,\"data\":\"aGVsbG8=\",\"signature\":\"cf77752dc29ed19e986e10a639ee3abb9d936ed9dbd123be1f44f31c9df5ed042fa4164ea12bad43ba497e1adcc8c1ada9b4b35142f7a94e49747b853b542b0d\",\"chainID\":\"1\",\"version\":5,\"options\":6}");
     EXPECT_TRUE(tx.verify());
+
+    tx = txFactory
+            .createEGLDTransfer(5, value, sender, receiver, gasPrice) // no data field
+            ->withOptions(1) // options=1; version=2 => should sign keccak(txSerialized)
+            .withVersion(2)
+            .buildSigned(pem.getSeed());
+    EXPECT_EQ(tx.serialize(),
+              "{\"nonce\":5,\"value\":\"3333\",\"receiver\":\"erd1qqqqqqqqqqqqqpgqrc4pg2xarca9z34njcxeur622qmfjp8w2jps89fxnl\",\"sender\":\"erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th\",\"gasPrice\":99999,\"gasLimit\":50000,\"signature\":\"dce93ad3cd16c9fe1d13959a989116d4dd37a6bc30cecb36765317d6eb1a7a918e5fc24c52db5c400c20fc293de940812fe87ea05aef80a05ec9ddf742ec850c\",\"chainID\":\"1\",\"version\":2,\"options\":1}");
+    EXPECT_TRUE(tx.verify());
 }
 
 TEST(TransactionFactory, createESDTTransfer)

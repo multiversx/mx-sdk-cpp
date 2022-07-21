@@ -9,10 +9,5 @@ function runTests(){
         fi
       fi
   done
-
   cd ..
 }
-
-cd tests || exit 1
-runTests test_cli
-runTests test_src

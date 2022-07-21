@@ -53,3 +53,10 @@ bytes Address::computePkFromBech32() const
     return util::convertBits(pk5BitsPerByte, kNoBitsInBech32, kNoBitsInByte, false);
 }
 
+Address &Address::operator=(const Address &rhs)
+{
+    this->m_pk = rhs.getPublicKey();
+    this->m_bech32Address = rhs.getBech32Address();
+
+    return *this;
+}

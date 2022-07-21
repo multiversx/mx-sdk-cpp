@@ -28,7 +28,7 @@ public:
 private:
     uint64_t m_nonce;
     BigUInt m_balance;
-    Address const m_address;
+    Address m_address;
 };
 
 

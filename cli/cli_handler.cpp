@@ -127,6 +127,42 @@ void handleTransferESDT(cxxopts::ParseResult const &result)
     std::cerr << "Transaction hash: " << txHash << "\n";
 }
 
+void handleSetNetworkConfig(cxxopts::ParseResult const &result)
+{
+    std::string network = result["config"].as<std::string>();
+    std::transform(network.begin(), network.end(), network.begin(),
+                   [](unsigned char c)
+                   { return std::tolower(c); });
+
+    auto const cliConfig = CLIConfig();
+    network[0] = char(toupper(network[0]));
+    if (network == NETWORK_MAINNET)
+    {
+        cliConfig.setNetwork(Mainnet);
+    }
+    else if (network == NETWORK_DEVNET)
+    {
+        cliConfig.setNetwork(Devnet);
+    }
+    else if (network == NETWORK_TESTNET)
+    {
+        cliConfig.setNetwork(Testnet);
+    }
+    else if (network == NETWORK_LOCAL)
+    {
+        cliConfig.setNetwork(Local);
+    }
+    else
+    {
+        throw std::invalid_argument("Invalid network: " + network);
+    }
+
+    auto cfg = cliConfig.config();
+    std::cerr << "Config changed to: " << network << "\n";
+    std::cerr << "ChainID = " << cfg.chainID << "\n";
+    std::cerr << "ProxyUrl = " << cfg.proxyUrl << "\n";
+}
+
 void handleRequest(ih::ArgParsedResult const &parsedResult)
 {
     switch (parsedResult.requestType)
@@ -149,6 +185,11 @@ void handleRequest(ih::ArgParsedResult const &parsedResult)
         case ih::transferESDT:
         {
             handleTransferESDT(parsedResult.result);
+            break;
+        }
+        case ih::setNetworkConfig:
+        {
+            handleSetNetworkConfig(parsedResult.result);
             break;
         }
         default:

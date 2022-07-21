@@ -70,7 +70,7 @@ BigUInt BigUInt::operator*(const BigUInt &rhs) const
     return BigUInt(ret);
 }
 
-bool BigUInt::operator==(const BigUInt &rhs)
+bool BigUInt::operator==(const BigUInt &rhs) const
 {
     return this->m_value == rhs.m_value;
 }
@@ -90,4 +90,38 @@ std::pair<BigUInt, BigUInt> BigUInt::divmod(const BigUInt &rhs) const
 BigUInt BigUInt::operator/(const BigUInt &rhs) const
 {
     return this->divmod(rhs).first;
+}
+
+bool BigUInt::operator>(const BigUInt &rhs) const
+{
+    integer v1(m_value, BASE_10);
+    integer v2(rhs.getValue(), BASE_10);
+
+    return v1 > v2;
+}
+
+bool BigUInt::operator<(const BigUInt &rhs) const
+{
+    integer v1(m_value, BASE_10);
+    integer v2(rhs.getValue(), BASE_10);
+
+    return v1 < v2;
+}
+
+BigUInt BigUInt::operator-(const BigUInt &rhs) const
+{
+    integer v1(m_value, BASE_10);
+    integer v2(rhs.getValue(), BASE_10);
+    integer res = v1 - v2;
+
+    return BigUInt(res.str());
+}
+
+BigUInt BigUInt::operator+(const BigUInt &rhs) const
+{
+    integer v1(m_value, BASE_10);
+    integer v2(rhs.getValue(), BASE_10);
+    integer res = v1 + v2;
+
+    return BigUInt(res.str());
 }

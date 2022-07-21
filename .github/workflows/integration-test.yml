@@ -1,0 +1,39 @@
+name: Integration tests
+
+on:
+  push:
+    branches: [ development, main, feat/* ]
+  pull_request:
+    branches: [ "*" ]
+
+jobs:
+  test:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install crypto library libsodium
+        run: sudo apt install libsodium-dev
+
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Update submodules
+        run: git submodule update --init --recursive
+
+      - name: Cmake
+        run: cmake .
+
+      - name: Build
+        run: cmake --build .
+
+      - name: Integration Tests - new testnet
+        run: cd scripts && /bin/bash local-testnet.sh new
+
+      - name: Integration Tests - start testnet
+        run: cd scripts && /bin/bash local-testnet.sh start
+
+      - name: IntegrationTests - run tests
+        run: ./scripts/integration-tests.sh
+
+      - name: Integration Tests - stop testnet
+        run: cd scripts && /bin/bash local-testnet.sh stop

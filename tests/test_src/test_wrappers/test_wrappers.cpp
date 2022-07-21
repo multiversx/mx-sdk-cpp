@@ -1,10 +1,8 @@
 #include "gtest/gtest.h"
 
-#include "utils/cfg.h"
 #include "utils/hex.h"
 #include "account/address.h"
 #include "wrappers/jsonwrapper.h"
-#include "wrappers/httpwrapper.h"
 #include "wrappers/cryptosignwrapper.h"
 
 class OrderedJsonFixture : public ::testing::Test
@@ -175,79 +173,3 @@ TEST(CryptoWrapper, verify)
 
     EXPECT_TRUE(wrapper::crypto::verify(signature, message, signerAddr.getPublicKey()));
 }
-
-#if GTESTS_HTTPS_PRECONDITIONS
-TEST(ClientWrapper, get_validSubDomain_validRequest)
-{
-    wrapper::http::Client client("https://testnet-gateway.elrond.com");
-    wrapper::http::Result res =  client.get("/address/erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqplllst77y4l");
-
-    EXPECT_FALSE(res.error);
-    EXPECT_EQ(res.status, STATUS_CODE_OK);
-    EXPECT_EQ(res.statusMessage, "OK");
-
-    EXPECT_FALSE(res.body.empty());
-    EXPECT_TRUE(res.body.find("success"));
-
-    auto json = nlohmann::json::parse(res.body);
-
-    EXPECT_TRUE(json["error"] == "");
-    EXPECT_EQ(json["data"]["account"]["address"], "erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqplllst77y4l");
-    EXPECT_NE(json["data"]["account"]["balance"], "0");
-}
-
-TEST(ClientWrapper, get_validSubDomain_invalidRequest)
-{
-    wrapper::http::Client client("https://testnet-gateway.elrond.com");
-    wrapper::http::Result res =  client.get("/address/erd1qqqqqq");
-
-    EXPECT_FALSE(res.error);
-    EXPECT_EQ(res.status, 500);
-    EXPECT_EQ(res.statusMessage, "Internal Server Error");
-
-    EXPECT_FALSE(res.body.empty());
-    EXPECT_TRUE(res.body.find("error"));
-
-    auto json = nlohmann::json::parse(res.body);
-
-    EXPECT_FALSE(json["error"] == "");
-}
-
-TEST(ClientWrapper, get_invalidSubDomain)
-{
-    wrapper::http::Client client("https://testnet-gateway.elrond.com");
-    wrapper::http::Result res =  client.get("/address_INVALID_PATH/erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqplllst77y4l");
-
-    EXPECT_FALSE(res.error);
-    EXPECT_EQ(res.status, 404);
-    EXPECT_EQ(res.statusMessage, "Not Found");
-}
-
-
-TEST(ClientWrapper, post_validSubDomain_testRequest)
-{
-    wrapper::http::Client client("https://testnet-gateway.elrond.com");
-    wrapper::http::Result res =  client.post("/transaction/send", "test");
-
-    EXPECT_FALSE(res.error);
-    EXPECT_EQ(res.status, 400);
-    EXPECT_EQ(res.statusMessage, "Bad Request");
-
-    EXPECT_FALSE(res.body.empty());
-    EXPECT_TRUE(res.body.find("error"));
-
-    auto json = nlohmann::json::parse(res.body);
-
-    EXPECT_FALSE(json["error"] == "");
-}
-
-TEST(ClientWrapper, post_invalidSubDomain)
-{
-    wrapper::http::Client client("https://testnet-gateway.elrond.com");
-    wrapper::http::Result res =  client.post("/transaction/send_INVALID_PATH", "test");
-
-    EXPECT_FALSE(res.error);
-    EXPECT_EQ(res.status, 404);
-    EXPECT_EQ(res.statusMessage, "Not Found");
-}
-#endif
