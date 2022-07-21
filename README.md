@@ -1,54 +1,49 @@
+
 # elrond-sdk-erdcpp
 
 Elrond C++ Command Line Tools and SDK for interacting with the Elrond Network (in general) and Smart Contracts (in
 particular).
 
 ## 1. Installation. How to use it
-
-### 1.1 Update submodules
-
-Elrond C++ SDK CLI uses google test which is configured as submodule. After cloning the repository, make sure to
-initialize and update the submodule:
-
 ```bash
-git submodule update --init --recursive
+./install.sh
 ```
 
-### 1.2 Dependencies
+This script will install all necessary dependencies for erd-cpp.
 
-Elrond C++ SDK CLI uses:
-- Libsodium shared library. Make sure to [install](https://doc.libsodium.org/installation) the
-latest version.
+Afterwards, it will build the solution and copy all **include headers** (`/usr/include/erdcpp`) and **generated static library**(`/usr/lib/libsrc.so`).
 
-For ubuntu users:
-```bash
-sudo apt install libsodium-dev
-```
-
-### 1.3 Compile and build with CMake
-
-```bash
-cmake .
-cmake --build .
-```
-
-### 1.4 Usage
-
-#### 1.4.1 SDK
-
-After building with cmake, you can use the SDK by:
-
-- Adding **include** folder to your project. Then you only need to include one header to your project:
-
+### 1.1 SDK
+To use the sdk in your project, simply include this header in your project:
 ```c++
-#include "erdsdk.h"
+#include "erdcpp/erdsdk.h"
+```
+Afterwards, make sure to link the `libsrc.so` library.
+
+### CMake integration
+
+To integrate the sdk in your `CMake` project, simply:
+1. include `/usr/include/erdcpp`
+2. link `libsrc.so`
+
+Example:
+```cmake
+cmake_minimum_required(VERSION 3.11)
+project(main)
+
+set(CMAKE_CXX_STANDARD 14)
+
+include_directories(/usr/include/erdcpp) #-> include header files
+
+add_executable(main main.cpp)
+target_link_libraries(main PUBLIC /usr/lib/libsrc.so) #-> link library
+
 ```
 
-- Add generated library in src file
 
-#### 1.4.2 CLI
+### 1.2 CLI
 
-To see all available command line commands:
+To see all available command lines:
 ```bash
 cd cli
 ./erdcpp -h
