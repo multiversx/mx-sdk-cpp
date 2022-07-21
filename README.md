@@ -50,5 +50,55 @@ cd cli
 ```
 
 ## 2. Examples
+A quick look into: 
+
+```c++
+    // Read data from wallet
+    PemFileReader myWallet("wallet.pem");
+    Address myAddress = myWallet.getAddress();
+    bytes mySeed = myWallet.getSeed();
+
+    // Get updated account from proxy
+    ProxyProvider proxy("https://gateway.elrond.com");
+    Account myAccount = proxy.getAccount(myAddress);
+
+    // Create a transaction factory, which lets you easily build signed/unsigned transactions
+    NetworkConfig networkConfig = proxy.getNetworkConfig();
+    TransactionFactory transactionFactory(networkConfig);
+
+    // Build ESDT transactions
+    TokenPayment mexTokens =
+            TokenPayment::fungibleFromAmount("MEX-455c57", // Token ID
+                                             "100",        // Amount = 100 MEX
+                                             18);          // Num of token decimals
+    Transaction transaction = transactionFactory.createESDTTransfer(
+                    mexTokens,            // Token to transfer
+                    myAccount.getNonce(), // Nonce
+                    myAddress,            // Sender's address
+                    Address("erd1..."),   // Receiver's address
+                    1000000000)           // Gas Price
+            ->buildSigned(mySeed);
+
+    // Send transaction and check its status
+    std::string txHash = proxy.send(transaction);
+    TransactionStatus txStatus = proxy.getTransactionStatus(txHash);
+    if (txStatus.isPending())
+    {
+        // ...
+    }
+```
 
 Click [here](examples/examples.md) to see a list with provided features and usage
+
+## 3. External libraries
+This repository uses `google test` as submodule, as well as `external` sources:
+
+- **aes_128_ctr**: License: **The Unlicense**. From: https://github.com/kokke/tiny-AES-c
+- **bech32**: License: **MIT**. Author: Pieter Wuille
+- **bigint**: License: **MIT**. From: https://github.com/calccrypto/integer
+- **cliparser**: License: **MIT**. From: https://github.com/jarro2783/cxxopts
+- **http**: License: **MIT**. From: https://github.com/yhirose/cpp-httplib
+- **json**: License: **MIT**. From: https://github.com/nlohmann/json
+- **keccak**: License: **MIT**. From: https://github.com/mjosaarinen/tiny_sha3
+- **toml**: License: **MIT**. From: https://github.com/skystrife/cpptoml
+- **libsodium**: License: **MIT**. From: https://github.com/jedisct1/libsodium
