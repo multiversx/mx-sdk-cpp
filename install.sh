@@ -1,5 +1,5 @@
 CURRENT_DIR=$(pwd)
-INCLUDE_PATH=/usr/include/
+INCLUDE_PATH=/usr/include
 LIB_PATH=/usr/lib
 
 echo "Installing libsodium library..."
