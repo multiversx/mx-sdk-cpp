@@ -10,6 +10,7 @@ echo "Updating submodules..."
 git submodule update --init --recursive || exit 1
 
 echo "Cmake"
+sudo snap install cmake --classic || sudo apt  install cmake || exit 1
 cmake . || exit 1
 
 echo "Building solution..."

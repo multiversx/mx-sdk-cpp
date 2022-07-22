@@ -13,8 +13,8 @@ jobs:
     steps:
       - name: Install crypto library libsodium
         run: |
-        sudo dpkg --configure -a
-        sudo apt install libsodium-dev
+          sudo dpkg --configure -a
+          sudo apt install libsodium-dev
 
       - name: Check out code
         uses: actions/checkout@v2
@@ -23,7 +23,9 @@ jobs:
         run: git submodule update --init --recursive
 
       - name: Cmake
-        run: cmake .
+        run: |
+          sudo snap install cmake --classic || sudo apt  install cmake
+          cmake .
 
       - name: Build
         run: cmake --build .
