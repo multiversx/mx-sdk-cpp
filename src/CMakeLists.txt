@@ -31,7 +31,8 @@ file(GLOB src
 include_directories(utils)
 include_directories(wrappers)
 
-add_library(src ${src})
+option(BUILD_SHARED_LIBS ON)
+add_library(src SHARED ${src})
 
 target_link_libraries(src PUBLIC utils)
 target_link_libraries(src PUBLIC external)
@@ -44,5 +45,3 @@ target_link_libraries(src PUBLIC
 target_compile_definitions(src PUBLIC
         $<$<BOOL:${HTTPLIB_IS_USING_OPENSSL}>:CPPHTTPLIB_OPENSSL_SUPPORT>
         )
-	
-
