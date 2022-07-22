@@ -12,7 +12,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Install crypto library libsodium
-        run: sudo apt install libsodium-dev
+        run: |
+        sudo dpkg --configure -a
+        sudo apt install libsodium-dev
 
       - name: Check out code
         uses: actions/checkout@v2

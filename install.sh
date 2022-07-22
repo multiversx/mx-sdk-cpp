@@ -3,6 +3,7 @@ INCLUDE_PATH=/usr/include/
 LIB_PATH=/usr/lib
 
 echo "Installing libsodium library..."
+sudo dpkg --configure -a
 sudo apt install libsodium-dev || exit 1
 
 echo "Updating submodules..."
