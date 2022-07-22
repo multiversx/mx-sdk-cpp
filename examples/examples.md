@@ -8,7 +8,7 @@
 | **Transaction** | Create, Sign, Serialize, Deserialize                               |
 | **Proxy**       | Get account, send transaction, get ESDT balances                   |
 | **ESDT**        | Issue, transfer, transfer with SC call                             |
-
+| **Builders**    | Build ESDT/ESDTNFT/MultiESDTNFT Transfer payload/transaction       |
 
 # 2. Examples
 
@@ -126,7 +126,7 @@ try
     // Deserialize transaction into current object
     transaction.deserialize("{\"nonce\":0,\"value\":\"0\",\"receiver\":\"erd1...}");
     
-    // Sign/verify transaction
+    // Sign/verify signed transaction
     Signer signer(seed); 
     transaction.sign(signer);
     if (!transaction.verify()){
@@ -166,53 +166,113 @@ catch (std::runtime_error const &err)
 
 ```
 
-### 2.1.6 ESDT transfer with func call
+### 2.1.6 Token payments
+
+```c++
+// Fungible tokens
+std::string identifierESDT = "ESDT-c76f1f";
+uint32_t numDecimalsESDT = 3;
+TokenPayment fungible1 = TokenPayment::fungibleFromAmount(identifierESDT, "4.11", numDecimalsESDT);
+TokenPayment fungible2 = TokenPayment::fungibleFromBigUInt(identifierESDT, BigUInt("411"), numDecimalsESDT);
+
+// Semi-fungible tokens
+std::string identifierSFT = "SFT-c76f1f";
+uint64_t nonceSFT = 4;
+BigUInt quantity(50);
+TokenPayment sft = TokenPayment::semiFungible(identifierSFT, nonceSFT, quantity);
+
+// Non-fungible tokens
+std::string identifierNFT = "NFT-c76f1f";
+uint64_t nonceNFT = 5;
+TokenPayment nft = TokenPayment::nonFungible(identifierNFT, nonceNFT);
+
+// Meta ESDT tokens
+std::string identifierMetaESDT = "META-c76f1f";
+uint64_t nonceMetaESDT = 5;
+uint32_t numDecimalsMetaESDT = 2;
+TokenPayment metaESDT1 = TokenPayment::metaESDTFromAmount(identifierMetaESDT, nonceMetaESDT, "101.3", numDecimalsMetaESDT);
+TokenPayment metaESDT2 = TokenPayment::metaESDTFromBigUInt(identifierMetaESDT, nonceMetaESDT, BigUInt(10130), numDecimalsMetaESDT);
+
+std::cout << fungible1.toString(); // will output 4110
+std::cout << fungible1.toPrettyString(); // will output 4.110 ESDT-c76f1f
+```
+
+### 2.1.7 Transaction builders
 
 ```c++
 try
 {
-    // Get address from json
-    KeyFileReader keyFile("alice.json", "password");
-    Address const address = keyFile.getAddress();
+    // Create a transaction factory to build different transaction types
+    ProxyProvider proxy("https://gateway.elrond.com");
+    NetworkConfig networkConfig = proxy.getNetworkConfig();
+    TransactionFactory transactionFactory(networkConfig);
     
-    // Load account from proxy
-    ProxyProvider proxy("https://testnet-gateway.elrond.com");
-    Account const account = proxy.getAccount(address);
+    // -> Create EGLD unsigned transaction
+    Transaction transaction1 = transactionFactory.createEGLDTransfer(
+                    2,                    // Nonce
+                    BigUInt(10000000000), // Value
+                    Address("erd1..."),   // Sender's address
+                    Address("erd1..."),   // Receiver's address
+                    1000000000,           // Gas price
+                    "hello")              // Data
+            ->withVersion(2)
+            .withOptions(1)
+            .build();                     // Build unsigned transaction with version = 2
     
-    // Create transaction
-    Transaction transaction;
-    transaction.m_sender = std::make_shared<Address>(account);
-    transaction.m_receiver = std::make_shared<Address>("erd1qqq..."); // contract address
-    transaction.m_chainID = "T";
-    transaction.m_nonce = account.getNonce();
-    transaction.m_gasPrice = 1000000000;
-    transaction.m_gasLimit = 150000000;
-
-    // Define function args
+    // -> Create ESDT transaction with SC call
     SCArguments args;
-    args.add("param1");
-    args.add(BigUInt("400000"));
+    args.add(Address("erd1..."));
+    args.add("foo");
+    args.add(BigUInt(100));
+    ContractCall contractCall("swap", args);
     
-    // Prepare transaction for ESDT transfer with func call + arguments
-    prepareTransactionForESDTTransfer(transaction, 
-                                      "TOKEN-b9cba1", // token id to transfer
-                                      "func",         // function to call
-                                      args);          // SC args
-                                      
-    // Sign transaction                                 
-    Signer const signer(keyFile.getSeed());
-    transaction.sign(signer);
+    TokenPayment mexTokens = TokenPayment::fungibleFromAmount("MEX-455c57", // Token ID
+                                                              "100",        // Amount = 100 MEX
+                                                              18);          // Num of token decimals
+    Transaction transaction2 = transactionFactory.createESDTTransfer(
+                    mexTokens,            // Token to transfer
+                    3,                    // Nonce
+                    myAddress,            // Sender's address
+                    Address("erd1..."),   // Receiver's address
+                    1000000000)           // Gas Price
+            ->withContractCall(contractCall)
+            .buildSigned(mySeed);         // Build signed tx with SC call
+            
+     // -> Create ESDTNFT transaction       
+    TokenPayment nft = TokenPayment::nonFungible("ERDCPP-38f249", 4);
+    Transaction transaction3 = transactionFactory.createESDTNFTTransfer(
+                    nft,                  // Token (esdt/nft)
+                    4,                    // Nonce
+                    Address("erd1..."),   // Sender's address
+                    Address("erd1..."),   // Destination address
+                    1000000000)           // Gas price
+            ->buildSigned(mySeed);
     
-    // Send transaction and get tx hash
-    std::string const txHash = proxy.send(transaction).hash;
+    // -> Create MultiESDTNFT transaction
+    TokenPayment token1 = TokenPayment::nonFungible("ERDCPP-38f249", 3);
+    TokenPayment token2 = TokenPayment::fungibleFromAmount("MEX-455c57", "123", 18);
+    Transaction transaction4 = transactionFactory.createMultiESDTNFTTransfer(
+                    {token1, token2},   // Tokens(esdt/nft/sft/metaESDT)
+                    5,                  // Nonce
+                    Address("erd1..."), // Sender's address
+                    Address("erd1..."), // Destination address
+                    1000000000)         // Gas price
+            ->buildSigned(mySeed);
     
-    // Check tx status
-    TransactionStatus const txStatus = proxy.getTransactionStatus(txHash);
-    if (txStatus.isSuccessful())
-    {
-        // ...
-    }
-    
+    // -> Create issue ESDT transaction
+    Transaction transaction5 = transactionFactory.createESDTIssue(
+                    6,                  // Nonce
+                    Address("erd1..."), // Sender's address
+                    1000000000,         // Gas price
+                    "Alice",            // Token's name
+                    "ALC",              // Token's ticker
+                    BigUInt(444000),    // Initial supply
+                    6,                  // Num of decimals
+                    ESDTProperties{     // ESDT Properties
+                            .canFreeze = true,
+                            .canWipe = true,
+                            .canMint = true})
+            ->buildSigned(mySeed);
 }
 catch (...)
 {
@@ -223,6 +283,7 @@ catch (...)
 ## 2.2 Examples. CLI
 
 To see all available command line commands:
+
 ```bash
 cd cli
 ./erdcpp -h
@@ -296,4 +357,14 @@ Usage:
       --can-upgrade       [Can upgrade] property (default: false)
       --can-add-roles     [Can add special roles] property (default: false)
 
+Set network
+[command]: network
+[subcommand]: set
+Usage:
+  erdcpp network set [OPTION...]
+
+ set options:
+      --config arg  Set network config used to interact with ERDCPP CLI. 
+                    Valid: mainnet, testnet, devnet, local (not case 
+                    sensitive)
 ```
