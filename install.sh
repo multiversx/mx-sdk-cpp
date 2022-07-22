@@ -2,6 +2,18 @@ CURRENT_DIR=$(pwd)
 INCLUDE_PATH=/usr/include
 LIB_PATH=/usr/lib
 
+GCC_VERSION_CURRENT="$(gcc -dumpfullversion)"
+GCC_VERSION_MIN_REQUIRED="9.4"
+if ! [ "$(printf '%s\n' "$GCC_VERSION_MIN_REQUIRED" "$GCC_VERSION_CURRENT" | sort -V | head -n1)" = "$GCC_VERSION_MIN_REQUIRED" ]; then
+       echo "Found GCC compiler version = ${GCC_VERSION_CURRENT}, which is less than min required = ${GCC_VERSION_MIN_REQUIRED}."
+       echo "Install gcc version 9.4(y/n)?"
+       read -r yn
+        case $yn in
+               [Yy]* ) sudo apt-get install gcc-9;;
+               * ) echo "Aborting..." & exit 1;;
+        esac
+fi
+
 echo "Installing libsodium library..."
 sudo dpkg --configure -a
 sudo apt install libsodium-dev || exit 1
