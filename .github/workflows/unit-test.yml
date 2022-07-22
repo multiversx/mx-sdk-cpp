@@ -21,6 +21,9 @@ jobs:
       - name: Update submodules
         run: git submodule update --init --recursive
 
+      - name: Install OpenSSL lib
+        run: sudo apt-get install libssl-dev
+
       - name: Cmake
         run: |
           sudo snap install cmake --classic || sudo apt  install cmake

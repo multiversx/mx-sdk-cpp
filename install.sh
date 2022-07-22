@@ -9,8 +9,16 @@ sudo apt install libsodium-dev || exit 1
 echo "Updating submodules..."
 git submodule update --init --recursive || exit 1
 
-echo "Cmake"
-sudo snap install cmake --classic || sudo apt  install cmake || exit 1
+if ! dpkg -s libssl-dev > /dev/null; then
+  echo "OpenSSL libssl-dev not installed, installing..."
+  sudo apt-get install libssl-dev || exit 1
+fi
+
+echo "CMake"
+if ! dpkg -s cmake > /dev/null; then
+  echo "CMake not installed, installing..."
+  sudo apt install cmake || sudo snap install cmake --classic || exit 1
+fi
 cmake . || exit 1
 
 echo "Building solution..."
