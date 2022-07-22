@@ -11,17 +11,17 @@ particular).
 
 This script will install all necessary dependencies, build solution and:
 - copy **headers** in `/usr/include/erdcpp` 
-- copy **static library** in `/usr/lib/libsrc.so`
+- copy **shared library** in `/usr/lib/libsrc.so`
 
 ### 1.1 SDK
-To use the sdk in your project, link `libsrc.so` and include this header in your project:
+To integrate this sdk in your project, link `libsrc.so` and include this header in your project:
 ```c++
 #include "erdcpp/erdsdk.h"
 ```
 
 ### CMake integration
 
-To integrate this sdk in your `CMake` project, simply:
+To integrate this sdk in your `CMake` project:
 1. include `/usr/include/erdcpp`
 2. link `/usr/lib/libsrc.so`
 
@@ -46,7 +46,7 @@ cd cli
 ```
 
 ## 2. Examples
-A quick look into: 
+A quick look into an ESDT transfer: 
 
 ```c++
     // Read data from wallet
@@ -58,7 +58,7 @@ A quick look into:
     ProxyProvider proxy("https://gateway.elrond.com");
     Account myAccount = proxy.getAccount(myAddress);
 
-    // Create a transaction factory, which lets you easily build signed/unsigned transactions
+    // Create a transaction factory, which helps you easily build signed/unsigned transactions
     NetworkConfig networkConfig = proxy.getNetworkConfig();
     TransactionFactory transactionFactory(networkConfig);
 
@@ -87,7 +87,7 @@ A quick look into:
 Click [here](examples/examples.md) to see a list with provided features and usage
 
 ## 3. External libraries
-This repository uses `google test` as submodule, as well as `external` sources:
+This repository uses `google test` as submodule, as well as the following `external` sources:
 
 - **aes_128_ctr**: License: **The Unlicense**. From: https://github.com/kokke/tiny-AES-c
 - **bech32**: License: **MIT**. Author: Pieter Wuille
