@@ -61,7 +61,7 @@ inline bool pointersHaveSameValue(std::shared_ptr<T> v1, std::shared_ptr<T> v2)
     }
     if (v1 != nullptr && v2 != nullptr)
     {
-        return v1.get() == v2.get();
+        return *v1.get() == *v2.get();
     }
 
     return false;

@@ -33,13 +33,13 @@ struct signSerializedTxData
 class TransactionSignSerializeParametrized : public ::testing::TestWithParam<signSerializedTxData>
 {
 public:
-    std::shared_ptr<bytes> getPtrBytesFrom(std::string const &param)
+    static std::shared_ptr<bytes> getPtrBytesFrom(std::string const &param)
     {
         return (param.empty()) ?
             nullptr : std::make_shared<bytes>(param.begin(),param.end());
     }
 
-    void signTransaction(Transaction &tx, std::string const &seed)
+    static void signTransaction(Transaction &tx, std::string const &seed)
     {
         bytes const signerSeed = util::hexToBytes(seed);
         Signer const signer(signerSeed);
@@ -189,7 +189,7 @@ struct deserializedTxData
 class TransactionDeserializeParametrized : public ::testing::TestWithParam<deserializedTxData>
 {
 public:
-    void EXPECT_PTR_BYTE_EQ_STR(std::shared_ptr<bytes> const &txData, std::string const &paramData)
+    static void EXPECT_PTR_BYTE_EQ_STR(std::shared_ptr<bytes> const &txData, std::string const &paramData)
     {
         if (paramData.empty())
         {
@@ -331,7 +331,7 @@ struct invalidSerializedTxData
 class TransactionDeserializeInvalidDataParametrized : public ::testing::TestWithParam<invalidSerializedTxData>
 {
 public:
-    void expectDeserializeExceptionMsg(std::string const &serializedTx, errorMessage const &errMsg)
+    static void expectDeserializeExceptionMsg(std::string const &serializedTx, errorMessage const &errMsg)
     {
         EXPECT_THROW({
                          try
@@ -435,4 +435,102 @@ TEST_F(TransactionSerializeFixture, serialize_missingFields)
     tx.m_sender = std::make_shared<Address>(sender);
     tx.m_receiver = nullptr;
     expectSerializeException<std::invalid_argument>(tx, ERROR_MSG_RECEIVER);
+}
+
+TEST(Transaction, comparisonOperator)
+{
+    Transaction tx1;
+    Transaction tx2;
+    EXPECT_EQ(tx1, tx2);
+
+    tx1.m_nonce = 1;
+    EXPECT_NE(tx1, tx2);
+    tx2.m_nonce = 2;
+    EXPECT_NE(tx1, tx2);
+    tx2.m_nonce = 1;
+    EXPECT_EQ(tx1, tx2);
+
+    tx1.m_value = BigUInt(4);
+    EXPECT_NE(tx1, tx2);
+    tx2.m_value = BigUInt(5);
+    EXPECT_NE(tx1, tx2);
+    tx2.m_value = BigUInt(4);
+    EXPECT_EQ(tx1, tx2);
+
+    tx1.m_sender = std::make_shared<Address>("erd10536tc3s886yqxtln74u6mztuwl5gy9k9gp8fttxda0klgxg979srtg5wt");
+    EXPECT_NE(tx1, tx2);
+    tx2.m_sender = std::make_shared<Address>("erd1cux02zersde0l7hhklzhywcxk4u9n4py5tdxyx7vrvhnza2r4gmq4vw35r");
+    EXPECT_NE(tx1, tx2);
+    tx2.m_sender = std::make_shared<Address>("erd10536tc3s886yqxtln74u6mztuwl5gy9k9gp8fttxda0klgxg979srtg5wt");
+    EXPECT_EQ(tx1, tx2);
+
+    tx1.m_receiver = std::make_shared<Address>("erd1sjsk3n2d0krq3pyxxtgf0q7j3t56sgusqaujj4n82l39t9h7jers6gslr4");
+    EXPECT_NE(tx1, tx2);
+    tx2.m_receiver = std::make_shared<Address>("erd10536tc3s886yqxtln74u6mztuwl5gy9k9gp8fttxda0klgxg979srtg5wt");
+    EXPECT_NE(tx1, tx2);
+    tx2.m_receiver = std::make_shared<Address>("erd1sjsk3n2d0krq3pyxxtgf0q7j3t56sgusqaujj4n82l39t9h7jers6gslr4");
+    EXPECT_EQ(tx1, tx2);
+
+    tx1.m_receiverUserName = std::make_shared<bytes>(util::hexToBytes("fab03"));
+    EXPECT_NE(tx1, tx2);
+    tx2.m_receiverUserName = std::make_shared<bytes>(util::hexToBytes("fab04"));
+    EXPECT_NE(tx1, tx2);
+    tx2.m_receiverUserName = std::make_shared<bytes>(util::hexToBytes("fab03"));
+    EXPECT_EQ(tx1, tx2);
+
+    tx1.m_senderUserName = std::make_shared<bytes>(util::hexToBytes("caffe"));
+    EXPECT_NE(tx1, tx2);
+    tx2.m_senderUserName = std::make_shared<bytes>(util::hexToBytes("caff"));
+    EXPECT_NE(tx1, tx2);
+    tx2.m_senderUserName = std::make_shared<bytes>(util::hexToBytes("caffe"));
+    EXPECT_EQ(tx1, tx2);
+
+    tx1.m_gasPrice = 123;
+    EXPECT_NE(tx1, tx2);
+    tx2.m_gasPrice = 444;
+    EXPECT_NE(tx1, tx2);
+    tx2.m_gasPrice = 123;
+    EXPECT_EQ(tx1, tx2);
+
+    tx1.m_gasLimit = 321;
+    EXPECT_NE(tx1, tx2);
+    tx2.m_gasLimit = 555;
+    EXPECT_NE(tx1, tx2);
+    tx2.m_gasLimit = 321;
+    EXPECT_EQ(tx1, tx2);
+
+    tx1.m_data = std::make_shared<bytes>(util::hexToBytes("ff"));
+    EXPECT_NE(tx1, tx2);
+    tx2.m_data = std::make_shared<bytes>(util::hexToBytes("aa"));
+    EXPECT_NE(tx1, tx2);
+    tx2.m_data = std::make_shared<bytes>(util::hexToBytes("ff"));
+    EXPECT_EQ(tx1, tx2);
+
+    tx1.m_signature = std::make_shared<std::string>("hello");
+    EXPECT_NE(tx1, tx2);
+    tx2.m_signature = std::make_shared<std::string>("bye");
+    EXPECT_NE(tx1, tx2);
+    tx2.m_signature = std::make_shared<std::string>("hello");
+    EXPECT_EQ(tx1, tx2);
+
+    tx1.m_chainID = "T";
+    EXPECT_NE(tx1, tx2);
+    tx2.m_chainID = "1";
+    EXPECT_NE(tx1, tx2);
+    tx2.m_chainID = "T";
+    EXPECT_EQ(tx1, tx2);
+
+    tx1.m_version = 2;
+    EXPECT_NE(tx1, tx2);
+    tx2.m_version = 4;
+    EXPECT_NE(tx1, tx2);
+    tx2.m_version = 2;
+    EXPECT_EQ(tx1, tx2);
+
+    tx1.m_options = std::make_shared<uint32_t>(1);
+    EXPECT_NE(tx1, tx2);
+    tx2.m_options = std::make_shared<uint32_t>(9);
+    EXPECT_NE(tx1, tx2);
+    tx2.m_options = std::make_shared<uint32_t>(1);
+    EXPECT_EQ(tx1, tx2);
 }
