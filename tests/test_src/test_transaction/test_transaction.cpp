@@ -4,14 +4,12 @@
 #include "utils/errors.h"
 #include "transaction/esdt.h"
 #include "transaction/transaction.h"
-#include "transaction/messagesigner.h"
 
 // Most tests for signing and transaction construction are adapted from one of the following sources:
 // ERD-JS: https://github.com/ElrondNetwork/elrond-sdk-erdjs/blob/bb926b029150d7c79f2b37308f4334f98a4cabf7/src/testutils/wallets.ts#L110
 //         https://github.com/ElrondNetwork/elrond-sdk-erdjs/blob/main/src/walletcore/users.spec.ts#L120
 // ERD-PY: https://github.com/ElrondNetwork/elrond-sdk-erdpy/blob/main/erdpy/tests/test_wallet.py
 // ERD-GO: https://github.com/ElrondNetwork/elrond-go/blob/master/examples/construction_test.go
-//         https://github.com/ElrondNetwork/elrond-go/blob/7d133422048b7e65f0a8730cfdd1fff9d51077e9/examples/messageSign_test.go#L87
 
 struct signSerializedTxData
 {
@@ -463,20 +461,4 @@ TEST(ESDTProperties, comparisonOperators)
     EXPECT_TRUE(esdt1 == ESDT_ISSUANCE_DEFAULT_PROPERTIES);
     EXPECT_TRUE(esdt2 == ESDT_ISSUANCE_DEFAULT_PROPERTIES);
     EXPECT_FALSE(esdt1 != esdt2);
-}
-
-TEST(MessageSigner, getSignature_verify)
-{
-    Address const address("erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th");
-    std::string const message = "custom message of Alice";
-    bytes const seed = util::hexToBytes("413f42575f7f26fad3317a778771212fdb80245850981e48b58a4f25e344e8f9");
-
-    MessageSigner signer(seed);
-    std::string const signature = signer.getSignature(message);
-
-    EXPECT_EQ(signature, util::hexToString("b83647b88cdc7904895f510250cc735502bf4fd86331dd1b76e078d6409433753fd6f619fc7f8152cf8589a4669eb8318b2e735e41309ed3b60e64221d814f08"));
-
-    EXPECT_TRUE(signer.verify(signature, message));
-    EXPECT_TRUE(MessageSigner::verify(signature, message, address));
-    EXPECT_TRUE(MessageSigner::verify(signature, message, address.getPublicKey()));
 }
