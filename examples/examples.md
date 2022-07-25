@@ -197,7 +197,39 @@ std::cout << fungible1.toString(); // will output 4110
 std::cout << fungible1.toPrettyString(); // will output 4.110 ESDT-c76f1f
 ```
 
-### 2.1.7 Transaction builders
+### 2.1.7 Payload builders
+
+```c++
+// Single ESDT
+TokenPayment payment = TokenPayment::fungibleFromAmount("COUNTER-8b028f", "100.00", 0);
+std::string data = ESDTTransferPayloadBuilder()
+        .setPayment(payment)
+        .build();
+
+// Single NFT
+TokenPayment payment = TokenPayment::nonFungible("ERDCPP-38f249", 1);
+std::string data = ESDTNFTTransferPayloadBuilder()
+        .setPayment(payment)
+        .setDestination(Address("erd1..."))
+        .build();
+
+// Single SFT
+TokenPayment payment = TokenPayment::semiFungible("SEMI-9efd0f", 1, BigUInt(5));
+std::string data = ESDTNFTTransferPayloadBuilder()
+        .setPayment(payment)
+        .setDestination(Address("erd1..."))
+        .build();
+
+// Multi ESDT/NFT
+TokenPayment paymentOne = TokenPayment::nonFungible("ERDCPP-38f249", 1);
+TokenPayment paymentTwo = TokenPayment::fungibleFromAmount("BAR-c80d29", "10.00", 18);
+std::string data = MultiESDTNFTTransferPayloadBuilder()
+        .setPayments({paymentOne, paymentTwo})
+        .setDestination(Address("erd1..."))
+        .build();
+```
+
+### 2.1.8 Transaction builders
 
 ```c++
 try
