@@ -2,7 +2,6 @@
 
 #include "utils/hex.h"
 #include "utils/errors.h"
-#include "transaction/esdt.h"
 #include "transaction/transaction.h"
 
 // Most tests for signing and transaction construction are adapted from one of the following sources:
@@ -436,29 +435,4 @@ TEST_F(TransactionSerializeFixture, serialize_missingFields)
     tx.m_sender = std::make_shared<Address>(sender);
     tx.m_receiver = nullptr;
     expectSerializeException<std::invalid_argument>(tx, ERROR_MSG_RECEIVER);
-}
-
-TEST(ESDTProperties, comparisonOperators)
-{
-    ESDTProperties esdt1, esdt2;
-
-    EXPECT_TRUE(esdt1 == esdt2);
-    EXPECT_TRUE(esdt1 == ESDT_ISSUANCE_DEFAULT_PROPERTIES);
-    EXPECT_TRUE(esdt2 == ESDT_ISSUANCE_DEFAULT_PROPERTIES);
-    EXPECT_FALSE(esdt1 != esdt2);
-
-    esdt1.canChangeOwner = true;
-    esdt2.canUpgrade = true;
-
-    EXPECT_FALSE(esdt1 == esdt2);
-    EXPECT_TRUE(esdt1 != ESDT_ISSUANCE_DEFAULT_PROPERTIES);
-    EXPECT_TRUE(esdt1 != ESDT_ISSUANCE_DEFAULT_PROPERTIES);
-
-    esdt1.canChangeOwner = false;
-    esdt2.canUpgrade = false;
-
-    EXPECT_TRUE(esdt1 == esdt2);
-    EXPECT_TRUE(esdt1 == ESDT_ISSUANCE_DEFAULT_PROPERTIES);
-    EXPECT_TRUE(esdt2 == ESDT_ISSUANCE_DEFAULT_PROPERTIES);
-    EXPECT_FALSE(esdt1 != esdt2);
 }
