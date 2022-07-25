@@ -533,4 +533,6 @@ TEST(Transaction, comparisonOperator)
     EXPECT_NE(tx1, tx2);
     tx2.m_options = std::make_shared<uint32_t>(1);
     EXPECT_EQ(tx1, tx2);
+
+    EXPECT_EQ(tx1.serialize(), tx2.serialize());
 }
