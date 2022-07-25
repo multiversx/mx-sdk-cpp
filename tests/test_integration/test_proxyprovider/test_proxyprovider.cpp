@@ -1,14 +1,14 @@
 #include "gtest/gtest.h"
 
 #include "thread"
-#include "test_common.h"
+#include "utils/common.h"
 #include "utils/errors.h"
 #include "filehandler/pemreader.h"
 #include "provider/proxyprovider.h"
 #include "transaction/transaction_factory.h"
 
 #define LOCAL_PROXY_URL std::string("http://127.0.0.1:7950")
-#define PEM_PATH getCanonicalRootPath("testnet/testnet-local/sandbox/node/config/walletKey.pem")
+#define PEM_PATH util::getCanonicalRootPath("testnet/testnet-local/sandbox/node/config/walletKey.pem")
 #define TIME_INTRA_SHARD_EXECUTION 6
 #define TIME_CROSS_SHARD_EXECUTION 18
 #define INTRA_SHARD true

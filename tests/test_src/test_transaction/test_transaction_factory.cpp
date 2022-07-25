@@ -1,7 +1,8 @@
 #include "gtest/gtest.h"
+
+#include "test_common.h"
 #include "filehandler/pemreader.h"
 #include "transaction/transaction_factory.h"
-#include "test_common.h"
 
 #define NO_OPTION 0
 
@@ -40,7 +41,8 @@ Transaction createTransaction(
 
 TEST(TransactionFactory, createEGLDTransfer)
 {
-    PemFileReader pem(getCanonicalRootPath("elrond-sdk-erdcpp/tests/testData/alicePem.pem"));
+    PemFileReader pem(getCanonicalTestDataPath("alicePem.pem"));
+
     BigUInt value(3333);
     Address sender = pem.getAddress();
     Address receiver("erd1qqqqqqqqqqqqqpgqrc4pg2xarca9z34njcxeur622qmfjp8w2jps89fxnl");
@@ -86,7 +88,8 @@ TEST(TransactionFactory, createEGLDTransfer)
 
 TEST(TransactionFactory, createESDTTransfer)
 {
-    PemFileReader pem(getCanonicalRootPath("elrond-sdk-erdcpp/tests/testData/alicePem.pem"));
+    PemFileReader pem(getCanonicalTestDataPath("alicePem.pem"));
+
     TokenPayment token = TokenPayment::nonFungible("ERDCPP-38f249", 1);
     Address sender = pem.getAddress();
     Address receiver("erd1qqqqqqqqqqqqqpgqrc4pg2xarca9z34njcxeur622qmfjp8w2jps89fxnl");
@@ -137,7 +140,8 @@ TEST(TransactionFactory, createESDTTransfer)
 
 TEST(TransactionFactory, createESDTNFTTransfer)
 {
-    PemFileReader pem(getCanonicalRootPath("elrond-sdk-erdcpp/tests/testData/alicePem.pem"));
+    PemFileReader pem(getCanonicalTestDataPath("alicePem.pem"));
+
     TokenPayment token = TokenPayment::nonFungible("ERDCPP-38f249", 4);
     Address sender = pem.getAddress();
     Address receiver("erd1qqqqqqqqqqqqqpgqrc4pg2xarca9z34njcxeur622qmfjp8w2jps89fxnl");
@@ -187,7 +191,8 @@ TEST(TransactionFactory, createESDTNFTTransfer)
 
 TEST(TransactionFactory, createMultiESDTNFT)
 {
-    PemFileReader pem(getCanonicalRootPath("elrond-sdk-erdcpp/tests/testData/alicePem.pem"));
+    PemFileReader pem(getCanonicalTestDataPath("alicePem.pem"));
+
     TokenPayment token1 = TokenPayment::nonFungible("ERDCPP-38f249", 3);
     TokenPayment token2 = TokenPayment::nonFungible("ERDCPP-38f249", 4);
     Address sender = pem.getAddress();
@@ -249,7 +254,8 @@ TEST(TransactionFactory, createMultiESDTNFT)
 
 TEST(TransactionFactory, createESDTIssue)
 {
-    PemFileReader pem(getCanonicalRootPath("elrond-sdk-erdcpp/tests/testData/alicePem.pem"));
+    PemFileReader pem(getCanonicalTestDataPath("alicePem.pem"));
+
     Address sender = pem.getAddress();
     Address expectedReceiver("erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u");
     uint64_t gasPrice = 99999;

@@ -353,8 +353,8 @@ TEST(HandleCreateSignedTransaction, withPemFile_expectCorrectWrittenTx)
     int const argc = 11;
     char *argv[argc];
 
-    std::string keyFile = "--key=" + util::getCanonicalRootPath("elrond-sdk-erdcpp/tests/testData/keysValid1.pem");
-    std::string outFile = "--outfile=" + util::getCanonicalRootPath("elrond-sdk-erdcpp/tests/testData/outputJson.json");
+    std::string keyFile = "--key=" + getCanonicalTestDataPath("keysValid1.pem");
+    std::string outFile = "--outfile=" + getCanonicalTestDataPath("outputJson.json");
 
     argv[0] = (char *) "erdcpp";
     argv[1] = (char *) "transaction";
