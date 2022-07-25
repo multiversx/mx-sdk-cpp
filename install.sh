@@ -2,6 +2,9 @@ CURRENT_DIR=$(pwd)
 INCLUDE_PATH=/usr/include
 LIB_PATH=/usr/lib
 
+echo "Getting updates and installing essentials..."
+sudo apt-get update && sudo apt-get install build-essential
+
 GCC_VERSION_CURRENT="$(gcc -dumpfullversion)"
 GCC_VERSION_MIN_REQUIRED="9.4"
 if ! [ "$(printf '%s\n' "$GCC_VERSION_MIN_REQUIRED" "$GCC_VERSION_CURRENT" | sort -V | head -n1)" = "$GCC_VERSION_MIN_REQUIRED" ]; then
@@ -9,7 +12,7 @@ if ! [ "$(printf '%s\n' "$GCC_VERSION_MIN_REQUIRED" "$GCC_VERSION_CURRENT" | sor
        echo "Install gcc version 9.4? (y/n)"
        read -r yn
        case $yn in
-              [Yy]* ) sudo apt-get install gcc-9;;
+              [Yy]* ) sudo apt-get install gcc-9 || exit 1;;
               * ) echo "Aborting..." & exit 1;;
        esac
 fi
