@@ -43,6 +43,10 @@ public:
 
     explicit Transaction();
 
+    bool operator==(Transaction const &rhs) const;
+
+    bool operator!=(Transaction const &rhs) const;
+
     void sign(Signer const &signer);
 
     bool verify();

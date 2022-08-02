@@ -11,15 +11,15 @@
 
 namespace internal
 {
-template <typename T>
-void setJsonValueIfNotNull(wrapper::json::OrderedJson &json, std::string const& key, std::shared_ptr<T> const &val)
+template<typename T>
+void setJsonValueIfNotNull(wrapper::json::OrderedJson &json, std::string const &key, std::shared_ptr<T> const &val)
 {
     if (val != nullptr)
         json.set(key, *val);
 }
 
-template <typename T>
-void getJsonValueIfNotNull(wrapper::json::OrderedJson const &json, std::string const& key, std::shared_ptr<T> &val)
+template<typename T>
+void getJsonValueIfNotNull(wrapper::json::OrderedJson const &json, std::string const &key, std::shared_ptr<T> &val)
 {
     if (json.contains(key))
     {
@@ -30,9 +30,9 @@ void getJsonValueIfNotNull(wrapper::json::OrderedJson const &json, std::string c
 
 bool shouldSignHash(Transaction const &tx)
 {
-    return( tx.m_options != nullptr)               &&
-          ( tx.m_version >= VERSION_SIGN_TX_HASH)  &&
-          (*tx.m_options & OPTIONS_SIGN_TX_HASH_MASK);
+    return (tx.m_options != nullptr) &&
+           (tx.m_version >= VERSION_SIGN_TX_HASH) &&
+           (*tx.m_options & OPTIONS_SIGN_TX_HASH_MASK);
 }
 
 std::string getSerializedTxMsg(Transaction tx, bool const withSignature)
@@ -44,13 +44,29 @@ std::string getSerializedTxMsg(Transaction tx, bool const withSignature)
 
     std::string txSerialized = tx.serialize();
 
-    if(shouldSignHash(tx))
+    if (shouldSignHash(tx))
     {
         txSerialized = wrapper::crypto::sha3Keccak(txSerialized);
     }
 
     return txSerialized;
 }
+
+template<typename T>
+inline bool pointersHaveSameValue(std::shared_ptr<T> v1, std::shared_ptr<T> v2)
+{
+    if (v1 == nullptr && v2 == nullptr)
+    {
+        return true;
+    }
+    if (v1 != nullptr && v2 != nullptr)
+    {
+        return *v1.get() == *v2.get();
+    }
+
+    return false;
+}
+
 }
 
 Transaction::Transaction(
@@ -97,6 +113,30 @@ Transaction::Transaction() :
         m_version(DEFAULT_VERSION),
         m_options(DEFAULT_OPTIONS)
 {}
+
+
+bool Transaction::operator==(const Transaction &rhs) const
+{
+    return (this->m_nonce == rhs.m_nonce &&
+            this->m_value == rhs.m_value &&
+            internal::pointersHaveSameValue(this->m_sender, rhs.m_sender) &&
+            internal::pointersHaveSameValue(this->m_receiver, rhs.m_receiver) &&
+            internal::pointersHaveSameValue(this->m_senderUserName, rhs.m_senderUserName) &&
+            internal::pointersHaveSameValue(this->m_receiverUserName, rhs.m_receiverUserName) &&
+            this->m_gasPrice == rhs.m_gasPrice &&
+            this->m_gasLimit == rhs.m_gasLimit &&
+            internal::pointersHaveSameValue(this->m_data, rhs.m_data) &&
+            internal::pointersHaveSameValue(this->m_signature, rhs.m_signature) &&
+            this->m_chainID == rhs.m_chainID &&
+            this->m_version == rhs.m_version &&
+            internal::pointersHaveSameValue(this->m_options, rhs.m_options)
+    );
+}
+
+bool Transaction::operator!=(const Transaction &rhs) const
+{
+    return !(*this == rhs);
+}
 
 void Transaction::sign(Signer const &signer)
 {
@@ -172,9 +212,9 @@ void Transaction::deserialize(std::string const &serializedTransaction)
     m_chainID = json.at<std::string>(TX_CHAIN_ID);
     m_version = json.at<uint64_t>(TX_VERSION);
 
-    internal::getJsonValueIfNotNull(json,TX_DATA,m_data);
-    internal::getJsonValueIfNotNull(json,TX_SIGNATURE,m_signature);
-    internal::getJsonValueIfNotNull(json,TX_RECEIVER_NAME,m_receiverUserName);
-    internal::getJsonValueIfNotNull(json,TX_SENDER_NAME,m_senderUserName);
-    internal::getJsonValueIfNotNull(json,TX_OPTIONS,m_options);
+    internal::getJsonValueIfNotNull(json, TX_DATA, m_data);
+    internal::getJsonValueIfNotNull(json, TX_SIGNATURE, m_signature);
+    internal::getJsonValueIfNotNull(json, TX_RECEIVER_NAME, m_receiverUserName);
+    internal::getJsonValueIfNotNull(json, TX_SENDER_NAME, m_senderUserName);
+    internal::getJsonValueIfNotNull(json, TX_OPTIONS, m_options);
 }
