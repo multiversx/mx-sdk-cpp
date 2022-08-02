@@ -8,7 +8,7 @@
 
 namespace utility
 {
-void requireAttribute(nlohmann::json const &data, std::string const &attribute)
+inline void requireAttribute(nlohmann::json const &data, std::string const &attribute)
 {
     if (!data.contains(attribute))
     {

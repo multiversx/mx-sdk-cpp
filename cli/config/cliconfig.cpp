@@ -1,5 +1,5 @@
 #include "cliconfig.h"
-#include "toml/cpptoml.h"
+#include "toml/toml.h"
 #include "utils/cfg.h"
 #include "utils/common.h"
 

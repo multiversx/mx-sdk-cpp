@@ -2,6 +2,7 @@
 #define ERD_COMMON_H
 
 #include "errors.h"
+#include "stdexcept"
 
 namespace util
 {

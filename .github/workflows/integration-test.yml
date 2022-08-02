@@ -12,7 +12,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Install crypto library libsodium
-        run: sudo apt install libsodium-dev
+        run: |
+          sudo dpkg --configure -a
+          sudo apt install libsodium-dev
 
       - name: Check out code
         uses: actions/checkout@v2
@@ -20,8 +22,13 @@ jobs:
       - name: Update submodules
         run: git submodule update --init --recursive
 
+      - name: Install OpenSSL lib
+        run: sudo apt-get install libssl-dev
+
       - name: Cmake
-        run: cmake .
+        run: |
+          sudo snap install cmake --classic || sudo apt  install cmake
+          cmake .
 
       - name: Build
         run: cmake --build .
