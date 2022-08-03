@@ -8,7 +8,7 @@ typedef std::string errorMessage;
 
 errorMessage const ERROR_MSG_EMPTY_VALUE = "Empty value: ";
 errorMessage const ERROR_MSG_NONCE = "Invalid nonce.";
-errorMessage const ERROR_MSG_VALUE = "Invalid value.";
+errorMessage const ERROR_MSG_VALUE = "Invalid value: ";
 errorMessage const ERROR_MSG_RECEIVER = "Invalid receiver.";
 errorMessage const ERROR_MSG_SENDER = "Invalid sender.";
 errorMessage const ERROR_MSG_GAS_PRICE = "Invalid gas price.";
@@ -39,5 +39,7 @@ errorMessage const ERROR_MSG_KEY_FILE_DERIVATION_FUNCTION = "Key file derivation
 errorMessage const ERROR_MSG_KEY_FILE_CIPHER = "Key file cipher algorithm not supported.";
 errorMessage const ERROR_MSG_MISSING_PASSWORD = "Missing key file password.";
 
+errorMessage const ERROR_MSG_NEGATIVE_VALUE = "Received negative value";
+errorMessage const ERROR_MSG_CANNOT_CONVERT_TO_BASE = "Cannot convert number to base: ";
 
 #endif

@@ -44,7 +44,7 @@ void handleIssueESDT(cxxopts::ParseResult const &result)
     auto const token = result["token"].as<std::string>();
     auto const ticker = result["ticker"].as<std::string>();
     auto const supply = result["supply"].as<std::string>();
-    auto const decimals = result["dec"].as<std::string>();
+    auto const decimals = result["dec"].as<uint32_t>();
 
     auto const canFreeze = result["can-freeze"].as<bool>();
     auto const canWipe = result["can-wipe"].as<bool>();
@@ -58,9 +58,6 @@ void handleIssueESDT(cxxopts::ParseResult const &result)
     auto keyFile = std::make_shared<SecretKeyProvider>(result);
     auto tx = utility::createTransaction(result, config);
 
-    Address const receiver = Address(config.issueESDTSCAddress);
-    tx.m_receiver = std::make_shared<Address>(receiver);
-
     ESDTProperties const esdtProperties
             {canFreeze,
              canWipe,
@@ -71,12 +68,23 @@ void handleIssueESDT(cxxopts::ParseResult const &result)
              canUpgrade,
              canAddSpecialRoles};
 
-    prepareTransactionForESDTIssuance(tx, token, ticker, supply, decimals, esdtProperties);
-    utility::signTransaction(tx, keyFile);
-
     ProxyProvider proxy(config.proxyUrl);
-    auto const txHash =  proxy.send(tx).hash;
-    std::cerr<< "Transaction hash: " << txHash << "\n";
+    NetworkConfig cfg = proxy.getNetworkConfig();
+
+    TransactionFactory txFactory(cfg);
+    tx = txFactory.createESDTIssue(
+            tx.m_nonce,
+            keyFile->getAddress(),
+            tx.m_gasPrice,
+            token,
+            ticker,
+            BigUInt(supply),
+            decimals,
+            esdtProperties
+    )->buildSigned(keyFile->getSeed());
+
+    auto const txHash = proxy.send(tx);
+    std::cerr << "Transaction hash: " << txHash << "\n";
 }
 
 void handleTransferESDT(cxxopts::ParseResult const &result)
@@ -90,23 +98,69 @@ void handleTransferESDT(cxxopts::ParseResult const &result)
     auto keyFile = std::make_shared<SecretKeyProvider>(result);
     auto tx = utility::createTransaction(result, config);
 
-    prepareTransactionForESDTTransfer(tx, token, function);
+    ProxyProvider proxy(config.proxyUrl);
+    NetworkConfig cfg = proxy.getNetworkConfig();
+
+    TokenPayment tokenPayment = TokenPayment::fungibleFromBigUInt(token, BigUInt(tx.m_value));
+    TransactionFactory txFactory(cfg);
+    tx = txFactory.createESDTTransfer(
+                    tokenPayment,
+                    tx.m_nonce,
+                    keyFile->getAddress(),
+                    *tx.m_receiver,
+                    tx.m_gasPrice)
+            ->build();
 
     if (!args.empty())
     {
-        std::string txData (tx.m_data->begin(), tx.m_data->end());
-        for (auto const &arg : args)
+        std::string txData(tx.m_data->begin(), tx.m_data->end());
+        for (auto const &arg: args)
         {
             txData += "@" + arg;
         }
         *tx.m_data = bytes(txData.begin(), txData.end());
     }
-
+    tx.m_gasLimit = GasEstimator(cfg).forESDTTransfer(tx.m_data->size());
     utility::signTransaction(tx, keyFile);
 
-    ProxyProvider proxy(config.proxyUrl);
-    auto const txHash =  proxy.send(tx).hash;
-    std::cerr<< "Transaction hash: " << txHash << "\n";
+    auto const txHash = proxy.send(tx);
+    std::cerr << "Transaction hash: " << txHash << "\n";
+}
+
+void handleSetNetworkConfig(cxxopts::ParseResult const &result)
+{
+    std::string network = result["config"].as<std::string>();
+    std::transform(network.begin(), network.end(), network.begin(),
+                   [](unsigned char c)
+                   { return std::tolower(c); });
+
+    auto const cliConfig = CLIConfig();
+    network[0] = char(toupper(network[0]));
+    if (network == NETWORK_MAINNET)
+    {
+        cliConfig.setNetwork(Mainnet);
+    }
+    else if (network == NETWORK_DEVNET)
+    {
+        cliConfig.setNetwork(Devnet);
+    }
+    else if (network == NETWORK_TESTNET)
+    {
+        cliConfig.setNetwork(Testnet);
+    }
+    else if (network == NETWORK_LOCAL)
+    {
+        cliConfig.setNetwork(Local);
+    }
+    else
+    {
+        throw std::invalid_argument("Invalid network: " + network);
+    }
+
+    auto cfg = cliConfig.config();
+    std::cerr << "Config changed to: " << network << "\n";
+    std::cerr << "ChainID = " << cfg.chainID << "\n";
+    std::cerr << "ProxyUrl = " << cfg.proxyUrl << "\n";
 }
 
 void handleRequest(ih::ArgParsedResult const &parsedResult)
@@ -115,7 +169,7 @@ void handleRequest(ih::ArgParsedResult const &parsedResult)
     {
         case ih::help:
         {
-            std::cerr<< parsedResult.help;
+            std::cerr << parsedResult.help;
             break;
         }
         case ih::createSignedTransaction:
@@ -131,6 +185,11 @@ void handleRequest(ih::ArgParsedResult const &parsedResult)
         case ih::transferESDT:
         {
             handleTransferESDT(parsedResult.result);
+            break;
+        }
+        case ih::setNetworkConfig:
+        {
+            handleSetNetworkConfig(parsedResult.result);
             break;
         }
         default:

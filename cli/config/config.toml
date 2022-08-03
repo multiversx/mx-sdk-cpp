@@ -1,12 +1,18 @@
 [Config]
 CLIConfig = "Testnet"
-	
+
+[Mainnet]
+ChainID = "1"
+ProxyUrl = "https://gateway.elrond.com"
+
 [Testnet]
 ChainID = "T"
 ProxyUrl = "https://testnet-gateway.elrond.com"
-IssueESDTSCAddress = "erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u"
    
 [Devnet]
 ChainID = "D"
 ProxyUrl = "https://devnet-gateway.elrond.com"
-IssueESDTSCAddress = "erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u"
+
+[Local]
+ChainID = "local-testnet"
+ProxyUrl = "http://127.0.0.1:7950"

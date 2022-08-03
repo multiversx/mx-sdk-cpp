@@ -4,27 +4,28 @@
 
 namespace internal
 {
-    ErdGenericApiResponse parse(wrapper::http::Result const &res)
+ErdGenericApiResponse parse(wrapper::http::Result const &res)
+{
+    if (res.error)
     {
-        if (res.error)
-        {
-            throw std::runtime_error(res.statusMessage);
-        }
-
-        return ErdGenericApiResponse(res.body);
+        throw std::runtime_error(res.statusMessage);
     }
 
-    nlohmann::json getPayLoad(wrapper::http::Result const &res)
-    {
-        ErdGenericApiResponse response = parse(res);
-        response.checkSuccessfulOperation();
-
-        return response.getData<nlohmann::json>();
-    }
+    return ErdGenericApiResponse(res.body);
 }
 
-ProxyProvider::ProxyProvider(std::string url):
-    m_url(std::move(url)) {}
+nlohmann::json getPayLoad(wrapper::http::Result const &res)
+{
+    ErdGenericApiResponse response = parse(res);
+    response.checkSuccessfulOperation();
+
+    return response.getData<nlohmann::json>();
+}
+}
+
+ProxyProvider::ProxyProvider(std::string url) :
+        m_url(std::move(url))
+{}
 
 Account ProxyProvider::getAccount(Address const &address)
 {
@@ -40,10 +41,10 @@ Account ProxyProvider::getAccount(Address const &address)
     std::string const balance = data["account"]["balance"];
     uint64_t const nonce = data["account"]["nonce"];
 
-    return Account(address, balance, nonce);
+    return Account(address, BigUInt(balance), nonce);
 }
 
-TransactionHash ProxyProvider::send(Transaction const &transaction)
+std::string ProxyProvider::send(Transaction const &transaction)
 {
     wrapper::http::Client client(m_url);
     wrapper::http::Result const result = client.post("/transaction/send", transaction.serialize(), wrapper::http::applicationJson);
@@ -51,10 +52,7 @@ TransactionHash ProxyProvider::send(Transaction const &transaction)
     auto data = internal::getPayLoad(result);
 
     utility::requireAttribute(data, "txHash");
-
-    std::string const txHash = data["txHash"];
-
-    return TransactionHash{txHash};
+    return data["txHash"];
 }
 
 TransactionStatus ProxyProvider::getTransactionStatus(std::string const &txHash)
@@ -71,7 +69,7 @@ TransactionStatus ProxyProvider::getTransactionStatus(std::string const &txHash)
     return TransactionStatus(txStatus);
 }
 
-std::string ProxyProvider::getESDTTokenBalance(Address const &address, std::string const &token) const
+BigUInt ProxyProvider::getESDTBalance(Address const &address, std::string const &token) const
 {
     wrapper::http::Client client(m_url);
     wrapper::http::Result const result = client.get("/address/" + address.getBech32Address() + "/esdt/" + token);
@@ -83,10 +81,10 @@ std::string ProxyProvider::getESDTTokenBalance(Address const &address, std::stri
 
     std::string balance = data["tokenData"]["balance"];
 
-    return balance;
+    return BigUInt(balance);
 }
 
-std::map<std::string, std::string> ProxyProvider::getAllESDTTokenBalances(Address const &address) const
+std::map<std::string, BigUInt> ProxyProvider::getAllESDTBalances(Address const &address) const
 {
     wrapper::http::Client client(m_url);
     wrapper::http::Result const result = client.get("/address/" + address.getBech32Address() + "/esdt");
@@ -97,18 +95,41 @@ std::map<std::string, std::string> ProxyProvider::getAllESDTTokenBalances(Addres
 
     auto esdts = data["esdts"];
 
-    std::map<std::string, std::string> ret;
+    std::map<std::string, BigUInt> ret;
     std::string esdt;
     std::string balance;
 
-    for (const auto& it : esdts.items())
+    for (const auto &it: esdts.items())
     {
         utility::requireAttribute(it.value(), "balance");
 
         esdt = it.key();
         balance = it.value()["balance"];
-        ret[esdt] = balance;
+        ret.emplace(esdt, BigUInt(balance));
     }
 
     return ret;
 }
+
+NetworkConfig ProxyProvider::getNetworkConfig() const
+{
+    wrapper::http::Client client(m_url);
+    wrapper::http::Result const result = client.get("/network/config");
+
+    auto data = internal::getPayLoad(result);
+
+    utility::requireAttribute(data, "config");
+    utility::requireAttribute(data["config"], "erd_chain_id");
+    utility::requireAttribute(data["config"], "erd_gas_per_data_byte");
+    utility::requireAttribute(data["config"], "erd_min_gas_limit");
+    utility::requireAttribute(data["config"], "erd_min_gas_price");
+
+    NetworkConfig cfg;
+    cfg.chainId = data["config"]["erd_chain_id"];
+    cfg.gasPerDataByte = data["config"]["erd_gas_per_data_byte"];
+    cfg.minGasLimit = data["config"]["erd_min_gas_limit"];
+    cfg.minGasPrice = data["config"]["erd_min_gas_price"];
+
+    return cfg;
+}
+

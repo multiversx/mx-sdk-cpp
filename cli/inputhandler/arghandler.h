@@ -12,7 +12,8 @@ enum RequestType
     help,
     createSignedTransaction,
     issueESDT,
-    transferESDT
+    transferESDT,
+    setNetworkConfig
 };
 
 struct ArgParsedResult

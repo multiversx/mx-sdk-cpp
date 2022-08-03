@@ -1,5 +1,6 @@
 #include "bits.h"
 #include "errors.h"
+#include "stdexcept"
 
 namespace util
 {

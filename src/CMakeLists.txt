@@ -4,8 +4,15 @@ file(GLOB src
         transaction/transaction.cpp
         transaction/signer.cpp
         transaction/messagesigner.cpp
-        transaction/scarguments.cpp
         transaction/esdt.cpp
+        transaction/gas_estimator.cpp
+        transaction/token_payment.cpp
+        transaction/payload_builder.cpp
+        transaction/itransaction_builder.cpp
+        transaction/transaction_builders.cpp
+        transaction/transaction_factory.cpp
+        smartcontracts/sc_arguments.cpp
+        smartcontracts/contract_call.cpp
         internal/biguint.cpp
         account/account.cpp
         account/address.cpp
@@ -18,12 +25,14 @@ file(GLOB src
         provider/apiresponse.h
         provider/proxyprovider.cpp
         provider/data/data_transaction.cpp
+        provider/data/networkconfig.cpp
         )
 
 include_directories(utils)
 include_directories(wrappers)
 
-add_library(src ${src})
+option(BUILD_SHARED_LIBS ON)
+add_library(src SHARED ${src})
 
 target_link_libraries(src PUBLIC utils)
 target_link_libraries(src PUBLIC external)
@@ -36,5 +45,3 @@ target_link_libraries(src PUBLIC
 target_compile_definitions(src PUBLIC
         $<$<BOOL:${HTTPLIB_IS_USING_OPENSSL}>:CPPHTTPLIB_OPENSSL_SUPPORT>
         )
-	
-

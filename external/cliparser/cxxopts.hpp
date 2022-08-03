@@ -1,13 +1,17 @@
 /*
+
 Copyright (c) 2014, 2015, 2016, 2017 Jarryd Beck
+
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 copies of the Software, and to permit persons to whom the Software is
 furnished to do so, subject to the following conditions:
+
 The above copyright notice and this permission notice shall be included in
 all copies or substantial portions of the Software.
+
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -15,6 +19,7 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
+
 */
 
 #ifndef CXXOPTS_HPP_INCLUDED
@@ -46,9 +51,14 @@ THE SOFTWARE.
 #  include <regex>
 #endif  // CXXOPTS_NO_REGEX
 
-#ifdef __cpp_lib_optional
-#include <optional>
-#define CXXOPTS_HAS_OPTIONAL
+// Nonstandard before C++17, which is coincidentally what we also need for <optional>
+#ifdef __has_include
+#  if __has_include(<optional>)
+#    include <optional>
+#    ifdef __cpp_lib_optional
+#      define CXXOPTS_HAS_OPTIONAL
+#    endif
+#  endif
 #endif
 
 #if __cplusplus >= 201603L
@@ -969,6 +979,12 @@ namespace cxxopts
     void
     parse_value(const std::string& text, std::vector<T>& value)
     {
+      if (text.empty()) {
+        T v;
+        parse_value(text, v);
+        value.emplace_back(std::move(v));
+        return;
+      }
       std::stringstream in(text);
       std::string token;
       while(!in.eof() && std::getline(in, token, CXXOPTS_VECTOR_DELIMITER)) {
@@ -1350,7 +1366,7 @@ namespace cxxopts
     {
       return m_count;
     }
-    
+
 #if defined(CXXOPTS_NULL_DEREF_IGNORE)
 #pragma GCC diagnostic pop
 #endif
@@ -2227,6 +2243,7 @@ OptionParser::parse(int argc, const char* const* argv)
           {
             if (m_allow_unrecognised)
             {
+              unmatched.push_back(std::string("-") + s[i]);
               continue;
             }
             //error

@@ -94,6 +94,11 @@ ArgParsedResult ArgHandler::parse(int const &argc, char *const argv[])
         helpMsg = m_options.esdt().help();
         reqType = help;
     }
+    else if (isCmd("network") && isSubCmdHelp() && argc == 3)
+    {
+        helpMsg = m_options.network().help();
+        reqType = help;
+    }
     else if (isCmd("transaction") && isSubCmd("new") &&
              canParse(argc, argv, m_options.transaction()))
     {
@@ -108,6 +113,11 @@ ArgParsedResult ArgHandler::parse(int const &argc, char *const argv[])
              canParse(argc, argv, m_options.esdt().transfer()))
     {
         reqType = transferESDT;
+    }
+    else if (isCmd("network") && isSubCmd("set") &&
+             canParse(argc, argv, m_options.network()))
+    {
+        reqType = setNetworkConfig;
     }
 
     return ArgParsedResult {reqType, helpMsg, m_result};

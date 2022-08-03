@@ -1,4 +1,4 @@
-#include "transaction/scarguments.h"
+#include "smartcontracts/sc_arguments.h"
 
 #include "hex.h"
 
