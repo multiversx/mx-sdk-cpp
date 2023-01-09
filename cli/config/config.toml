@@ -3,15 +3,15 @@ CLIConfig = "Testnet"
 
 [Mainnet]
 ChainID = "1"
-ProxyUrl = "https://gateway.elrond.com"
+ProxyUrl = "https://gateway.multiversx.com"
 
 [Testnet]
 ChainID = "T"
-ProxyUrl = "https://testnet-gateway.elrond.com"
+ProxyUrl = "https://testnet-gateway.multiversx.com"
    
 [Devnet]
 ChainID = "D"
-ProxyUrl = "https://devnet-gateway.elrond.com"
+ProxyUrl = "https://devnet-gateway.multiversx.com"
 
 [Local]
 ChainID = "local-testnet"

@@ -5,10 +5,10 @@
 #include "transaction/transaction.h"
 
 // Most tests for signing and transaction construction are adapted from one of the following sources:
-// ERD-JS: https://github.com/ElrondNetwork/elrond-sdk-erdjs/blob/bb926b029150d7c79f2b37308f4334f98a4cabf7/src/testutils/wallets.ts#L110
-//         https://github.com/ElrondNetwork/elrond-sdk-erdjs/blob/main/src/walletcore/users.spec.ts#L120
-// ERD-PY: https://github.com/ElrondNetwork/elrond-sdk-erdpy/blob/main/erdpy/tests/test_wallet.py
-// ERD-GO: https://github.com/ElrondNetwork/elrond-go/blob/master/examples/construction_test.go
+// ERD-JS: https://github.com/multiversx/mx-sdk-erdjs/blob/bb926b029150d7c79f2b37308f4334f98a4cabf7/src/testutils/wallets.ts#L110
+//         https://github.com/multiversx/mx-sdk-erdjs/blob/main/src/walletcore/users.spec.ts#L120
+// ERD-PY: https://github.com/multiversx/mx-sdk-erdpy/blob/main/erdpy/tests/test_wallet.py
+// ERD-GO: https://github.com/multiversx/mx-chain-go/blob/master/examples/construction_test.go
 
 struct signSerializedTxData
 {

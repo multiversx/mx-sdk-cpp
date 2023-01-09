@@ -1,6 +1,6 @@
 #include <utility>
 
-// This file is an adaptation from https://github.com/ElrondNetwork/elrond-sdk-erdjs/blob/main/src/gasEstimator.ts
+// This file is an adaptation from https://github.com/multiversx/mx-sdk-erdjs/blob/main/src/gasEstimator.ts
 #include "transaction/gas_estimator.h"
 
 // Additional gas to account for eventual increases in gas requirements (thus avoid fast-breaking changes in clients of erd-cpp).

@@ -124,10 +124,10 @@ TEST_F(OrderedJsonFixture, serialize_empty)
 }
 
 // Most tests for crypto library are adapted from one of the following sources:
-// ERDJS: https://github.com/ElrondNetwork/elrond-sdk-erdjs/blob/bb926b029150d7c79f2b37308f4334f98a4cabf7/src/testutils/wallets.ts#L110
-//        https://github.com/ElrondNetwork/elrond-sdk-erdjs/blob/main/src/walletcore/users.spec.ts#L120
-// ERDPY: https://github.com/ElrondNetwork/elrond-sdk-erdpy/blob/main/erdpy/tests/test_wallet.py
-// ERDGO: https://github.com/ElrondNetwork/elrond-go/blob/master/examples/construction_test.go
+// ERDJS: https://github.com/multiversx/mx-sdk-erdjs/blob/bb926b029150d7c79f2b37308f4334f98a4cabf7/src/testutils/wallets.ts#L110
+//        https://github.com/multiversx/mx-sdk-erdjs/blob/main/src/walletcore/users.spec.ts#L120
+// ERDPY: https://github.com/multiversx/mx-sdk-erdpy/blob/main/erdpy/tests/test_wallet.py
+// ERDGO: https://github.com/multiversx/mx-chain-go/blob/master/examples/construction_test.go
 TEST(CryptoWrapper, getSecretKey)
 {
     bytes const seed = util::hexToBytes("e253a571ca153dc2aee845819f74bcc9773b0586edead15a94cb7235a5027436");

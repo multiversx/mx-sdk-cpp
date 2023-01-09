@@ -1,7 +1,7 @@
 #ifndef ERD_PAYLOAD_BUILDER_H
 #define ERD_PAYLOAD_BUILDER_H
 
-// This file is an adaptation from https://github.com/ElrondNetwork/elrond-sdk-erdjs/blob/main/src/tokenTransferBuilders.ts
+// This file is an adaptation from https://github.com/multiversx/mx-sdk-erdjs/blob/main/src/tokenTransferBuilders.ts
 
 #include "esdt.h"
 #include "account/address.h"

@@ -2,10 +2,10 @@ CURRENT_DIR=$(pwd)
 WORKING_DIR="$CURRENT_DIR"/../..
 TESTNET_DIR=$WORKING_DIR/testnet
 TESTNET_OUTPUT_DIR=$TESTNET_DIR/testnet-local
-SCRIPTS_DIR=elrond-go/scripts/testnet
+SCRIPTS_DIR=mx-chain-go/scripts/testnet
 VARIABLES_PATH=$SCRIPTS_DIR/variables.sh
-ENABLE_EPOCH_DIR=$TESTNET_DIR/elrond-go/cmd/node/config/enableEpochs.toml
-SYSTEM_SC_CONFIG_DIR=$TESTNET_DIR/elrond-go/cmd/node/config/systemSmartContractsConfig.toml
+ENABLE_EPOCH_DIR=$TESTNET_DIR/mx-chain-go/cmd/node/config/enableEpochs.toml
+SYSTEM_SC_CONFIG_DIR=$TESTNET_DIR/mx-chain-go/cmd/node/config/systemSmartContractsConfig.toml
 SANDBOX_NAME=sandbox
 
 cloneDependencies(){
@@ -15,9 +15,9 @@ cloneDependencies(){
 
   mkdir "$TESTNET_DIR"
 
-  git clone https://github.com/ElrondNetwork/elrond-go "$TESTNET_DIR/elrond-go"
-  git clone https://github.com/ElrondNetwork/elrond-deploy-go "$TESTNET_DIR/elrond-deploy-go"
-  git clone https://github.com/ElrondNetwork/elrond-proxy-go "$TESTNET_DIR/elrond-proxy-go"
+  git clone https://github.com/multiversx/mx-chain-go "$TESTNET_DIR/mx-chain-go"
+  git clone https://github.com/multiversx/mx-chain-deploy-go "$TESTNET_DIR/mx-chain-deploy-go"
+  git clone https://github.com/multiversx/mx-chain-proxy-go "$TESTNET_DIR/mx-chain-proxy-go"
 }
 
 testnetRemove(){
@@ -37,9 +37,9 @@ testnetSetup(){
 
   mkdir "$TESTNET_OUTPUT_DIR"
   cd "$TESTNET_OUTPUT_DIR" && \
-    (ln -s "$TESTNET_DIR"/elrond-go elrond-go && \
-    ln -s "$TESTNET_DIR"/elrond-deploy-go elrond-deploy-go && \
-    ln -s "$TESTNET_DIR"/elrond-proxy-go elrond-proxy-go)
+    (ln -s "$TESTNET_DIR"/mx-chain-go mx-chain-go && \
+    ln -s "$TESTNET_DIR"/mx-chain-deploy-go mx-chain-deploy-go && \
+    ln -s "$TESTNET_DIR"/mx-chain-proxy-go mx-chain-proxy-go)
 }
 
 testnetPrereq(){
@@ -69,12 +69,12 @@ testnetNew(){
 
 testnetStart(){
   cd "$TESTNET_DIR" && \
-    ./elrond-go/scripts/testnet/start.sh trace
+    ./mx-chain-go/scripts/testnet/start.sh trace
 }
 
 testnetStop(){
   cd "$TESTNET_DIR" && \
-    ./elrond-go/scripts/testnet/stop.sh
+    ./mx-chain-go/scripts/testnet/stop.sh
 }
 
 echoOptions(){
