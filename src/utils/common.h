@@ -31,9 +31,9 @@ inline std::string getCanonicalRootPath(std::string const &path)
     // Get absolute path to executable
     std::string canonicalPath = std::string(canonicalize_file_name("/proc/self/exe"));
 
-    // Remove everything in path until elrond-sdk-erdcpp directory and concatenate it with the path
-    // Use rfind because github action runs into elrond-sdk-erdcpp/elrond-sdk-erdcpp folder
-    auto const pos = canonicalPath.rfind("elrond-sdk-erdcpp");
+    // Remove everything in path until mx-sdk-erdcpp directory and concatenate it with the path
+    // Use rfind because github action runs into mx-sdk-erdcpp/mx-sdk-erdcpp folder
+    auto const pos = canonicalPath.rfind("mx-sdk-erdcpp");
     canonicalPath = canonicalPath.substr(0, pos);
     return canonicalPath + path;
 }
