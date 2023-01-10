@@ -1,8 +1,7 @@
 
 # mx-sdk-erdcpp
 
-MultiversX C++ Command Line Tools and SDK for interacting with the MultiversX Network (in general) and Smart Contracts (in
-particular).
+MultiversX C++ Command Line Tools and SDK for interacting with the MultiversX blockchain.
 
 ## 1. Installation. How to use it
 ```bash
