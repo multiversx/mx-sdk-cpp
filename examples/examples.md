@@ -151,7 +151,7 @@ catch (std::length_error const &err)
 ```c++
 try
 {
-    ProxyProvider proxy("https://testnet-gateway.elrond.com");
+    ProxyProvider proxy("https://testnet-gateway.multiversx.com");
     Address const address("erd1qq...");
     Account const account = proxy.getAccount(address);
 }
@@ -235,7 +235,7 @@ std::string data = MultiESDTNFTTransferPayloadBuilder()
 try
 {
     // Create a transaction factory to build different transaction types
-    ProxyProvider proxy("https://gateway.elrond.com");
+    ProxyProvider proxy("https://gateway.multiversx.com");
     NetworkConfig networkConfig = proxy.getNetworkConfig();
     TransactionFactory transactionFactory(networkConfig);
     

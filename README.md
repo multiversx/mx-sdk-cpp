@@ -1,7 +1,7 @@
 
-# elrond-sdk-erdcpp
+# mx-sdk-erdcpp
 
-Elrond C++ Command Line Tools and SDK for interacting with the Elrond Network (in general) and Smart Contracts (in
+MultiversX C++ Command Line Tools and SDK for interacting with the MultiversX Network (in general) and Smart Contracts (in
 particular).
 
 ## 1. Installation. How to use it
@@ -55,7 +55,7 @@ A quick look into an ESDT transfer:
     bytes mySeed = myWallet.getSeed();
 
     // Get updated account from proxy
-    ProxyProvider proxy("https://gateway.elrond.com");
+    ProxyProvider proxy("https://gateway.multiversx.com");
     Account myAccount = proxy.getAccount(myAddress);
 
     // Create a transaction factory, which helps you easily build signed/unsigned transactions
