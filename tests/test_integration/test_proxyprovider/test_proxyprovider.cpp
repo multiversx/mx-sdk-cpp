@@ -8,7 +8,7 @@
 #include "transaction/transaction_factory.h"
 
 #define LOCAL_PROXY_URL std::string("http://127.0.0.1:7950")
-#define PEM_PATH util::getCanonicalRootPath("testnet/testnet-local/sandbox/node/config/walletKey.pem")
+#define PEM_PATH util::getCanonicalRootPath("mx-sdk-cpp/testnet/testnet-local/sandbox/node/config/walletKey.pem")
 #define TIME_INTRA_SHARD_EXECUTION 6
 #define TIME_CROSS_SHARD_EXECUTION 18
 #define INTRA_SHARD true
@@ -168,15 +168,41 @@ TEST_F(LocalTestnetProxyProviderTxFixture, getAccount)
 
 TEST_F(LocalTestnetProxyProviderTxFixture, getESDTokenBalance_invalidToken)
 {
-    BigUInt balance = m_proxy.getESDTBalance(m_senderAddr, "this esdt does not exist");
-    EXPECT_TRUE(balance == DEFAULT_BALANCE);
+    EXPECT_THROW({
+        try
+        {
+            BigUInt balance = m_proxy.getESDTBalance(m_senderAddr, "this esdt does not exist");
+        }
+        catch (const std::runtime_error &e)
+        {
+            std::string const errDescription = e.what();
+
+            EXPECT_TRUE(errDescription.find(ERROR_MSG_HTTP_REQUEST_FAILED) != std::string::npos);
+            EXPECT_TRUE(errDescription.find(ERROR_MSG_REASON) != std::string::npos);
+            EXPECT_TRUE(errDescription.find("not found") != std::string::npos);
+            throw;
+        }
+    }, std::runtime_error);
 }
 
 TEST_F(LocalTestnetProxyProviderTxFixture, getAllESDTokenBalances_noTokens)
 {
-    Address const address("erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqplllst77y4l");
-    auto const esdts = m_proxy.getAllESDTBalances(address);
-    EXPECT_TRUE(esdts.empty());
+    EXPECT_THROW({
+                     try
+                     {
+                         Address const address("erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqplllst77y4l");
+                         auto const esdts = m_proxy.getAllESDTBalances(address);
+                     }
+                     catch (const std::runtime_error &e)
+                     {
+                         std::string const errDescription = e.what();
+
+                         EXPECT_TRUE(errDescription.find(ERROR_MSG_HTTP_REQUEST_FAILED) != std::string::npos);
+                         EXPECT_TRUE(errDescription.find(ERROR_MSG_REASON) != std::string::npos);
+                         EXPECT_TRUE(errDescription.find("not found") != std::string::npos);
+                         throw;
+                     }
+                 }, std::runtime_error);
 }
 
 TEST_F(LocalTestnetProxyProviderTxFixture, getTransactionStatus_invalidHash)

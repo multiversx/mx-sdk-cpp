@@ -34,10 +34,10 @@ jobs:
         run: cmake --build .
 
       - name: Integration Tests - new testnet
-        run: cd scripts && sudo /bin/bash local-testnet.sh new
+        run: /bin/bash scripts/local-testnet.sh new
 
       - name: Integration Tests - start testnet
-        run: cd scripts && /bin/bash local-testnet.sh start
+        run: /bin/bash scripts/local-testnet.sh start
 
       - name: IntegrationTests - run tests
         run: ./scripts/integration-tests.sh
