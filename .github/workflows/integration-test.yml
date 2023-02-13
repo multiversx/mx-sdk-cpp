@@ -43,4 +43,4 @@ jobs:
         run: ./scripts/integration-tests.sh
 
       - name: Integration Tests - stop testnet
-        run: cd scripts && /bin/bash local-testnet.sh stop
+        run: /bin/bash scripts/local-testnet.sh stop
