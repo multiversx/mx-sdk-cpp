@@ -4,8 +4,11 @@ TESTNET_DIR=$WORKING_DIR/testnet
 TESTNET_OUTPUT_DIR=$TESTNET_DIR/testnet-local
 SCRIPTS_DIR=mx-chain-go/scripts/testnet
 VARIABLES_PATH=$SCRIPTS_DIR/variables.sh
+OBSERVERS_PATH=$SCRIPTS_DIR/include/observers.sh
+VALIDATORS_PATH=$SCRIPTS_DIR/include/validators.sh
 ENABLE_EPOCH_DIR=$TESTNET_DIR/mx-chain-go/cmd/node/config/enableEpochs.toml
 SYSTEM_SC_CONFIG_DIR=$TESTNET_DIR/mx-chain-go/cmd/node/config/systemSmartContractsConfig.toml
+CONFIG_TOML_DIR=$TESTNET_DIR/mx-chain-go/cmd/node/config/config.toml
 SANDBOX_NAME=sandbox
 
 cloneDependencies(){
@@ -39,7 +42,13 @@ testnetSetup(){
   sed -i 's/ESDTTransferRoleEnableEpoch =.*/ESDTTransferRoleEnableEpoch = 0/' "$ENABLE_EPOCH_DIR"
   sed -i 's/MetaESDTSetEnableEpoch =.*/MetaESDTSetEnableEpoch = 0/' "$ENABLE_EPOCH_DIR"
   sed -i 's/ESDTRegisterAndSetAllRolesEnableEpoch =.*/ESDTRegisterAndSetAllRolesEnableEpoch = 0/' "$ENABLE_EPOCH_DIR"
-  sed -i 's/ESDTRegisterAndSetAllRolesEnableEpoch =.*/ESDTRegisterAndSetAllRolesEnableEpoch = 0/' "$ENABLE_EPOCH_DIR"
+  sed -i 's/CheckCorrectTokenIDForTransferRoleEnableEpoch =.*/CheckCorrectTokenIDForTransferRoleEnableEpoch = 0/' "$ENABLE_EPOCH_DIR"
+  sed -i 's/ESDTNFTCreateOnMultiShardEnableEpoch =.*/ESDTNFTCreateOnMultiShardEnableEpoch = 0/' "$ENABLE_EPOCH_DIR"
+  sed -i 's/MultiESDTTransferFixOnCallBackOnEnableEpoch =.*/MultiESDTTransferFixOnCallBackOnEnableEpoch = 0/' "$ENABLE_EPOCH_DIR"
+
+  sed -i 's/MinRoundsBetweenEpochs =.*/MinRoundsBetweenEpochs = 20/' "$CONFIG_TOML_DIR"
+  sed -i 's/RoundsPerEpoch .*/RoundsPerEpoch = 20/' "$CONFIG_TOML_DIR"
+
   sed -i 's/BaseIssuingCost =.*/BaseIssuingCost = "50000000000000000"/' "$SYSTEM_SC_CONFIG_DIR"
 
   mkdir "$TESTNET_OUTPUT_DIR"
@@ -64,6 +73,10 @@ testnetUpdateVariables(){
   sed -i 's/META_VALIDATORCOUNT=.*/META_VALIDATORCOUNT=1/' $VARIABLES_PATH
   sed -i 's/META_OBSERVERCOUNT=.*/META_OBSERVERCOUNT=1/' $VARIABLES_PATH
   sed -i 's/META_CONSENSUS_SIZE=.*/META_CONSENSUS_SIZE=$META_VALIDATORCOUNT/' $VARIABLES_PATH
+  sed -i 's/export NODE_DELAY=.*/export NODE_DELAY=30/' $VARIABLES_PATH
+
+  sed -i 's/EXTRA_OBSERVERS_FLAGS.*/EXTRA_OBSERVERS_FLAGS --operation-mode db-lookup-extension"/' $OBSERVERS_PATH
+  sed -i 's/config_validator.toml/config_validator.toml --operation-mode db-lookup-extension/' $VALIDATORS_PATH
 }
 
 testnetNew(){
@@ -81,7 +94,7 @@ testnetReset(){
 
 testnetStart(){
   cd "$TESTNET_DIR" && \
-    ./mx-chain-go/scripts/testnet/start.sh trace
+    ./mx-chain-go/scripts/testnet/start.sh
 }
 
 testnetStop(){
@@ -93,6 +106,7 @@ echoOptions(){
   echo "ERROR!!! Please choose one of the following parameters:
   - new to create a new testnet
   - start to start the testnet
+  - reset to reset the testnet
   - stop to stop the testnet"
 }
 

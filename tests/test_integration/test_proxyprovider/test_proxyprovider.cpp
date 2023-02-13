@@ -9,6 +9,8 @@
 
 #define LOCAL_PROXY_URL std::string("http://127.0.0.1:7950")
 #define PEM_PATH util::getCanonicalRootPath("mx-sdk-cpp/testnet/testnet-local/sandbox/node/config/walletKey.pem")
+#define ROUNDS_IN_EPOCH 20
+#define ROUND_TIME 6
 #define TIME_INTRA_SHARD_EXECUTION 6
 #define TIME_CROSS_SHARD_EXECUTION 18
 #define INTRA_SHARD true
@@ -310,6 +312,8 @@ TEST_F(LocalTestnetProxyProviderTxFixture, send_validTx_signedHashedTx_moveBalan
 
 TEST_F(LocalTestnetProxyProviderTxFixture, esdt_issue_transfer_getESDTBalance)
 {
+    wait(ROUND_TIME * ROUNDS_IN_EPOCH);
+
     issueESDT("Alice", "ALC", BigUInt(123), 0);
     issueESDT("Bob", "BOB", BigUInt(321), 0, ESDTProperties{
             .canFreeze = true,
