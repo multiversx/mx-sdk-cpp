@@ -387,11 +387,11 @@ TEST(HandleSetNetworkConfig, setCLIConfig)
 
     setCLIConfig(Mainnet);
     EXPECT_EQ(cliConfig.config().chainID, "1");
-    EXPECT_EQ(cliConfig.config().proxyUrl, "https://gateway.elrond.com");
+    EXPECT_EQ(cliConfig.config().proxyUrl, "https://gateway.multiversx.com");
 
     setCLIConfig(Devnet);
     EXPECT_EQ(cliConfig.config().chainID, "D");
-    EXPECT_EQ(cliConfig.config().proxyUrl, "https://devnet-gateway.elrond.com");
+    EXPECT_EQ(cliConfig.config().proxyUrl, "https://devnet-gateway.multiversx.com");
 
     setCLIConfig(Local);
     EXPECT_EQ(cliConfig.config().chainID, "local-testnet");
@@ -400,7 +400,7 @@ TEST(HandleSetNetworkConfig, setCLIConfig)
     // A bit hackish: set Testnet last one, leaving config.toml as it is, so it doesn't show as changed file in git
     setCLIConfig(Testnet);
     EXPECT_EQ(cliConfig.config().chainID, "T");
-    EXPECT_EQ(cliConfig.config().proxyUrl, "https://testnet-gateway.elrond.com");
+    EXPECT_EQ(cliConfig.config().proxyUrl, "https://testnet-gateway.multiversx.com");
 }
 
 //TODO: Create CMake function to automatically run all tests

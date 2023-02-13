@@ -26,7 +26,7 @@ struct Config
 class CLIConfig
 {
 public:
-    explicit CLIConfig(std::string const &tomlConfigPath = "mx-sdk-erdcpp/cli/config/config.toml");
+    explicit CLIConfig(std::string const &tomlConfigPath = "mx-sdk-cpp/cli/config/config.toml");
 
     Config config() const;
 

@@ -3,7 +3,7 @@
 #include "utils/hex.h"
 #include "transaction/messagesigner.h"
 
-// See also: https://github.com/ElrondNetwork/elrond-go/blob/7d133422048b7e65f0a8730cfdd1fff9d51077e9/examples/messageSign_test.go
+// See also: https://github.com/multiversx/mx-chain-go/blob/7d133422048b7e65f0a8730cfdd1fff9d51077e9/examples/messageSign_test.go
 
 TEST(MessageSigner, getSignature_verify)
 {
