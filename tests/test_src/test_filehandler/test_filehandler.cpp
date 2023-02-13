@@ -145,7 +145,7 @@ TEST_F(KeyFileReaderConstructorFixture, invalidContent)
 }
 
 // These tests are adapted from :
-// https://github.com/multiversx/mx-sdk-erdjs/blob/main/src/testutils/wallets.ts
+// https://github.com/multiversx/mx-sdk-js-core/blob/main/src/testutils/wallets.ts
 TEST(KeyFileReader, getAddress_getSeed_differentFiles)
 {
     KeyFileReader aliceKeyFile(getCanonicalTestDataPath("aliceKeyFile.json"), "password");

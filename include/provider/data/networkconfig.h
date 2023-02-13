@@ -5,7 +5,7 @@
 
 // A "NetworkConfig" object holds the network parameters relevant to creating transactions (e.g. minimum gas limit, minimum gas price).
 // The following fields can (should) be fetched from https://api.multiversx.com/network/config.
-// Also, see https://github.com/trustwallet/wallet-core/blob/master/src/Elrond/NetworkConfig.h
+// Also, see https://github.com/trustwallet/wallet-core/blob/master/src/MultiversX/NetworkConfig.h
 struct NetworkConfig
 {
     std::string chainId;

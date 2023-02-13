@@ -124,10 +124,10 @@ TEST_F(OrderedJsonFixture, serialize_empty)
 }
 
 // Most tests for crypto library are adapted from one of the following sources:
-// ERDJS: https://github.com/multiversx/mx-sdk-erdjs/blob/bb926b029150d7c79f2b37308f4334f98a4cabf7/src/testutils/wallets.ts#L110
-//        https://github.com/multiversx/mx-sdk-erdjs/blob/main/src/walletcore/users.spec.ts#L120
-// ERDPY: https://github.com/multiversx/mx-sdk-erdpy/blob/main/erdpy/tests/test_wallet.py
-// ERDGO: https://github.com/multiversx/mx-chain-go/blob/master/examples/construction_test.go
+// - MX-SDK-JS:   https://github.com/multiversx/mx-sdk-js-core/blob/bb926b029150d7c79f2b37308f4334f98a4cabf7/src/testutils/wallets.ts#L110
+//                https://github.com/multiversx/mx-sdk-js-core/blob/bb926b029150d7c79f2b37308f4334f98a4cabf7/src/walletcore/users.spec.ts#L120
+// - MX-SDK-PY:   https://github.com/multiversx/mx-sdk-py-cli/blob/main/multiversx_sdk_cli/tests/test_wallet.py
+// - MX-CHAIN-GO: https://github.com/multiversx/mx-chain-go/blob/master/examples/construction_test.go
 TEST(CryptoWrapper, getSecretKey)
 {
     bytes const seed = util::hexToBytes("e253a571ca153dc2aee845819f74bcc9773b0586edead15a94cb7235a5027436");

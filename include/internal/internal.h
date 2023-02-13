@@ -11,7 +11,7 @@
 
 typedef std::vector<uint8_t> bytes;
 
-// See also https://github.com/multiversx/mx-sdk-erdjs/blob/main/src/crypto/derivationParams.ts
+// See also https://github.com/multiversx/mx-sdk-js-wallet/blob/884226cdd9dc9621aba18218f024d7b4f76b26dc/src/crypto/derivationParams.ts
 struct KdfParams
 {
     uint32_t dklen = 32;
@@ -21,7 +21,7 @@ struct KdfParams
     std::string salt;
 };
 
-// See also https://github.com/multiversx/mx-sdk-erdjs/blob/main/src/crypto/encryptedData.ts
+// See also https://github.com/multiversx/mx-sdk-js-wallet/blob/884226cdd9dc9621aba18218f024d7b4f76b26dc/src/crypto/encryptedData.ts
 struct EncryptedData
 {
     uint32_t version;
