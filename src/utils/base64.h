@@ -1,5 +1,5 @@
-#ifndef ERD_BASE64_H
-#define ERD_BASE64_H
+#ifndef MX_BASE64_H
+#define MX_BASE64_H
 
 #include <string>
 

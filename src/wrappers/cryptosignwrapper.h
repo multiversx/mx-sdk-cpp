@@ -1,5 +1,5 @@
-#ifndef ERD_WRAPPER_CRYPTO_SIGN_H
-#define ERD_WRAPPER_CRYPTO_SIGN_H
+#ifndef MX_WRAPPER_CRYPTO_SIGN_H
+#define MX_WRAPPER_CRYPTO_SIGN_H
 
 #include <string>
 

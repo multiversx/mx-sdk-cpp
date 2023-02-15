@@ -1,5 +1,5 @@
-#ifndef ERD_ACCOUNT_H
-#define ERD_ACCOUNT_H
+#ifndef MX_ACCOUNT_H
+#define MX_ACCOUNT_H
 
 #include "address.h"
 #include "internal/biguint.h"
@@ -32,4 +32,4 @@ private:
 };
 
 
-#endif //ERD_ACCOUNT_H
+#endif //MX_ACCOUNT_H

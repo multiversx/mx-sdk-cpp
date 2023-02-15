@@ -1,6 +1,6 @@
 #include "cli_handler.h"
 #include "cli_utility.h"
-#include "erdsdk.h"
+#include "mxsdk.h"
 #include "config/cliconfig.h"
 #include "secretkeyprovider.h"
 

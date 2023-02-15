@@ -1,5 +1,5 @@
-#ifndef ERD_BIG_UINT_H
-#define ERD_BIG_UINT_H
+#ifndef MX_BIG_UINT_H
+#define MX_BIG_UINT_H
 
 #include <string>
 
@@ -34,4 +34,4 @@ private:
     std::string m_value;
 };
 
-#endif //ERD_BIG_UINT_H
+#endif //MX_BIG_UINT_H

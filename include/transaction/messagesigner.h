@@ -1,5 +1,5 @@
-#ifndef ERD_MESSAGE_SIGNER_H
-#define ERD_MESSAGE_SIGNER_H
+#ifndef MX_MESSAGE_SIGNER_H
+#define MX_MESSAGE_SIGNER_H
 
 #include "transaction/signer.h"
 #include "internal/internal.h"
@@ -23,5 +23,4 @@ public:
     static std::string computeERDPrefixedMsgHash(std::string const &message);
 };
 
-
-#endif //ERD_MESSAGE_SIGNER_H
+#endif //MX_MESSAGE_SIGNER_H

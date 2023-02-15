@@ -14,9 +14,9 @@ set(SOURCE_FILES main.cpp
                  secretkeyprovider.cpp
                  config/cliconfig.cpp )
                  
-add_executable(erdcpp ${HEADER_FILES}
+add_executable(mxcpp ${HEADER_FILES}
                       ${SOURCE_FILES})
 
-target_link_libraries(erdcpp PUBLIC inputhandler)
-target_link_libraries(erdcpp PUBLIC src)
+target_link_libraries(mxcpp PUBLIC inputhandler)
+target_link_libraries(mxcpp PUBLIC src)
 

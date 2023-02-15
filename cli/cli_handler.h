@@ -1,5 +1,5 @@
-#ifndef ERD_CLI_HANDLER_H
-#define ERD_CLI_HANDLER_H
+#ifndef MX_CLI_HANDLER_H
+#define MX_CLI_HANDLER_H
 
 #include "inputhandler/ext.h"
 

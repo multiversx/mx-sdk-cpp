@@ -1,5 +1,5 @@
-#ifndef ERD_ITRANSACTION_BUILDER_H
-#define ERD_ITRANSACTION_BUILDER_H
+#ifndef MX_ITRANSACTION_BUILDER_H
+#define MX_ITRANSACTION_BUILDER_H
 
 #include "transaction.h"
 #include "filehandler/isecretkey.h"
@@ -36,4 +36,4 @@ protected:
     ContractCall m_contractCall;
 };
 
-#endif //ERD_ITRANSACTION_BUILDER_H
+#endif //MX_ITRANSACTION_BUILDER_H

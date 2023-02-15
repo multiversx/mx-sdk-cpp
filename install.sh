@@ -41,9 +41,9 @@ cmake --build . || exit 1
 
 echo "Installing sdk..."
 
-sudo cp -r "$CURRENT_DIR/include/" "$INCLUDE_PATH/erdcpp"
+sudo cp -r "$CURRENT_DIR/include/" "$INCLUDE_PATH/mxcpp"
 if [[ $? -ne 0 ]]; then
-  echo "Could not copy include headers from $CURRENT_DIR/include/ to $INCLUDE_PATH/erdcpp"
+  echo "Could not copy include headers from $CURRENT_DIR/include/ to $INCLUDE_PATH/mxcpp"
   exit 1
 fi
 

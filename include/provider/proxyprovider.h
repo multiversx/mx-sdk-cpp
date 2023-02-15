@@ -1,5 +1,5 @@
-#ifndef ERD_PROXY_PROVIDER_H
-#define ERD_PROXY_PROVIDER_H
+#ifndef MX_PROXY_PROVIDER_H
+#define MX_PROXY_PROVIDER_H
 
 #include <map>
 
@@ -29,6 +29,6 @@ private:
     std::string m_url;
 };
 
-#endif //ERD_PROXY_PROVIDER_H
+#endif //MX_PROXY_PROVIDER_H
 
 

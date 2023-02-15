@@ -1,5 +1,5 @@
-#ifndef ERD_WRAPPER_HTTP_H
-#define ERD_WRAPPER_HTTP_H
+#ifndef MX_WRAPPER_HTTP_H
+#define MX_WRAPPER_HTTP_H
 
 #include "http/httplib.h"
 

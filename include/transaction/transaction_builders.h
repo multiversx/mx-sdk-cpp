@@ -1,5 +1,5 @@
-#ifndef ERD_TRANSACTION_BUILDERS_ESDT_H
-#define ERD_TRANSACTION_BUILDERS_ESDT_H
+#ifndef MX_TRANSACTION_BUILDERS_ESDT_H
+#define MX_TRANSACTION_BUILDERS_ESDT_H
 
 #include "token_payment.h"
 #include "itransaction_builder.h"
@@ -71,4 +71,4 @@ private:
     std::vector<TokenPayment> m_tokenPayments;
 };
 
-#endif //ERD_TRANSACTION_BUILDERS_ESDT_H
+#endif //MX_TRANSACTION_BUILDERS_ESDT_H

@@ -1,5 +1,5 @@
-#ifndef ERD_TOKEN_PAYMENT_H
-#define ERD_TOKEN_PAYMENT_H
+#ifndef MX_TOKEN_PAYMENT_H
+#define MX_TOKEN_PAYMENT_H
 
 #include <string>
 #include "internal/biguint.h"
@@ -38,4 +38,4 @@ private:
     uint32_t m_numDecimals;
 };
 
-#endif //ERD_TOKEN_PAYMENT_H
+#endif //MX_TOKEN_PAYMENT_H

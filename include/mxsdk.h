@@ -1,5 +1,5 @@
-#ifndef ERD_SDK_H
-#define ERD_SDK_H
+#ifndef MX_SDK_H
+#define MX_SDK_H
 
 #include "internal/internal.h"
 #include "internal/biguint.h"
@@ -20,4 +20,4 @@
 #include "filehandler/keyfilereader.h"
 #include "provider/proxyprovider.h"
 
-#endif //ERD_SDK_H
+#endif //MX_SDK_H

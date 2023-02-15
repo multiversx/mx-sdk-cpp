@@ -1,5 +1,5 @@
-#ifndef ERD_PROXY_API_RESPONSE_H
-#define ERD_PROXY_API_RESPONSE_H
+#ifndef MX_PROXY_API_RESPONSE_H
+#define MX_PROXY_API_RESPONSE_H
 
 #include <stdexcept>
 
@@ -17,10 +17,10 @@ inline void requireAttribute(nlohmann::json const &data, std::string const &attr
 }
 }
 
-class ErdGenericApiResponse
+class MXGenericApiResponse
 {
 public:
-    explicit ErdGenericApiResponse(std::string const &rawData)
+    explicit MXGenericApiResponse(std::string const &rawData)
     {
         try
         {

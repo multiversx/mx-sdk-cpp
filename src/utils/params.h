@@ -1,5 +1,5 @@
-#ifndef ERD_PARAMS_H
-#define ERD_PARAMS_H
+#ifndef MX_PARAMS_H
+#define MX_PARAMS_H
 
 #include <map>
 #include <string>

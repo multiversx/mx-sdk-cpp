@@ -1,5 +1,5 @@
-#ifndef ERD_GAS_ESTIMATOR_H
-#define ERD_GAS_ESTIMATOR_H
+#ifndef MX_GAS_ESTIMATOR_H
+#define MX_GAS_ESTIMATOR_H
 
 #include "provider/data/networkconfig.h"
 
@@ -20,4 +20,4 @@ private:
     NetworkConfig m_networkConfig;
 };
 
-#endif //ERD_GAS_ESTIMATOR_H
+#endif //MX_GAS_ESTIMATOR_H

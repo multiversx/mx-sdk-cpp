@@ -1,5 +1,5 @@
-#ifndef ERD_CLI_CONFIG_H
-#define ERD_CLI_CONFIG_H
+#ifndef MX_CLI_CONFIG_H
+#define MX_CLI_CONFIG_H
 
 #include <string>
 #include <map>

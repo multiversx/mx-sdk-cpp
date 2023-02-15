@@ -1,5 +1,5 @@
-#ifndef ERD_COMMON_H
-#define ERD_COMMON_H
+#ifndef MX_COMMON_H
+#define MX_COMMON_H
 
 #include "errors.h"
 #include "stdexcept"

@@ -1,5 +1,5 @@
-#ifndef ERD_TRANSACTION_H
-#define ERD_TRANSACTION_H
+#ifndef MX_TRANSACTION_H
+#define MX_TRANSACTION_H
 
 #include "internal/biguint.h"
 #include "account/address.h"
@@ -70,4 +70,4 @@ public:
     std::shared_ptr<uint32_t> m_options;
 };
 
-#endif //ERD_TRANSACTION_H
+#endif //MX_TRANSACTION_H

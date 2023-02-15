@@ -1,5 +1,5 @@
-#ifndef ERD_TRANSACTION_FACTORY_H
-#define ERD_TRANSACTION_FACTORY_H
+#ifndef MX_TRANSACTION_FACTORY_H
+#define MX_TRANSACTION_FACTORY_H
 
 #include "esdt.h"
 #include "gas_estimator.h"
@@ -50,4 +50,4 @@ private:
     GasEstimator m_gasEstimator;
 };
 
-#endif //ERD_TRANSACTION_FACTORY_H
+#endif //MX_TRANSACTION_FACTORY_H

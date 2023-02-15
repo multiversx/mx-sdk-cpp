@@ -1,7 +1,7 @@
-#ifndef ERD_TOML_H
-#define ERD_TOML_H
+#ifndef MX_TOML_H
+#define MX_TOML_H
 
 #include "limits"
 #include "cpptoml.h"
 
-#endif //ERD_TOML_H
+#endif //MX_TOML_H

@@ -1,5 +1,5 @@
-#ifndef ERD_ERRORS_H
-#define ERD_ERRORS_H
+#ifndef MX_ERRORS_H
+#define MX_ERRORS_H
 
 #include <map>
 #include <string>

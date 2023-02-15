@@ -1,5 +1,5 @@
-#ifndef ERD_BITS_H
-#define ERD_BITS_H
+#ifndef MX_BITS_H
+#define MX_BITS_H
 
 #include <vector>
 #include <cstdint>
