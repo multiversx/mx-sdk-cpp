@@ -33,7 +33,7 @@ void setCLIConfig(Network const &network)
     char *argv[argc];
     std::string config = "--config=" + CLIConfig().toString(network);
 
-    argv[0] = (char *) "erdcpp";
+    argv[0] = (char *) "mxcpp";
     argv[1] = (char *) "network";
     argv[2] = (char *) "set";
     argv[3] = (char *) &config[0];
@@ -48,7 +48,7 @@ TEST(ArgHandler, parse_noArgument_expectInvalid)
 {
     int const argc = 1;
     char *argv[argc];
-    argv[0] = (char *) "erdcpp";
+    argv[0] = (char *) "mxcpp";
 
     ih::ArgHandler argHandler;
     auto const res = argHandler.parse(argc, argv);
@@ -62,7 +62,7 @@ TEST(ArgHandler, parse_randomArgs_expectInvalid)
 {
     int const argc = 3;
     char *argv[argc];
-    argv[0] = (char *) "erdcpp";
+    argv[0] = (char *) "mxcpp";
     argv[1] = (char *) "dsa";
     argv[2] = (char *) "";
 
@@ -78,7 +78,7 @@ TEST(ArgHandler, parse_help_expectHelp)
 {
     int const argc = 2;
     char *argv[argc];
-    argv[0] = (char *) "erdcpp";
+    argv[0] = (char *) "mxcpp";
     argv[1] = (char *) "help";
 
     ih::ArgHandler argHandler;
@@ -94,7 +94,7 @@ TEST(ArgHandler, parse_transaction_help_expectHelp)
 {
     int const argc = 3;
     char *argv[argc];
-    argv[0] = (char *) "erdcpp";
+    argv[0] = (char *) "mxcpp";
     argv[1] = (char *) "transaction";
     argv[2] = (char *) "help";
 
@@ -111,7 +111,7 @@ TEST(ArgHandler, parse_transaction_withoutSubArgument_expectInvalid)
 {
     int const argc = 2;
     char *argv[argc];
-    argv[0] = (char *) "erdcpp";
+    argv[0] = (char *) "mxcpp";
     argv[1] = (char *) "transaction";
 
     ih::ArgHandler argHandler;
@@ -123,7 +123,7 @@ TEST(ArgHandler, parse_transaction_new_noData_expectCreateTransaction)
 {
     int const argc = 12;
     char *argv[argc];
-    argv[0] = (char *) "erdcpp";
+    argv[0] = (char *) "mxcpp";
     argv[1] = (char *) "transaction";
     argv[2] = (char *) "new";
     argv[3] = (char *) "--nonce=3";
@@ -155,7 +155,7 @@ TEST(ArgHandler, parse_transaction_new_withData_expectCreateTransaction)
 {
     int const argc = 11;
     char *argv[argc];
-    argv[0] = (char *) "erdcpp";
+    argv[0] = (char *) "mxcpp";
     argv[1] = (char *) "transaction";
     argv[2] = (char *) "new";
     argv[3] = (char *) "--nonce=3";
@@ -186,7 +186,7 @@ TEST(ArgHandler, parse_transaction_new_invalidNonce_expectErrorNonce)
 {
     int const argc = 11;
     char *argv[argc];
-    argv[0] = (char *) "erdcpp";
+    argv[0] = (char *) "mxcpp";
     argv[1] = (char *) "transaction";
     argv[2] = (char *) "new";
     argv[3] = (char *) "--nonce=3f";
@@ -207,7 +207,7 @@ TEST(ArgHandler, parse_transaction_new_invalidValue_expectErrorValue)
 {
     int const argc = 11;
     char *argv[argc];
-    argv[0] = (char *) "erdcpp";
+    argv[0] = (char *) "mxcpp";
     argv[1] = (char *) "transaction";
     argv[2] = (char *) "new";
     argv[3] = (char *) "--nonce=3";
@@ -227,7 +227,7 @@ TEST(ArgHandler, parse_transaction_new_invalidReceiver_expectErrorReceiver)
     int const argc = 11;
     char *argv[argc];
 
-    argv[0] = (char *) "erdcpp";
+    argv[0] = (char *) "mxcpp";
     argv[1] = (char *) "transaction";
     argv[2] = (char *) "new";
     argv[3] = (char *) "--nonce=0";
@@ -247,7 +247,7 @@ TEST(ArgHandler, parse_transaction_new_invalidGasPrice_expectErrorGasPrice)
     int const argc = 11;
     char *argv[argc];
 
-    argv[0] = (char *) "erdcpp";
+    argv[0] = (char *) "mxcpp";
     argv[1] = (char *) "transaction";
     argv[2] = (char *) "new";
     argv[3] = (char *) "--nonce=0";
@@ -269,7 +269,7 @@ TEST(ArgHandler, parse_transaction_new_invalidGasLimit_expectErrorGasLimit)
     int const argc = 11;
     char *argv[argc];
 
-    argv[0] = (char *) "erdcpp";
+    argv[0] = (char *) "mxcpp";
     argv[1] = (char *) "transaction";
     argv[2] = (char *) "new";
     argv[3] = (char *) "--nonce=0";
@@ -291,7 +291,7 @@ TEST(ArgHandler, parse_transaction_new_invalidPemInput_expectErrorPem)
     int const argc = 11;
     char *argv[argc];
 
-    argv[0] = (char *) "erdcpp";
+    argv[0] = (char *) "mxcpp";
     argv[1] = (char *) "transaction";
     argv[2] = (char *) "new";
     argv[3] = (char *) "--nonce=0";
@@ -311,7 +311,7 @@ TEST(ArgHandler, parse_transaction_new_invalidJsonOutput_expectErrorJson)
     int const argc = 11;
     char *argv[argc];
 
-    argv[0] = (char *) "erdcpp";
+    argv[0] = (char *) "mxcpp";
     argv[1] = (char *) "transaction";
     argv[2] = (char *) "new";
     argv[3] = (char *) "--nonce=0";
@@ -331,7 +331,7 @@ TEST(ArgHandler, parse_transaction_new_invalidData_expectErrorData)
     int const argc = 11;
     char *argv[argc];
 
-    argv[0] = (char *) "erdcpp";
+    argv[0] = (char *) "mxcpp";
     argv[1] = (char *) "transaction";
     argv[2] = (char *) "new";
     argv[3] = (char *) "--nonce=0";
@@ -356,7 +356,7 @@ TEST(HandleCreateSignedTransaction, withPemFile_expectCorrectWrittenTx)
     std::string keyFile = "--key=" + getCanonicalTestDataPath("keysValid1.pem");
     std::string outFile = "--outfile=" + getCanonicalTestDataPath("outputJson.json");
 
-    argv[0] = (char *) "erdcpp";
+    argv[0] = (char *) "mxcpp";
     argv[1] = (char *) "transaction";
     argv[2] = (char *) "new";
     argv[3] = (char *) "--nonce=5";
@@ -406,5 +406,5 @@ TEST(HandleSetNetworkConfig, setCLIConfig)
 //TODO: Create CMake function to automatically run all tests
 //TODO: Design CMake to automatically ->link all libraries + include all directories<- for every newly added test file
 //TODO: Split tests file in headers + CPP
-//TODO: Put every API inside erd namespace
+//TODO: Put every API inside mx namespace
 

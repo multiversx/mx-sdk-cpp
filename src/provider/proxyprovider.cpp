@@ -4,19 +4,19 @@
 
 namespace internal
 {
-ErdGenericApiResponse parse(wrapper::http::Result const &res)
+MXGenericApiResponse parse(wrapper::http::Result const &res)
 {
     if (res.error)
     {
         throw std::runtime_error(res.statusMessage);
     }
 
-    return ErdGenericApiResponse(res.body);
+    return MXGenericApiResponse(res.body);
 }
 
 nlohmann::json getPayLoad(wrapper::http::Result const &res)
 {
-    ErdGenericApiResponse response = parse(res);
+    MXGenericApiResponse response = parse(res);
     response.checkSuccessfulOperation();
 
     return response.getData<nlohmann::json>();

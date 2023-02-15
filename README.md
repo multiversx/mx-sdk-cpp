@@ -9,19 +9,19 @@ particular).
 ```
 
 This script will install all necessary dependencies, build solution and:
-- copy **headers** in `/usr/include/erdcpp` 
+- copy **headers** in `/usr/include/mxcpp` 
 - copy **shared library** in `/usr/lib/libsrc.so`
 
 ### 1.1 SDK
 To integrate this sdk in your project, link `libsrc.so` and include this header in your project:
 ```c++
-#include "erdcpp/erdsdk.h"
+#include "mxcpp/mxsdk.h"
 ```
 
 ### CMake integration
 
 To integrate this sdk in your `CMake` project:
-1. include `/usr/include/erdcpp`
+1. include `/usr/include/mxcpp`
 2. link `/usr/lib/libsrc.so`
 
 Example:
@@ -29,7 +29,7 @@ Example:
 cmake_minimum_required(VERSION 3.11)
 project(main)
 
-include_directories(/usr/include/erdcpp) #-> include header files
+include_directories(/usr/include/mxcpp) #-> include header files
 
 add_executable(main main.cpp)
 target_link_libraries(main PUBLIC /usr/lib/libsrc.so) #-> link library
@@ -41,7 +41,7 @@ target_link_libraries(main PUBLIC /usr/lib/libsrc.so) #-> link library
 To see all available command lines:
 ```bash
 cd cli
-./erdcpp -h
+./mxcpp -h
 ```
 
 ## 2. Examples

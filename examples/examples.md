@@ -207,7 +207,7 @@ std::string data = ESDTTransferPayloadBuilder()
         .build();
 
 // Single NFT
-TokenPayment payment = TokenPayment::nonFungible("ERDCPP-38f249", 1);
+TokenPayment payment = TokenPayment::nonFungible("MXCPP-38f249", 1);
 std::string data = ESDTNFTTransferPayloadBuilder()
         .setPayment(payment)
         .setDestination(Address("erd1..."))
@@ -221,7 +221,7 @@ std::string data = ESDTNFTTransferPayloadBuilder()
         .build();
 
 // Multi ESDT/NFT
-TokenPayment paymentOne = TokenPayment::nonFungible("ERDCPP-38f249", 1);
+TokenPayment paymentOne = TokenPayment::nonFungible("MXCPP-38f249", 1);
 TokenPayment paymentTwo = TokenPayment::fungibleFromAmount("BAR-c80d29", "10.00", 18);
 std::string data = MultiESDTNFTTransferPayloadBuilder()
         .setPayments({paymentOne, paymentTwo})
@@ -271,7 +271,7 @@ try
             .buildSigned(mySeed);         // Build signed tx with SC call
             
      // -> Create ESDTNFT transaction       
-    TokenPayment nft = TokenPayment::nonFungible("ERDCPP-38f249", 4);
+    TokenPayment nft = TokenPayment::nonFungible("MXCPP-38f249", 4);
     Transaction transaction3 = transactionFactory.createESDTNFTTransfer(
                     nft,                  // Token (esdt/nft)
                     4,                    // Nonce
@@ -281,7 +281,7 @@ try
             ->buildSigned(mySeed);
     
     // -> Create MultiESDTNFT transaction
-    TokenPayment token1 = TokenPayment::nonFungible("ERDCPP-38f249", 3);
+    TokenPayment token1 = TokenPayment::nonFungible("MXCPP-38f249", 3);
     TokenPayment token2 = TokenPayment::fungibleFromAmount("MEX-455c57", "123", 18);
     Transaction transaction4 = transactionFactory.createMultiESDTNFTTransfer(
                     {token1, token2},   // Tokens(esdt/nft/sft/metaESDT)
@@ -318,7 +318,7 @@ To see all available command line commands:
 
 ```bash
 cd cli
-./erdcpp -h
+./mxcpp -h
 ```
 
 ```
@@ -326,7 +326,7 @@ Create signed transactions
 [command]: transaction
 [subcommand]: new
 Usage:
-  erdcpp transaction new [OPTION...]
+  mxcpp transaction new [OPTION...]
 
  new options:
       --nonce arg          Transaction nonce
@@ -348,7 +348,7 @@ Transfer ESDT
 [command]: esdt
 [subcommand]: transfer
 Usage:
-  erdcpp esdt transfer [OPTION...]
+  mxcpp esdt transfer [OPTION...]
 
  transfer options:
       --nonce arg      Sender account's nonce
@@ -368,7 +368,7 @@ Issue ESDT
 [command]: esdt
 [subcommand]: issue
 Usage:
-  erdcpp esdt issue [OPTION...]
+  mxcpp esdt issue [OPTION...]
 
  issue options:
       --token arg         Token id
@@ -393,10 +393,10 @@ Set network
 [command]: network
 [subcommand]: set
 Usage:
-  erdcpp network set [OPTION...]
+  mxcpp network set [OPTION...]
 
  set options:
-      --config arg  Set network config used to interact with ERDCPP CLI. 
+      --config arg  Set network config used to interact with MXCPP CLI. 
                     Valid: mainnet, testnet, devnet, local (not case 
                     sensitive)
 ```

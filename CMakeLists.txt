@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 set(CMAKE_CXX_FLAGS "-fPIC")
 
-project(ERDCPP)
+project(MXCPP)
 
 set(LIBSODIUM_INCLUDE_PATH "/usr/local/include")
 set(LIBSODIUM_LIB_PATH "/usr/local/lib")

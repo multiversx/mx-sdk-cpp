@@ -3,7 +3,7 @@
 
 #include "inputhandler/ext.h"
 #include "config/cliconfig.h"
-#include "erdsdk.h"
+#include "mxsdk.h"
 
 namespace cli
 {

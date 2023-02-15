@@ -1,8 +1,8 @@
 #include "options_esdt.h"
 
 OptionsESDT::OptionsESDT() :
-        m_optionsIssue("erdcpp esdt issue", "Issue ESDT\n[command]: esdt\n[subcommand]: issue"),
-        m_optionsTransfer("erdcpp esdt transfer", "Transfer ESDT\n[command]: esdt\n[subcommand]: transfer")
+        m_optionsIssue("mxcpp esdt issue", "Issue ESDT\n[command]: esdt\n[subcommand]: issue"),
+        m_optionsTransfer("mxcpp esdt transfer", "Transfer ESDT\n[command]: esdt\n[subcommand]: transfer")
 {
     initOptions();
 }

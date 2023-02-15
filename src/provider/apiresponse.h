@@ -17,10 +17,10 @@ inline void requireAttribute(nlohmann::json const &data, std::string const &attr
 }
 }
 
-class ErdGenericApiResponse
+class MXGenericApiResponse
 {
 public:
-    explicit ErdGenericApiResponse(std::string const &rawData)
+    explicit MXGenericApiResponse(std::string const &rawData)
     {
         try
         {

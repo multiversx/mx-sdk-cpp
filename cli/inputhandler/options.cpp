@@ -1,8 +1,8 @@
 #include "options.h"
 
 CLIOptions::CLIOptions() :
-        m_optionsTx("erdcpp transaction new", "Create signed transactions\n[command]: transaction\n[subcommand]: new"),
-        m_optionsNetwork("erdcpp network set", "Set network\n[command]: network\n[subcommand]: set"),
+        m_optionsTx("mxcpp transaction new", "Create signed transactions\n[command]: transaction\n[subcommand]: new"),
+        m_optionsNetwork("mxcpp network set", "Set network\n[command]: network\n[subcommand]: set"),
         m_optionsESDT()
 {
     initOptions();
@@ -58,5 +58,5 @@ void CLIOptions::initOptionsTx()
 void CLIOptions::initOptionsNetwork()
 {
     m_optionsNetwork.add_options("set") // network config set
-            ("config", "Set network config used to interact with ERDCPP CLI. Valid: mainnet, testnet, devnet, local (not case sensitive)", cxxopts::value<std::string>());
+            ("config", "Set network config used to interact with MXCPP CLI. Valid: mainnet, testnet, devnet, local (not case sensitive)", cxxopts::value<std::string>());
 }
