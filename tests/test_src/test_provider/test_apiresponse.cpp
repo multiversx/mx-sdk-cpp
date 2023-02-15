@@ -2,12 +2,12 @@
 
 #include "provider/apiresponse.h"
 
-TEST(ErdGenericApiResponse, constructor_validData)
+TEST(MXGenericApiResponse, constructor_validData)
 {
     EXPECT_NO_THROW(MXGenericApiResponse apiResponse(R"({"data":"something","error":"some error","code":"some code"})"));
 }
 
-TEST(ErdGenericApiResponse, constructor_invalidData)
+TEST(MXGenericApiResponse, constructor_invalidData)
 {
     EXPECT_THROW({
                      try
@@ -22,7 +22,7 @@ TEST(ErdGenericApiResponse, constructor_invalidData)
                  }, std::invalid_argument );
 }
 
-TEST(ErdGenericApiResponse, getters_allExist)
+TEST(MXGenericApiResponse, getters_allExist)
 {
     MXGenericApiResponse apiResponse(R"({"data":{"account":{"address":"erd1qq"}},"error":"some error","code":"some code"})");
 
@@ -34,7 +34,7 @@ TEST(ErdGenericApiResponse, getters_allExist)
     EXPECT_EQ(apiResponse.getData<nlohmann::json>(), expectedData);
 }
 
-TEST(ErdGenericApiResponse, getters_missingCode)
+TEST(MXGenericApiResponse, getters_missingCode)
 {
     MXGenericApiResponse apiResponse(R"({"data":{"account":{"address":"erd1qq"}},"error":"some error"})");
 
@@ -56,7 +56,7 @@ TEST(ErdGenericApiResponse, getters_missingCode)
     EXPECT_EQ(apiResponse.getData<nlohmann::json>(), expectedData);
 }
 
-TEST(ErdGenericApiResponse, getters_missingError)
+TEST(MXGenericApiResponse, getters_missingError)
 {
     MXGenericApiResponse apiResponse(R"({"data":{"account":{"address":"erd1qq"}},"code":"some code"})");
 
@@ -68,7 +68,7 @@ TEST(ErdGenericApiResponse, getters_missingError)
     EXPECT_EQ(apiResponse.getData<nlohmann::json>(), expectedData);
 }
 
-TEST(ErdGenericApiResponse, getters_emptyError)
+TEST(MXGenericApiResponse, getters_emptyError)
 {
     MXGenericApiResponse apiResponse(R"({"data":{"account":{"address":"erd1qq"}},"code":"some code","error":""})");
 
@@ -80,7 +80,7 @@ TEST(ErdGenericApiResponse, getters_emptyError)
     EXPECT_EQ(apiResponse.getData<nlohmann::json>(), expectedData);
 }
 
-TEST(ErdGenericApiResponse, getters_missingData)
+TEST(MXGenericApiResponse, getters_missingData)
 {
     MXGenericApiResponse apiResponse(R"({"error":"some error","code":"some code"})");
 
@@ -105,7 +105,7 @@ struct apiResponseData
     bool expectSuccessful;
 };
 
-class ErdApiResponseCheckOperation : public ::testing::TestWithParam<apiResponseData>
+class MXApiResponseCheckOperation : public ::testing::TestWithParam<apiResponseData>
 {
 public:
     void EXPECT_UNSUCCESSFUL_OPERATION (MXGenericApiResponse const &response)
@@ -130,7 +130,7 @@ public:
 
 INSTANTIATE_TEST_CASE_P (
         Successful,
-        ErdApiResponseCheckOperation,
+        MXApiResponseCheckOperation,
         ::testing::Values
                 (apiResponseData {R"({"data":{"account":{"address":"erd1qq"}},"code":"successful","error":""})", true},
                  apiResponseData {R"({"data":{"account":{"address":"erd1qq"}},"code":"success","error":""})", true},
@@ -138,7 +138,7 @@ INSTANTIATE_TEST_CASE_P (
 
 INSTANTIATE_TEST_CASE_P (
         Unsuccessful,
-        ErdApiResponseCheckOperation,
+        MXApiResponseCheckOperation,
         ::testing::Values
                 (apiResponseData {R"({"data":{"account":{"address":"erd1qq"}},"code":"fail","error":"some error"})", false},
                  apiResponseData {R"({"data":null,"code":"fail","error":"some error"})", false},
@@ -148,7 +148,7 @@ INSTANTIATE_TEST_CASE_P (
                  apiResponseData {R"({"data":null,"code":"success","error":"some error"})", false}));
 
 
-TEST_P(ErdApiResponseCheckOperation, checkSuccessfulOperation_successful)
+TEST_P(MXApiResponseCheckOperation, checkSuccessfulOperation_successful)
 {
     apiResponseData const &currParam = GetParam();
 
@@ -164,7 +164,7 @@ TEST_P(ErdApiResponseCheckOperation, checkSuccessfulOperation_successful)
     }
 }
 
-TEST(ErdGenericApiResponse, utility_requireAttribute)
+TEST(MXGenericApiResponse, utility_requireAttribute)
 {
     nlohmann::json data;
     data["account"]["address"] = "erd1qq";
