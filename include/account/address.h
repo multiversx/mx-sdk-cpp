@@ -1,5 +1,5 @@
-#ifndef ERD_ADDRESS_H
-#define ERD_ADDRESS_H
+#ifndef MX_ADDRESS_H
+#define MX_ADDRESS_H
 
 #include <string>
 #include "internal/internal.h"
@@ -35,4 +35,4 @@ private:
     std::string m_bech32Address;
 };
 
-#endif //ERD_ADDRESS_H
+#endif //MX_ADDRESS_H

@@ -1,5 +1,5 @@
-#ifndef ERD_TRANSACTION_BUILDER_INPUT_H
-#define ERD_TRANSACTION_BUILDER_INPUT_H
+#ifndef MX_TRANSACTION_BUILDER_INPUT_H
+#define MX_TRANSACTION_BUILDER_INPUT_H
 
 #include "gas_estimator.h"
 #include "account/address.h"
@@ -18,4 +18,4 @@ struct TransactionBuilderInput
     uint64_t gasLimit = DEFAULT_GAS_LIMIT;
 };
 
-#endif //ERD_TRANSACTION_BUILDER_INPUT_H
+#endif //MX_TRANSACTION_BUILDER_INPUT_H

@@ -1,5 +1,5 @@
-#ifndef ERD_UTILS_EXT_H
-#define ERD_UTILS_EXT_H
+#ifndef MX_UTILS_EXT_H
+#define MX_UTILS_EXT_H
 
 #include "hex.h"
 #include "base64.h"

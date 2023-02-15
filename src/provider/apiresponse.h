@@ -1,5 +1,5 @@
-#ifndef ERD_PROXY_API_RESPONSE_H
-#define ERD_PROXY_API_RESPONSE_H
+#ifndef MX_PROXY_API_RESPONSE_H
+#define MX_PROXY_API_RESPONSE_H
 
 #include <stdexcept>
 

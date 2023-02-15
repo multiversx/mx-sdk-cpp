@@ -1,5 +1,5 @@
-#ifndef ERD_CLI_OPTIONS_H
-#define ERD_CLI_OPTIONS_H
+#ifndef MX_CLI_OPTIONS_H
+#define MX_CLI_OPTIONS_H
 
 #include "options_esdt.h"
 

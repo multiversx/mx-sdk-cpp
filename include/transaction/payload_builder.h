@@ -1,5 +1,5 @@
-#ifndef ERD_PAYLOAD_BUILDER_H
-#define ERD_PAYLOAD_BUILDER_H
+#ifndef MX_PAYLOAD_BUILDER_H
+#define MX_PAYLOAD_BUILDER_H
 
 // This file is an adaptation from https://github.com/multiversx/mx-sdk-js-core/blob/main/src/tokenTransferBuilders.ts
 
@@ -84,4 +84,4 @@ private:
     ESDTProperties m_esdtProperties;
 };
 
-#endif //ERD_PAYLOAD_BUILDER_H
+#endif //MX_PAYLOAD_BUILDER_H

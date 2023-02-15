@@ -1,5 +1,5 @@
-#ifndef ERD_WRAPPER_JSON_H
-#define ERD_WRAPPER_JSON_H
+#ifndef MX_WRAPPER_JSON_H
+#define MX_WRAPPER_JSON_H
 
 #include <string>
 

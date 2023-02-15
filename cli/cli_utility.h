@@ -1,5 +1,5 @@
-#ifndef ERD_CLI_UTILITY_H
-#define ERD_CLI_UTILITY_H
+#ifndef MX_CLI_UTILITY_H
+#define MX_CLI_UTILITY_H
 
 #include "inputhandler/ext.h"
 #include "config/cliconfig.h"

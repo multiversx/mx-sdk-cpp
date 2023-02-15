@@ -1,5 +1,5 @@
-#ifndef ERD_SC_ARGUMENTS_H
-#define ERD_SC_ARGUMENTS_H
+#ifndef MX_SC_ARGUMENTS_H
+#define MX_SC_ARGUMENTS_H
 
 #include <vector>
 
@@ -26,4 +26,4 @@ private:
 };
 
 
-#endif //ERD_SC_ARGUMENTS_H
+#endif //MX_SC_ARGUMENTS_H

@@ -1,5 +1,5 @@
-#ifndef ERD_HEX_H
-#define ERD_HEX_H
+#ifndef MX_HEX_H
+#define MX_HEX_H
 
 #include <string>
 #include "internal/internal.h"

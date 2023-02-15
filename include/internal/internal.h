@@ -1,5 +1,5 @@
-#ifndef ERD_INTERNAL_H
-#define ERD_INTERNAL_H
+#ifndef MX_INTERNAL_H
+#define MX_INTERNAL_H
 
 #include <string>
 #include <vector>
@@ -34,4 +34,4 @@ struct EncryptedData
     std::string mac;
 };
 
-#endif //ERD_INTERNAL_H
+#endif //MX_INTERNAL_H

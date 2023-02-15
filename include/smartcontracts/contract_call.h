@@ -1,5 +1,5 @@
-#ifndef ERD_CONTRACT_CALL_H
-#define ERD_CONTRACT_CALL_H
+#ifndef MX_CONTRACT_CALL_H
+#define MX_CONTRACT_CALL_H
 
 #include "sc_arguments.h"
 
@@ -19,4 +19,4 @@ private:
     SCArguments m_args;
 };
 
-#endif //ERD_CONTRACT_CALL_H
+#endif //MX_CONTRACT_CALL_H

@@ -1,5 +1,5 @@
-#ifndef ERD_ESDT_H
-#define ERD_ESDT_H
+#ifndef MX_ESDT_H
+#define MX_ESDT_H
 
 #include "transaction.h"
 #include "smartcontracts/sc_arguments.h"
@@ -31,4 +31,4 @@ bool operator==(ESDTProperties const &lhs, ESDTProperties const &rhs);
 
 bool operator!=(ESDTProperties const &lhs, ESDTProperties const &rhs);
 
-#endif //ERD_ESDT_H
+#endif //MX_ESDT_H

@@ -1,5 +1,5 @@
-#ifndef ERD_CLI_I_WRAPPER_H
-#define ERD_CLI_I_WRAPPER_H
+#ifndef MX_CLI_I_WRAPPER_H
+#define MX_CLI_I_WRAPPER_H
 
 #include <cliparser/cxxopts.hpp>
 

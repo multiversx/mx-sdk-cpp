@@ -1,5 +1,5 @@
-#ifndef ERD_SIGNER_H
-#define ERD_SIGNER_H
+#ifndef MX_SIGNER_H
+#define MX_SIGNER_H
 
 #include "internal/internal.h"
 #include "account/address.h"
@@ -22,4 +22,4 @@ private:
 };
 
 
-#endif //ERD_SIGNER_H
+#endif //MX_SIGNER_H

@@ -1,5 +1,5 @@
-#ifndef ERD_CLI_ARG_HANDLER_H
-#define ERD_CLI_ARG_HANDLER_H
+#ifndef MX_CLI_ARG_HANDLER_H
+#define MX_CLI_ARG_HANDLER_H
 
 #include "utils/errors.h"
 #include "options.h"

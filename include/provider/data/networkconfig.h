@@ -1,5 +1,5 @@
-#ifndef ERD_NETWORKCONFIG_H
-#define ERD_NETWORKCONFIG_H
+#ifndef MX_NETWORKCONFIG_H
+#define MX_NETWORKCONFIG_H
 
 #include <string>
 
@@ -32,4 +32,4 @@ bool operator!=(NetworkConfig const &lhs, NetworkConfig const &rhs);
 .minGasPrice = 1000000000                              \
 };
 
-#endif //ERD_NETWORKCONFIG_H
+#endif //MX_NETWORKCONFIG_H

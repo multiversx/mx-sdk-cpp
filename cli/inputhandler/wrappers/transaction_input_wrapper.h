@@ -1,5 +1,5 @@
-#ifndef ERD_CLI_TRANSACTION_INPUT_WRAPPER_H
-#define ERD_CLI_TRANSACTION_INPUT_WRAPPER_H
+#ifndef MX_CLI_TRANSACTION_INPUT_WRAPPER_H
+#define MX_CLI_TRANSACTION_INPUT_WRAPPER_H
 
 #include "iwrapper.h"
 #include "account/address.h"
